@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <title>PoG — XY+T Mobile Temporal Lab</title>
+  <link rel="stylesheet" href="./xyt-video.css">
+</head>
+<body>
+  <main class="xyt-shell">
+    <section class="xyt-stage" aria-label="Interactive XY plus time temporal video volume">
+      <div id="xyt-canvas" class="xyt-canvas" aria-hidden="true"></div>
+
+      <header class="xyt-meta">
+        <div class="xyt-brand-row">
+          <div>
+            <p class="xyt-kicker">PoG EXPERIMENT</p>
+            <h1>XY + T / EXTRACTED FORM</h1>
+          </div>
+          <button id="xyt-panel-toggle" class="xyt-panel-toggle" type="button" aria-expanded="true" aria-controls="xyt-panel">TOOLS</button>
+        </div>
+        <p id="xyt-status" class="xyt-status" role="status" aria-live="polite">LOADING TEMPORAL VOLUME…</p>
+        <div class="xyt-readouts">
+          <span id="xyt-time" class="xyt-time">00:00.00 / 00:00.00</span>
+          <span id="xyt-source" class="xyt-source">IMG_4903.mp4</span>
+        </div>
+      </header>
+
+      <section id="xyt-panel" class="xyt-panel" aria-label="Temporal rendering controls">
+        <div class="xyt-panel-handle" aria-hidden="true"></div>
+
+        <div class="xyt-panel-grid">
+          <div class="xyt-control-group">
+            <span class="xyt-label">TRAIL MODE</span>
+            <div class="xyt-segmented xyt-two">
+              <button class="xyt-mode is-active" type="button" data-mode="motion" aria-pressed="true">MOTION</button>
+              <button class="xyt-mode" type="button" data-mode="silhouette" aria-pressed="false">SILHOUETTE</button>
+            </div>
+          </div>
+
+          <div class="xyt-control-group">
+            <span class="xyt-label">MOTION MASK</span>
+            <div class="xyt-segmented xyt-two">
+              <button class="xyt-mask is-active" type="button" data-mask="on" aria-pressed="true">ON</button>
+              <button class="xyt-mask" type="button" data-mask="off" aria-pressed="false">OFF</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="xyt-range-group">
+          <div class="xyt-range-head">
+            <label class="xyt-label" for="xyt-trail-length">TRAIL LENGTH</label>
+            <output id="xyt-trail-length-value" for="xyt-trail-length">±100</output>
+          </div>
+          <input id="xyt-trail-length" class="xyt-range" type="range" min="30" max="180" value="100" step="10">
+        </div>
+
+        <div class="xyt-range-group">
+          <div class="xyt-range-head">
+            <label class="xyt-label" for="xyt-trail-strength">TRAIL STRENGTH</label>
+            <output id="xyt-trail-strength-value" for="xyt-trail-strength">100%</output>
+          </div>
+          <input id="xyt-trail-strength" class="xyt-range" type="range" min="35" max="125" value="100" step="5">
+        </div>
+
+        <div class="xyt-upload-row">
+          <label class="xyt-upload" for="xyt-upload-input">UPLOAD VIDEO</label>
+          <input id="xyt-upload-input" class="xyt-upload-input" type="file" accept="video/*">
+          <button id="xyt-reset" class="xyt-secondary" type="button">RESET VIEW</button>
+        </div>
+      </section>
+
+      <div class="xyt-transport">
+        <div class="xyt-scrub-row">
+          <span class="xyt-scrub-label">Z / TIME</span>
+          <input id="xyt-scrub" class="xyt-scrub" type="range" min="0" max="1000" value="0" step="1" aria-label="Scrub video time">
+        </div>
+        <button id="xyt-toggle" class="xyt-play" type="button" aria-label="Play temporal volume">PLAY</button>
+      </div>
+
+      <p class="xyt-help">DRAG ORBIT · PINCH ZOOM · SCRUB TIME</p>
+    </section>
+  </main>
+
+  <script type="module" src="./xyt-video.js"></script>
+</body>
+</html>

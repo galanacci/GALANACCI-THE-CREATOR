@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title>Experiments folder</title>
+  <path fill="#ead1b2" d="M10 31c0-5.523 4.477-10 10-10h31l10 12h47c5.523 0 10 4.477 10 10v52c0 5.523-4.477 10-10 10H20c-5.523 0-10-4.477-10-10V31Z"/>
+  <path fill="#000" d="M10 45h108v50c0 5.523-4.477 10-10 10H20c-5.523 0-10-4.477-10-10V45Z" opacity=".88"/>
+  <path fill="#ead1b2" d="M24 60h80v4H24zm0 12h56v4H24z" opacity=".9"/>
+</svg>

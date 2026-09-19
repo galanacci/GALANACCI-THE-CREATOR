@@ -1,0 +1,72 @@
+{
+  "fps": 30.0,
+  "duration": 21.2,
+  "frameCount": 636,
+  "frameWidth": 320,
+  "frameHeight": 180,
+  "atlasCols": 8,
+  "atlasRows": 8,
+  "framesPerAtlas": 64,
+  "atlases": [
+    {
+      "index": 0,
+      "startFrame": 0,
+      "frameCount": 64,
+      "file": "./assets/atlases/atlas-00.jpg"
+    },
+    {
+      "index": 1,
+      "startFrame": 64,
+      "frameCount": 64,
+      "file": "./assets/atlases/atlas-01.jpg"
+    },
+    {
+      "index": 2,
+      "startFrame": 128,
+      "frameCount": 64,
+      "file": "./assets/atlases/atlas-02.jpg"
+    },
+    {
+      "index": 3,
+      "startFrame": 192,
+      "frameCount": 64,
+      "file": "./assets/atlases/atlas-03.jpg"
+    },
+    {
+      "index": 4,
+      "startFrame": 256,
+      "frameCount": 64,
+      "file": "./assets/atlases/atlas-04.jpg"
+    },
+    {
+      "index": 5,
+      "startFrame": 320,
+      "frameCount": 64,
+      "file": "./assets/atlases/atlas-05.jpg"
+    },
+    {
+      "index": 6,
+      "startFrame": 384,
+      "frameCount": 64,
+      "file": "./assets/atlases/atlas-06.jpg"
+    },
+    {
+      "index": 7,
+      "startFrame": 448,
+      "frameCount": 64,
+      "file": "./assets/atlases/atlas-07.jpg"
+    },
+    {
+      "index": 8,
+      "startFrame": 512,
+      "frameCount": 64,
+      "file": "./assets/atlases/atlas-08.jpg"
+    },
+    {
+      "index": 9,
+      "startFrame": 576,
+      "frameCount": 60,
+      "file": "./assets/atlases/atlas-09.jpg"
+    }
+  ]
+}
