@@ -245,8 +245,8 @@ button {
   display: grid;
   align-self: start;
   position: absolute;
-  left: 24px;
-  top: 24px;
+  left: 20px;
+  top: 20px;
   justify-items: center;
   width: var(--shortcut-width);
   min-height: var(--shortcut-min-height);

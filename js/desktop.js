@@ -2,6 +2,7 @@ import { APPS } from "./apps.js";
 
 const GRID = 16;
 const EDGE = 20;
+const FOLDER_EDGE = 20;
 const COLLISION_GAP = 0;
 const POSITION_PREFIX = "gtc:desktop-position:";
 const HINT_KEY = "gtc:desktop-hint:v1";
@@ -204,11 +205,11 @@ function closeFolderWindow() {
 function renderFolderItem(item, position) {
   if (!folderBody) return;
 
-  const maxX = Math.max(0, folderBody.clientWidth - item.offsetWidth);
-  const maxY = Math.max(0, folderBody.clientHeight - item.offsetHeight);
+  const maxX = Math.max(FOLDER_EDGE, folderBody.clientWidth - item.offsetWidth - FOLDER_EDGE);
+  const maxY = Math.max(FOLDER_EDGE, folderBody.clientHeight - item.offsetHeight - FOLDER_EDGE);
   const next = {
-    x: clamp(position.x, 0, maxX),
-    y: clamp(position.y, 0, maxY)
+    x: clamp(position.x, FOLDER_EDGE, maxX),
+    y: clamp(position.y, FOLDER_EDGE, maxY)
   };
 
   item.style.left = `${next.x}px`;
@@ -219,8 +220,8 @@ function renderFolderItem(item, position) {
 function positionFolderItems() {
   document.querySelectorAll(".folder-item").forEach((item) => {
     renderFolderItem(item, item._folderPosition || {
-      x: Number.parseFloat(item.style.left) || 24,
-      y: Number.parseFloat(item.style.top) || 24
+      x: Number.parseFloat(item.style.left) || FOLDER_EDGE,
+      y: Number.parseFloat(item.style.top) || FOLDER_EDGE
     });
   });
 }
