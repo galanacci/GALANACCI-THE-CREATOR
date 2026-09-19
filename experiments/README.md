@@ -11,3 +11,23 @@ experiments/
     style.css
     app.js
 ```
+
+## Shared desktop palette
+
+Future experiments should use the landing desktop palette:
+
+- Background: `#000000`
+- Foreground and accent: `#ead1b2`
+- Faint grid or divider lines: `rgba(234, 209, 178, .08)`
+- Muted text: `rgba(234, 209, 178, .62)`
+
+Keep these values as CSS custom properties so each experiment remains consistent:
+
+```css
+:root {
+  --bg: #000;
+  --fg: #ead1b2;
+  --accent: #ead1b2;
+  --line: rgba(234, 209, 178, .22);
+}
+```
