@@ -89,9 +89,7 @@ function readPosition(shortcut) {
   try {
     const parsed = JSON.parse(storageGet(key));
     if (Number.isFinite(parsed?.x) && Number.isFinite(parsed?.y)) return parsed;
-  } catch {
-    // Fall through.
-  }
+  } catch {}
 
   const position = randomPosition(shortcut);
   storageSet(key, JSON.stringify(position));
@@ -131,7 +129,6 @@ function findAvailablePosition(shortcut, position) {
     for (let x = EDGE; x <= maxX; x += GRID) {
       const next = { x, y };
       if (!isAvailable(next)) continue;
-
       const distance = Math.abs(next.x - candidate.x) + Math.abs(next.y - candidate.y);
       if (distance < closestDistance) {
         closest = next;
@@ -147,13 +144,11 @@ function renderShortcut(shortcut, position) {
   const next = findAvailablePosition(shortcut, position);
   shortcut._desktopPosition = next;
   shortcut.style.transform = `translate3d(${next.x}px, ${next.y}px, 0)`;
-
   if (selected === shortcut) renderHint(shortcut);
 }
 
 function renderHint(shortcut) {
   if (!hint || !shortcut?._desktopPosition) return;
-
   const width = hint.offsetWidth;
   const position = shortcut._desktopPosition;
   const x = clamp(
@@ -163,7 +158,6 @@ function renderHint(shortcut) {
   );
   const below = position.y + shortcut.offsetHeight + 9;
   const y = below + 28 <= window.innerHeight ? below : Math.max(8, position.y - 30);
-
   hint.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 }
 
@@ -180,7 +174,7 @@ function clearSelection() {
 }
 
 function clearFolderSelection() {
-  document.querySelectorAll(".folder-item.is-selected").forEach((item) => {
+  document.querySelectorAll(".app-list__row.is-selected").forEach((item) => {
     item.classList.remove("is-selected");
   });
 }
@@ -200,7 +194,6 @@ function closeFolderWindow() {
 
 function openFolderWindow(app) {
   if (!folderWindow || !app.enabled) return;
-
   dismissHint();
   clearSelection();
   folderWindow.hidden = false;
@@ -210,7 +203,6 @@ function openFolderWindow(app) {
 
 function closeExperimentWindow() {
   if (!experimentWindow) return;
-
   experimentWindow.classList.remove("is-open");
   experimentWindow.hidden = true;
   experimentWindow.setAttribute("aria-hidden", "true");
@@ -219,7 +211,6 @@ function closeExperimentWindow() {
 
 function openExperimentWindow(url, label) {
   if (!experimentWindow || !experimentFrame) return;
-
   closeFolderWindow();
   dismissHint();
   clearSelection();
@@ -236,13 +227,11 @@ function openShortcut(shortcut, app) {
     openFolderWindow(app);
     return;
   }
-
   launchShortcut(shortcut, app);
 }
 
 async function launchShortcut(shortcut, app) {
   if (launchLocked || !app.enabled || !app.url) return;
-
   launchLocked = true;
   dismissHint();
   clearSelection();
@@ -288,7 +277,6 @@ function installShortcut(shortcut, app) {
 
     const dx = event.clientX - dragging.startX;
     const dy = event.clientY - dragging.startY;
-
     if (Math.abs(dx) + Math.abs(dy) > 5) dragging.moved = true;
     if (!dragging.moved) return;
 
@@ -301,7 +289,6 @@ function installShortcut(shortcut, app) {
 
   const finishPointer = (event) => {
     if (!dragging || dragging.shortcut !== shortcut) return;
-
     const moved = dragging.moved;
     shortcut.releasePointerCapture?.(event.pointerId);
 
@@ -353,7 +340,7 @@ folderWindow?.querySelector("[data-close-folder]")?.addEventListener("click", cl
 experimentWindow?.querySelector("[data-close-experiment]")?.addEventListener("click", closeExperimentWindow);
 
 folderWindow?.addEventListener("pointerdown", (event) => {
-  if (!event.target.closest(".folder-item")) clearFolderSelection();
+  if (!event.target.closest(".app-list__row")) clearFolderSelection();
 });
 
 document.querySelectorAll("[data-experiment-link]").forEach((link) => {
@@ -363,6 +350,7 @@ document.querySelectorAll("[data-experiment-link]").forEach((link) => {
   };
 
   link.addEventListener("click", (event) => {
+    clearFolderSelection();
     link.classList.add("is-selected");
     if (isTouch) openLinkedExperiment(event);
     else event.preventDefault();
@@ -374,10 +362,6 @@ document.querySelectorAll("[data-experiment-link]").forEach((link) => {
 
   link.addEventListener("keydown", (event) => {
     if (event.key === "Enter" || event.key === " ") openLinkedExperiment(event);
-  });
-
-  link.addEventListener("dragstart", (event) => {
-    event.preventDefault();
   });
 });
 
@@ -464,12 +448,8 @@ folderChrome?.addEventListener("pointerdown", (event) => {
 
 window.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
-
-  if (experimentWindow && !experimentWindow.hidden) {
-    closeExperimentWindow();
-  } else {
-    closeFolderWindow();
-  }
+  if (experimentWindow && !experimentWindow.hidden) closeExperimentWindow();
+  else closeFolderWindow();
 });
 
 buildApps();

@@ -1,0 +1,121 @@
+.app-folder-body {
+  position: relative;
+  display: block;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 0;
+  overflow: auto;
+  background: var(--bg);
+  background-image: none;
+}
+
+.app-list {
+  width: 100%;
+  min-width: 560px;
+  color: var(--fg);
+  font-family: var(--font-brand);
+}
+
+.app-list__header,
+.app-list__row {
+  display: grid;
+  grid-template-columns: minmax(250px, 1fr) 140px 150px;
+  align-items: center;
+  width: 100%;
+}
+
+.app-list__header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  min-height: 34px;
+  border-bottom: 1px solid rgba(0, 0, 0, .22);
+  background: var(--bg);
+  color: rgba(0, 0, 0, .58);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: .11em;
+}
+
+.app-list__header > span,
+.app-list__row > span {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  height: 100%;
+  padding: 0 12px;
+}
+
+.app-list__header > span + span,
+.app-list__row > span + span {
+  border-left: 1px solid rgba(0, 0, 0, .10);
+}
+
+.app-list__row {
+  position: relative;
+  min-height: 52px;
+  border-bottom: 1px solid rgba(0, 0, 0, .10);
+  background: transparent;
+  color: var(--fg);
+  text-decoration: none;
+  cursor: default;
+}
+
+.app-list__row:hover {
+  background: rgba(0, 0, 0, .055);
+}
+
+.app-list__row.is-selected,
+.app-list__row:focus-visible {
+  outline: 0;
+  background: rgba(0, 0, 0, .13);
+}
+
+.app-list__name {
+  gap: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .045em;
+}
+
+.app-list__name img {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.app-list__name span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-list__meta {
+  overflow: hidden;
+  color: rgba(0, 0, 0, .68);
+  font-size: 9px;
+  letter-spacing: .045em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Override the legacy folder-grid sizing only for this window. */
+#folder-window {
+  width: min(720px, calc(100vw - 32px));
+  height: min(420px, calc(100vh - 48px));
+  min-width: 420px;
+}
+
+@media (max-width: 680px) {
+  #folder-window {
+    width: calc(100vw - 20px);
+    min-width: 0;
+    height: min(390px, calc(100vh - 24px));
+  }
+
+  .app-list {
+    min-width: 520px;
+  }
+}

@@ -7,7 +7,8 @@
   <meta name="description" content="GALANACCI THE CREATOR — archive, experiments, brands and worlds.">
   <title>GALANACCI THE CREATOR</title>
 
-  <link rel="stylesheet" href="style.css?v=20260919-app-folder-list-v1">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles/app-folder-list.css?v=20260919-v2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,12 +17,10 @@
 <body>
   <main id="gtc-desktop" class="desktop" aria-label="GALANACCI THE CREATOR desktop">
     <div id="desktop-apps" class="desktop-apps" aria-label="Desktop applications"></div>
-
     <p id="desktop-hint" class="desktop-hint" aria-hidden="true"></p>
-
     <div class="desktop-meta" aria-hidden="true">
       <span>GALANACCI THE CREATOR</span>
-      <span>DESKTOP_034</span>
+      <span>DESKTOP_035</span>
     </div>
   </main>
 
@@ -31,28 +30,28 @@
       <button type="button" class="folder-window__close" data-close-folder aria-label="Close folder">&times;</button>
     </header>
 
-    <div class="folder-window__body">
-      <div class="folder-list" role="table" aria-label="Applications">
-        <div class="folder-list__header" role="row">
+    <div class="folder-window__body app-folder-body">
+      <div class="app-list" role="table" aria-label="Applications">
+        <div class="app-list__header" role="row">
           <span role="columnheader">NAME</span>
           <span role="columnheader">DATE CREATED</span>
           <span role="columnheader">CREATED BY</span>
         </div>
 
         <a
-          class="folder-item"
+          class="app-list__row"
           data-experiment-link
           data-label="2(XY+T).EXE"
           href="./experiments/2(XY-T)/index.html"
           aria-label="Open 2(XY+T).EXE experiment"
           role="row"
         >
-          <span class="folder-item__name" role="cell">
+          <span class="app-list__name" role="cell">
             <img src="assets/icons/XY-T.EXE.svg" alt="" draggable="false">
             <span>2(XY+T).EXE</span>
           </span>
-          <span class="folder-item__meta" role="cell">19/09/2026</span>
-          <span class="folder-item__meta" role="cell">GALANACCI</span>
+          <span class="app-list__meta" role="cell">19/09/2026</span>
+          <span class="app-list__meta" role="cell">GALANACCI</span>
         </a>
       </div>
     </div>
@@ -87,6 +86,6 @@
   </section>
 
   <script type="module" src="js/apps.js"></script>
-  <script type="module" src="js/desktop.js?v=20260919-app-folder-list-v1"></script>
+  <script type="module" src="js/desktop.js?v=20260919-app-folder-v2"></script>
 </body>
 </html>
