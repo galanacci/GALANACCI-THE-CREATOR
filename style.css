@@ -240,8 +240,8 @@ button {
 }
 
 .folder-item img {
-  width: 74px;
-  height: 74px;
+  width: var(--shortcut-icon-size);
+  height: var(--shortcut-icon-size);
   object-fit: contain;
 }
 
@@ -319,6 +319,11 @@ button {
     left: calc(14px + var(--safe-left));
     right: calc(14px + var(--safe-right));
     bottom: calc(13px + var(--safe-bottom));
+  }
+
+  .folder-item img {
+    width: var(--shortcut-icon-size);
+    height: var(--shortcut-icon-size);
   }
 }
 
