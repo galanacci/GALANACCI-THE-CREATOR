@@ -3,7 +3,7 @@
   --fg: #ead1b2;
   --accent: #ead1b2;
   --accent-light: #ead1b2;
-  --grid-line: rgba(234, 209, 178, .11);
+  --grid-line: rgba(234, 209, 178, .08);
   --grid-size: 16px;
   --edge: 20px;
   --safe-top: env(safe-area-inset-top, 0px);
