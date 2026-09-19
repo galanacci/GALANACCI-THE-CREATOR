@@ -5,7 +5,7 @@
   --muted: rgba(234, 209, 178, .62);
   --line: rgba(234, 209, 178, .22);
   --line-strong: rgba(234, 209, 178, .64);
-  --panel: rgba(0, 0, 0, .58);
+  --panel: rgba(0, 0, 0, .10);
   --accent: #ead1b2;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
