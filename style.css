@@ -1,9 +1,9 @@
 :root {
   --bg: #000;
-  --fg: #fff;
-  --accent: #9b70df;
-  --accent-light: #a981e8;
-  --grid-line: rgba(103, 60, 175, .11);
+  --fg: #ead1b2;
+  --accent: #ead1b2;
+  --accent-light: #ead1b2;
+  --grid-line: rgba(234, 209, 178, .18);
   --grid-size: 16px;
   --edge: 20px;
   --safe-top: env(safe-area-inset-top, 0px);
@@ -99,8 +99,8 @@ button {
 .desktop-shortcut.is-selected,
 .desktop-shortcut:focus-visible {
   outline: 0;
-  border-color: rgba(169, 129, 232, .86);
-  background: rgba(103, 60, 175, .32);
+  border-color: rgba(234, 209, 178, .86);
+  background: rgba(234, 209, 178, .18);
 }
 
 .desktop-shortcut:active {
@@ -115,14 +115,16 @@ button {
   position: absolute;
   top: 0;
   left: 0;
-  width: 200px;
+  width: max-content;
+  max-width: calc(100vw - 16px);
   margin: 0;
-  color: rgba(255, 255, 255, .68);
+  color: rgba(234, 209, 178, .68);
   font-size: 9px;
   font-weight: 600;
   letter-spacing: .16em;
   line-height: 1.4;
   text-align: center;
+  white-space: nowrap;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
@@ -143,7 +145,7 @@ button {
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  color: rgba(255, 255, 255, .32);
+  color: var(--fg);
   font-size: 8px;
   font-weight: 600;
   letter-spacing: .13em;
@@ -157,7 +159,7 @@ button {
   display: grid;
   place-items: center;
   background: #000;
-  color: #fff;
+  color: var(--fg);
   opacity: 0;
   transition: opacity 180ms ease;
 }
@@ -185,7 +187,7 @@ button {
   display: block;
   width: 100%;
   height: 1px;
-  background: rgba(255, 255, 255, .18);
+  background: rgba(234, 209, 178, .18);
   overflow: hidden;
 }
 
