@@ -5,6 +5,7 @@
   --accent-light: #ead1b2;
   --grid-line: rgba(234, 209, 178, .08);
   --grid-size: 16px;
+  --shortcut-icon-size: 74px;
   --edge: 20px;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
@@ -90,8 +91,8 @@ button {
 }
 
 .desktop-shortcut img {
-  width: 74px;
-  height: 74px;
+  width: var(--shortcut-icon-size);
+  height: var(--shortcut-icon-size);
   object-fit: contain;
   pointer-events: none;
 }
@@ -300,15 +301,14 @@ button {
 }
 
 @media (max-width: 680px) {
+  :root {
+    --shortcut-icon-size: 66px;
+  }
+
   .desktop-shortcut {
     width: 90px;
     min-height: 98px;
     font-size: 11px;
-  }
-
-  .desktop-shortcut img {
-    width: 66px;
-    height: 66px;
   }
 
   .desktop-hint {

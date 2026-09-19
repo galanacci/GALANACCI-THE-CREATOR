@@ -2,6 +2,7 @@ import { APPS } from "./apps.js";
 
 const GRID = 16;
 const EDGE = 20;
+const COLLISION_GAP = 8;
 const POSITION_PREFIX = "gtc:desktop-position:";
 const HINT_KEY = "gtc:desktop-hint:v1";
 const LAUNCH_DELAY = 520;
@@ -96,13 +97,49 @@ function writePosition(shortcut, position) {
   storageSet(POSITION_PREFIX + shortcut.dataset.appId, JSON.stringify(position));
 }
 
-function renderShortcut(shortcut, position) {
-  const { maxX, maxY } = boundsFor(shortcut);
+function overlaps(shortcut, position, other) {
+  const otherPosition = other._desktopPosition;
+  if (!otherPosition) return false;
 
-  const next = {
+  return position.x < otherPosition.x + other.offsetWidth + COLLISION_GAP
+    && position.x + shortcut.offsetWidth + COLLISION_GAP > otherPosition.x
+    && position.y < otherPosition.y + other.offsetHeight + COLLISION_GAP
+    && position.y + shortcut.offsetHeight + COLLISION_GAP > otherPosition.y;
+}
+
+function findAvailablePosition(shortcut, position) {
+  const { maxX, maxY } = boundsFor(shortcut);
+  const candidate = {
     x: clamp(snap(position.x), EDGE, maxX),
     y: clamp(snap(position.y), EDGE, maxY)
   };
+  const otherShortcuts = [...document.querySelectorAll(".desktop-shortcut")]
+    .filter((other) => other !== shortcut);
+
+  const isAvailable = (next) => otherShortcuts.every((other) => !overlaps(shortcut, next, other));
+  if (isAvailable(candidate)) return candidate;
+
+  let closest = null;
+  let closestDistance = Number.POSITIVE_INFINITY;
+
+  for (let y = EDGE; y <= maxY; y += GRID) {
+    for (let x = EDGE; x <= maxX; x += GRID) {
+      const next = { x, y };
+      if (!isAvailable(next)) continue;
+
+      const distance = Math.abs(next.x - candidate.x) + Math.abs(next.y - candidate.y);
+      if (distance < closestDistance) {
+        closest = next;
+        closestDistance = distance;
+      }
+    }
+  }
+
+  return closest || candidate;
+}
+
+function renderShortcut(shortcut, position) {
+  const next = findAvailablePosition(shortcut, position);
 
   shortcut._desktopPosition = next;
   shortcut.style.transform = `translate3d(${next.x}px, ${next.y}px, 0)`;
