@@ -226,6 +226,28 @@ function positionFolderItems() {
   });
 }
 
+function moveFolderItem(event) {
+  if (!folderDragging) return;
+
+  const dx = event.clientX - folderDragging.startX;
+  const dy = event.clientY - folderDragging.startY;
+  if (Math.abs(dx) + Math.abs(dy) > 5) folderDragging.moved = true;
+  if (!folderDragging.moved) return;
+
+  renderFolderItem(folderDragging.item, {
+    x: folderDragging.origin.x + dx,
+    y: folderDragging.origin.y + dy
+  });
+}
+
+function finishFolderItem(event) {
+  if (!folderDragging) return;
+
+  folderDragging.item.releasePointerCapture?.(event.pointerId);
+  if (folderDragging.moved) folderDragging.item.dataset.folderMoved = "true";
+  folderDragging = null;
+}
+
 function openFolderWindow(app) {
   if (!folderWindow || !app.enabled) return;
 
@@ -424,6 +446,7 @@ document.querySelectorAll("[data-experiment-link]").forEach((link) => {
   link.addEventListener("pointerdown", (event) => {
     if (!folderBody || (event.button !== undefined && event.button !== 0)) return;
 
+    event.preventDefault();
     link.classList.add("is-selected");
     folderDragging = {
       item: link,
@@ -436,32 +459,11 @@ document.querySelectorAll("[data-experiment-link]").forEach((link) => {
 
     link.setPointerCapture?.(event.pointerId);
   });
-
-  link.addEventListener("pointermove", (event) => {
-    if (!folderDragging || folderDragging.item !== link) return;
-
-    const dx = event.clientX - folderDragging.startX;
-    const dy = event.clientY - folderDragging.startY;
-    if (Math.abs(dx) + Math.abs(dy) > 5) folderDragging.moved = true;
-    if (!folderDragging.moved) return;
-
-    renderFolderItem(link, {
-      x: folderDragging.origin.x + dx,
-      y: folderDragging.origin.y + dy
-    });
-  });
-
-  const finishFolderPointer = (event) => {
-    if (!folderDragging || folderDragging.item !== link) return;
-
-    link.releasePointerCapture?.(event.pointerId);
-    if (folderDragging.moved) link.dataset.folderMoved = "true";
-    folderDragging = null;
-  };
-
-  link.addEventListener("pointerup", finishFolderPointer);
-  link.addEventListener("pointercancel", finishFolderPointer);
 });
+
+window.addEventListener("pointermove", moveFolderItem);
+window.addEventListener("pointerup", finishFolderItem);
+window.addEventListener("pointercancel", finishFolderItem);
 
 folderChrome?.addEventListener("pointerdown", (event) => {
   if (!folderWindow || (event.button !== undefined && event.button !== 0)) return;
