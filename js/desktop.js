@@ -17,6 +17,7 @@ const experimentFrame = document.getElementById("experiment-frame");
 const experimentTitle = document.getElementById("experiment-window-title");
 const folderChrome = folderWindow?.querySelector(".folder-window__chrome");
 const folderBody = folderWindow?.querySelector(".folder-window__body");
+const folderResizeHandles = [...(folderWindow?.querySelectorAll("[data-resize]") || [])];
 const transition = document.getElementById("launch-transition");
 const launchLabel = document.getElementById("launch-label");
 
@@ -27,6 +28,7 @@ const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
 let selected = null;
 let dragging = null;
 let folderDragging = null;
+let folderResizing = null;
 let launchLocked = false;
 
 const storageGet = (key) => {
@@ -208,8 +210,8 @@ function renderFolderItem(item, position) {
   const maxX = Math.max(FOLDER_EDGE, folderBody.clientWidth - item.offsetWidth - FOLDER_EDGE);
   const maxY = Math.max(FOLDER_EDGE, folderBody.clientHeight - item.offsetHeight - FOLDER_EDGE);
   const next = {
-    x: clamp(position.x, FOLDER_EDGE, maxX),
-    y: clamp(position.y, FOLDER_EDGE, maxY)
+    x: clamp(snap(position.x), FOLDER_EDGE, maxX),
+    y: clamp(snap(position.y), FOLDER_EDGE, maxY)
   };
 
   item.style.left = `${next.x}px`;
@@ -464,6 +466,58 @@ document.querySelectorAll("[data-experiment-link]").forEach((link) => {
 window.addEventListener("pointermove", moveFolderItem);
 window.addEventListener("pointerup", finishFolderItem);
 window.addEventListener("pointercancel", finishFolderItem);
+
+function moveFolderWindow(event) {
+  if (!folderResizing || !folderWindow) return;
+
+  const { direction, start, rect } = folderResizing;
+  const dx = event.clientX - start.x;
+  const dy = event.clientY - start.y;
+  const minWidth = 300;
+  const minHeight = 220;
+  let left = rect.left;
+  let top = rect.top;
+  let width = rect.width;
+  let height = rect.height;
+
+  if (direction.includes("e")) width = clamp(rect.width + dx, minWidth, window.innerWidth - left);
+  if (direction.includes("s")) height = clamp(rect.height + dy, minHeight, window.innerHeight - top);
+  if (direction.includes("w")) {
+    left = clamp(rect.left + dx, 0, rect.right - minWidth);
+    width = rect.right - left;
+  }
+  if (direction.includes("n")) {
+    top = clamp(rect.top + dy, 0, rect.bottom - minHeight);
+    height = rect.bottom - top;
+  }
+
+  folderWindow.style.transform = "none";
+  folderWindow.style.left = `${left}px`;
+  folderWindow.style.top = `${top}px`;
+  folderWindow.style.width = `${width}px`;
+  folderWindow.style.height = `${height}px`;
+}
+
+function finishFolderWindowResize() {
+  folderResizing = null;
+}
+
+folderResizeHandles.forEach((handle) => {
+  handle.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+    const rect = folderWindow.getBoundingClientRect();
+    folderResizing = {
+      direction: handle.dataset.resize,
+      start: { x: event.clientX, y: event.clientY },
+      rect
+    };
+    handle.setPointerCapture?.(event.pointerId);
+  });
+});
+
+window.addEventListener("pointermove", moveFolderWindow);
+window.addEventListener("pointerup", finishFolderWindowResize);
+window.addEventListener("pointercancel", finishFolderWindowResize);
 
 folderChrome?.addEventListener("pointerdown", (event) => {
   if (!folderWindow || (event.button !== undefined && event.button !== 0)) return;
