@@ -11,6 +11,9 @@ const desktop = document.getElementById("gtc-desktop");
 const appsHost = document.getElementById("desktop-apps");
 const hint = document.getElementById("desktop-hint");
 const folderWindow = document.getElementById("folder-window");
+const experimentWindow = document.getElementById("experiment-window");
+const experimentFrame = document.getElementById("experiment-frame");
+const experimentTitle = document.getElementById("experiment-window-title");
 const transition = document.getElementById("launch-transition");
 const launchLabel = document.getElementById("launch-label");
 
@@ -205,6 +208,29 @@ function openFolderWindow(app) {
   requestAnimationFrame(() => folderWindow.classList.add("is-open"));
 }
 
+function closeExperimentWindow() {
+  if (!experimentWindow) return;
+
+  experimentWindow.classList.remove("is-open");
+  experimentWindow.hidden = true;
+  experimentWindow.setAttribute("aria-hidden", "true");
+  if (experimentFrame) experimentFrame.src = "about:blank";
+}
+
+function openExperimentWindow(url, label) {
+  if (!experimentWindow || !experimentFrame) return;
+
+  closeFolderWindow();
+  dismissHint();
+  clearSelection();
+  experimentTitle.textContent = label;
+  experimentFrame.title = label;
+  experimentFrame.src = url;
+  experimentWindow.hidden = false;
+  experimentWindow.setAttribute("aria-hidden", "false");
+  requestAnimationFrame(() => experimentWindow.classList.add("is-open"));
+}
+
 function openShortcut(shortcut, app) {
   if (app.type === "folder") {
     openFolderWindow(app);
@@ -327,6 +353,7 @@ window.addEventListener("resize", () => {
 
 window.addEventListener("pageshow", () => {
   launchLocked = false;
+  closeExperimentWindow();
 
   if (transition) {
     transition.classList.remove("is-open");
@@ -336,8 +363,21 @@ window.addEventListener("pageshow", () => {
 });
 
 folderWindow?.querySelector("[data-close-folder]")?.addEventListener("click", closeFolderWindow);
+experimentWindow?.querySelector("[data-close-experiment]")?.addEventListener("click", closeExperimentWindow);
+document.querySelectorAll("[data-experiment-link]").forEach((link) => {
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    openExperimentWindow(link.href, link.dataset.label || link.textContent.trim());
+  });
+});
 window.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") closeFolderWindow();
+  if (event.key !== "Escape") return;
+
+  if (experimentWindow && !experimentWindow.hidden) {
+    closeExperimentWindow();
+  } else {
+    closeFolderWindow();
+  }
 });
 
 if (hint) {

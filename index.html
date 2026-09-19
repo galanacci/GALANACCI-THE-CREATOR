@@ -31,10 +31,20 @@
       <button type="button" class="folder-window__close" data-close-folder aria-label="Close folder">&times;</button>
     </header>
     <div class="folder-window__body">
-      <a class="folder-item" href="./experiments/2(XY-T)/" aria-label="Open 2(XY-T).EXE experiment">
+      <a class="folder-item" data-experiment-link data-label="2(XY-T).EXE" href="./experiments/2(XY-T)/index.html" aria-label="Open 2(XY-T).EXE experiment">
         <img src="assets/icons/XY-T.EXE.svg" alt="">
         <span>2(XY-T).EXE</span>
       </a>
+    </div>
+  </section>
+
+  <section id="experiment-window" class="experiment-window" hidden aria-hidden="true" role="dialog" aria-labelledby="experiment-window-title">
+    <header class="experiment-window__chrome">
+      <span id="experiment-window-title">2(XY-T).EXE</span>
+      <button type="button" class="folder-window__close" data-close-experiment aria-label="Close experiment">&times;</button>
+    </header>
+    <div class="experiment-window__body">
+      <iframe id="experiment-frame" title="2(XY-T).EXE" allow="autoplay; fullscreen"></iframe>
     </div>
   </section>
 
