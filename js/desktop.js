@@ -14,6 +14,8 @@ const folderWindow = document.getElementById("folder-window");
 const experimentWindow = document.getElementById("experiment-window");
 const experimentFrame = document.getElementById("experiment-frame");
 const experimentTitle = document.getElementById("experiment-window-title");
+const folderChrome = folderWindow?.querySelector(".folder-window__chrome");
+const folderBody = folderWindow?.querySelector(".folder-window__body");
 const transition = document.getElementById("launch-transition");
 const launchLabel = document.getElementById("launch-label");
 
@@ -23,6 +25,7 @@ const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
 
 let selected = null;
 let dragging = null;
+let folderDragging = null;
 let launchLocked = false;
 
 const storageGet = (key) => {
@@ -198,6 +201,30 @@ function closeFolderWindow() {
   folderWindow.setAttribute("aria-hidden", "true");
 }
 
+function renderFolderItem(item, position) {
+  if (!folderBody) return;
+
+  const maxX = Math.max(0, folderBody.clientWidth - item.offsetWidth);
+  const maxY = Math.max(0, folderBody.clientHeight - item.offsetHeight);
+  const next = {
+    x: clamp(position.x, 0, maxX),
+    y: clamp(position.y, 0, maxY)
+  };
+
+  item.style.left = `${next.x}px`;
+  item.style.top = `${next.y}px`;
+  item._folderPosition = next;
+}
+
+function positionFolderItems() {
+  document.querySelectorAll(".folder-item").forEach((item) => {
+    renderFolderItem(item, item._folderPosition || {
+      x: Number.parseFloat(item.style.left) || 24,
+      y: Number.parseFloat(item.style.top) || 24
+    });
+  });
+}
+
 function openFolderWindow(app) {
   if (!folderWindow || !app.enabled) return;
 
@@ -205,7 +232,10 @@ function openFolderWindow(app) {
   clearSelection();
   folderWindow.hidden = false;
   folderWindow.setAttribute("aria-hidden", "false");
-  requestAnimationFrame(() => folderWindow.classList.add("is-open"));
+  requestAnimationFrame(() => {
+    folderWindow.classList.add("is-open");
+    positionFolderItems();
+  });
 }
 
 function closeExperimentWindow() {
@@ -371,6 +401,12 @@ document.querySelectorAll("[data-experiment-link]").forEach((link) => {
   };
 
   link.addEventListener("click", (event) => {
+    if (link.dataset.folderMoved === "true") {
+      link.dataset.folderMoved = "false";
+      event.preventDefault();
+      return;
+    }
+
     link.classList.add("is-selected");
     if (isTouch) openLinkedExperiment(event);
     else event.preventDefault();
@@ -383,7 +419,79 @@ document.querySelectorAll("[data-experiment-link]").forEach((link) => {
   link.addEventListener("keydown", (event) => {
     if (event.key === "Enter" || event.key === " ") openLinkedExperiment(event);
   });
+
+  link.addEventListener("pointerdown", (event) => {
+    if (!folderBody || (event.button !== undefined && event.button !== 0)) return;
+
+    link.classList.add("is-selected");
+    folderDragging = {
+      item: link,
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      origin: { ...(link._folderPosition || { x: 24, y: 24 }) },
+      moved: false
+    };
+
+    link.setPointerCapture?.(event.pointerId);
+  });
+
+  link.addEventListener("pointermove", (event) => {
+    if (!folderDragging || folderDragging.item !== link) return;
+
+    const dx = event.clientX - folderDragging.startX;
+    const dy = event.clientY - folderDragging.startY;
+    if (Math.abs(dx) + Math.abs(dy) > 5) folderDragging.moved = true;
+    if (!folderDragging.moved) return;
+
+    renderFolderItem(link, {
+      x: folderDragging.origin.x + dx,
+      y: folderDragging.origin.y + dy
+    });
+  });
+
+  const finishFolderPointer = (event) => {
+    if (!folderDragging || folderDragging.item !== link) return;
+
+    link.releasePointerCapture?.(event.pointerId);
+    if (folderDragging.moved) link.dataset.folderMoved = "true";
+    folderDragging = null;
+  };
+
+  link.addEventListener("pointerup", finishFolderPointer);
+  link.addEventListener("pointercancel", finishFolderPointer);
 });
+
+folderChrome?.addEventListener("pointerdown", (event) => {
+  if (!folderWindow || (event.button !== undefined && event.button !== 0)) return;
+
+  const start = {
+    x: event.clientX,
+    y: event.clientY,
+    left: folderWindow.offsetLeft,
+    top: folderWindow.offsetTop
+  };
+
+  const move = (moveEvent) => {
+    const maxLeft = Math.max(0, window.innerWidth - folderWindow.offsetWidth);
+    const maxTop = Math.max(0, window.innerHeight - folderWindow.offsetHeight);
+    folderWindow.style.transform = "none";
+    folderWindow.style.left = `${clamp(start.left + moveEvent.clientX - start.x, 0, maxLeft)}px`;
+    folderWindow.style.top = `${clamp(start.top + moveEvent.clientY - start.y, 0, maxTop)}px`;
+  };
+
+  const stop = () => {
+    window.removeEventListener("pointermove", move);
+    window.removeEventListener("pointerup", stop);
+  };
+
+  window.addEventListener("pointermove", move);
+  window.addEventListener("pointerup", stop, { once: true });
+});
+
+if (folderBody && "ResizeObserver" in window) {
+  new ResizeObserver(positionFolderItems).observe(folderBody);
+}
 window.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
 
