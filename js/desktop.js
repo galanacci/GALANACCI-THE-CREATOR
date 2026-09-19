@@ -278,3 +278,8 @@ if (hint) {
 }
 
 buildApps();
+
+const initialShortcut = appsHost?.querySelector(".desktop-shortcut");
+if (hint?.classList.contains("is-visible") && initialShortcut) {
+  renderHint(initialShortcut);
+}
