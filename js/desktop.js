@@ -371,6 +371,7 @@ document.querySelectorAll("[data-experiment-link]").forEach((link) => {
   };
 
   link.addEventListener("click", (event) => {
+    link.classList.add("is-selected");
     if (isTouch) openLinkedExperiment(event);
     else event.preventDefault();
   });

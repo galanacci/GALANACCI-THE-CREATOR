@@ -5,6 +5,11 @@
   --accent-light: #ead1b2;
   --grid-line: rgba(234, 209, 178, .08);
   --grid-size: 16px;
+  --shortcut-width: 100px;
+  --shortcut-min-height: 112px;
+  --shortcut-gap: 7px;
+  --shortcut-padding: 8px 4px;
+  --shortcut-font-size: 12px;
   --shortcut-icon-size: 74px;
   --edge: 20px;
   --safe-top: env(safe-area-inset-top, 0px);
@@ -62,17 +67,17 @@ button {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100px;
-  min-height: 112px;
+  width: var(--shortcut-width);
+  min-height: var(--shortcut-min-height);
   display: grid;
   place-items: center;
   align-content: start;
-  gap: 7px;
-  padding: 8px 4px;
+  gap: var(--shortcut-gap);
+  padding: var(--shortcut-padding);
   border: 1px solid transparent;
   background: transparent;
   color: var(--fg);
-  font-size: 12px;
+  font-size: var(--shortcut-font-size);
   font-weight: 600;
   letter-spacing: .07em;
   line-height: 1;
@@ -97,8 +102,15 @@ button {
   pointer-events: none;
 }
 
+.desktop-shortcut span,
+.folder-item span {
+  white-space: nowrap;
+}
+
 .desktop-shortcut.is-selected,
-.desktop-shortcut:focus-visible {
+.desktop-shortcut:focus-visible,
+.folder-item.is-selected,
+.folder-item:focus-visible {
   outline: 0;
   border-color: rgba(234, 209, 178, .86);
   background: rgba(234, 209, 178, .18);
@@ -221,19 +233,23 @@ button {
 
 .folder-item {
   display: grid;
+  align-self: start;
   justify-items: center;
-  gap: 9px;
-  padding: 8px 4px;
+  width: var(--shortcut-width);
+  min-height: var(--shortcut-min-height);
+  gap: var(--shortcut-gap);
+  padding: var(--shortcut-padding);
   border: 1px solid transparent;
   color: var(--fg);
-  font-size: 11px;
+  font-size: var(--shortcut-font-size);
   font-weight: 600;
   letter-spacing: .08em;
+  line-height: 1;
   text-decoration: none;
 }
 
 .folder-item:hover,
-.folder-item:focus-visible {
+.folder-item.is-selected {
   border-color: rgba(234, 209, 178, .5);
   background: rgba(234, 209, 178, .12);
   outline: 0;
@@ -349,13 +365,16 @@ button {
 
 @media (max-width: 680px) {
   :root {
+    --shortcut-width: 90px;
+    --shortcut-min-height: 98px;
+    --shortcut-font-size: 11px;
     --shortcut-icon-size: 66px;
   }
 
   .desktop-shortcut {
-    width: 90px;
-    min-height: 98px;
-    font-size: 11px;
+    width: var(--shortcut-width);
+    min-height: var(--shortcut-min-height);
+    font-size: var(--shortcut-font-size);
   }
 
   .desktop-hint {
@@ -371,6 +390,12 @@ button {
   .folder-item img {
     width: var(--shortcut-icon-size);
     height: var(--shortcut-icon-size);
+  }
+
+  .folder-item {
+    width: var(--shortcut-width);
+    min-height: var(--shortcut-min-height);
+    font-size: var(--shortcut-font-size);
   }
 }
 
