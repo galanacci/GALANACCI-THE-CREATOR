@@ -2,7 +2,7 @@ import { APPS } from "./apps.js";
 
 const GRID = 16;
 const EDGE = 20;
-const COLLISION_GAP = 8;
+const COLLISION_GAP = 0;
 const POSITION_PREFIX = "gtc:desktop-position:";
 const HINT_KEY = "gtc:desktop-hint:v1";
 const LAUNCH_DELAY = 520;
