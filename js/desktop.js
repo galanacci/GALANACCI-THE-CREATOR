@@ -365,9 +365,22 @@ window.addEventListener("pageshow", () => {
 folderWindow?.querySelector("[data-close-folder]")?.addEventListener("click", closeFolderWindow);
 experimentWindow?.querySelector("[data-close-experiment]")?.addEventListener("click", closeExperimentWindow);
 document.querySelectorAll("[data-experiment-link]").forEach((link) => {
-  link.addEventListener("click", (event) => {
+  const openLinkedExperiment = (event) => {
     event.preventDefault();
     openExperimentWindow(link.href, link.dataset.label || link.textContent.trim());
+  };
+
+  link.addEventListener("click", (event) => {
+    if (isTouch) openLinkedExperiment(event);
+    else event.preventDefault();
+  });
+
+  link.addEventListener("dblclick", (event) => {
+    if (!isTouch) openLinkedExperiment(event);
+  });
+
+  link.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") openLinkedExperiment(event);
   });
 });
 window.addEventListener("keydown", (event) => {
