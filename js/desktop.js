@@ -41,6 +41,10 @@ const storageSet = (key, value) => {
   catch { /* persistence is optional */ }
 };
 
+document.addEventListener("contextmenu", (event) => {
+  event.preventDefault();
+});
+
 function buildApps() {
   for (const app of APPS) {
     const shortcut = document.createElement("button");
@@ -189,6 +193,12 @@ function selectShortcut(shortcut) {
 function clearSelection() {
   selected?.classList.remove("is-selected");
   selected = null;
+}
+
+function clearFolderSelection() {
+  document.querySelectorAll(".folder-item.is-selected").forEach((item) => {
+    item.classList.remove("is-selected");
+  });
 }
 
 function dismissHint() {
@@ -419,6 +429,9 @@ window.addEventListener("pageshow", () => {
 
 folderWindow?.querySelector("[data-close-folder]")?.addEventListener("click", closeFolderWindow);
 experimentWindow?.querySelector("[data-close-experiment]")?.addEventListener("click", closeExperimentWindow);
+folderWindow?.addEventListener("pointerdown", (event) => {
+  if (!event.target.closest(".folder-item")) clearFolderSelection();
+});
 document.querySelectorAll("[data-experiment-link]").forEach((link) => {
   const openLinkedExperiment = (event) => {
     event.preventDefault();
@@ -445,10 +458,13 @@ document.querySelectorAll("[data-experiment-link]").forEach((link) => {
     if (event.key === "Enter" || event.key === " ") openLinkedExperiment(event);
   });
 
+  link.addEventListener("dragstart", (event) => {
+    event.preventDefault();
+  });
+
   link.addEventListener("pointerdown", (event) => {
     if (!folderBody || (event.button !== undefined && event.button !== 0)) return;
 
-    event.preventDefault();
     link.classList.add("is-selected");
     folderDragging = {
       item: link,

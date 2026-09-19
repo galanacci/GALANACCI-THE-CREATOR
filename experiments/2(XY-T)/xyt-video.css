@@ -60,8 +60,7 @@ button { -webkit-tap-highlight-color: transparent; }
   pointer-events: none;
 }
 .xyt-brand-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
-.xyt-kicker, .xyt-meta h1, .xyt-status { margin: 0; }
-.xyt-kicker { font-size: 9px; letter-spacing: .18em; opacity: .5; }
+.xyt-meta h1, .xyt-status { margin: 0; }
 .xyt-meta h1 { margin-top: 6px; font-size: 15px; line-height: 1.1; font-weight: 600; letter-spacing: .13em; }
 .xyt-status { margin-top: 8px; max-width: min(620px, 78vw); font-size: 8px; line-height: 1.35; letter-spacing: .12em; opacity: .48; }
 .xyt-readouts { display: flex; gap: 10px; align-items: center; margin-top: 7px; max-width: min(700px, 80vw); }
@@ -172,7 +171,6 @@ button { -webkit-tap-highlight-color: transparent; }
     left: calc(10px + var(--safe-left));
     right: calc(10px + var(--safe-right));
   }
-  .xyt-kicker { font-size: 8px; }
   .xyt-meta h1 { font-size: 12px; letter-spacing: .1em; }
   .xyt-status { margin-top: 5px; max-width: 70vw; font-size: 7px; }
   .xyt-readouts { margin-top: 5px; max-width: 72vw; }

@@ -3,6 +3,10 @@ import { initPerformanceTier, getPerformanceTier } from "../../js/core/performan
 
 initPerformanceTier();
 
+document.addEventListener("contextmenu", (event) => {
+  event.preventDefault();
+});
+
 const host = document.getElementById("xyt-canvas");
 const status = document.getElementById("xyt-status");
 const timeReadout = document.getElementById("xyt-time");

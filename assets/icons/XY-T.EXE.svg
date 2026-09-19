@@ -1,6 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
   <title>2(XY+T) experiment</title>
-  <rect x="8" y="8" width="112" height="112" fill="#000" stroke="#ead1b2" stroke-width="4"/>
-  <path fill="#ead1b2" d="M25 29h18l21 27 21-27h18L73 68v31H55V68L25 29Zm53 54h25v16H78V83Z"/>
-  <path fill="#000" d="M29 38h10l17 22-6 8L29 45zm60 0h10L82 65l-6-8z"/>
+  <g stroke="#ead1b2" stroke-width="2" stroke-linejoin="round">
+    <path fill="#000" d="M8 31 64 5l56 26-56 29L8 31Z"/>
+    <path fill="#000" d="M8 31v63l56 29V60L8 31Z"/>
+    <path fill="#000" d="m120 31-56 29v63l56-29V31Z"/>
+  </g>
+  <text x="64" y="43" fill="#ead1b2" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" letter-spacing="-1" transform="rotate(-25 64 43)">XY-T</text>
 </svg>

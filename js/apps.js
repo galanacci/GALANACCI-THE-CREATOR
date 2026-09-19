@@ -8,7 +8,7 @@ export const APPS = Object.freeze([
   },
   {
     id: "experiments-folder",
-    label: "EXPERIMENTS",
+    label: "APPS",
     icon: new URL("../assets/icons/Experiments.FOLDER.svg", import.meta.url).href,
     url: "./experiments/",
     type: "folder",

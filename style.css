@@ -1,9 +1,9 @@
 :root {
-  --bg: #000;
-  --fg: #ead1b2;
-  --accent: #ead1b2;
-  --accent-light: #ead1b2;
-  --grid-line: rgba(234, 209, 178, .08);
+  --bg: #ead1b2;
+  --fg: #000;
+  --accent: #000;
+  --accent-light: #000;
+  --grid-line: rgba(0, 0, 0, .12);
   --grid-size: 16px;
   --shortcut-width: 100px;
   --shortcut-min-height: 112px;
@@ -81,7 +81,7 @@ button {
   font-weight: 600;
   letter-spacing: .07em;
   line-height: 1;
-  cursor: default;
+  cursor: pointer;
   touch-action: none;
   visibility: hidden;
   transition:
@@ -107,13 +107,14 @@ button {
   white-space: nowrap;
 }
 
+.desktop-shortcut:hover,
 .desktop-shortcut.is-selected,
 .desktop-shortcut:focus-visible,
 .folder-item.is-selected,
 .folder-item:focus-visible {
   outline: 0;
-  border-color: rgba(234, 209, 178, .86);
-  background: rgba(234, 209, 178, .18);
+  border-color: rgba(0, 0, 0, .72);
+  background: rgba(0, 0, 0, .12);
 }
 
 .desktop-shortcut:active {
@@ -131,7 +132,7 @@ button {
   width: max-content;
   max-width: calc(100vw - 16px);
   margin: 0;
-  color: rgba(234, 209, 178, .68);
+  color: rgba(0, 0, 0, .68);
   font-size: 9px;
   font-weight: 600;
   letter-spacing: .16em;
@@ -179,8 +180,8 @@ button {
   max-height: calc(100vh - 48px);
   overflow: hidden;
   resize: none;
-  border: 1px solid rgba(234, 209, 178, .5);
-  background: #000;
+  border: 1px solid rgba(0, 0, 0, .5);
+  background: var(--bg);
   box-shadow: 0 18px 60px rgba(0, 0, 0, .62);
   opacity: 0;
   pointer-events: none;
@@ -204,7 +205,7 @@ button {
   justify-content: space-between;
   min-height: 40px;
   padding-left: 14px;
-  border-bottom: 1px solid rgba(234, 209, 178, .22);
+  border-bottom: 1px solid rgba(0, 0, 0, .22);
   color: var(--fg);
   font-size: 10px;
   font-weight: 600;
@@ -227,7 +228,7 @@ button {
 
 .folder-window__close:hover,
 .folder-window__close:focus-visible {
-  background: rgba(234, 209, 178, .16);
+  background: rgba(0, 0, 0, .12);
   outline: 0;
 }
 
@@ -239,6 +240,11 @@ button {
   min-height: 180px;
   padding: 0;
   overflow: auto;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
 }
 
 .folder-item {
@@ -247,7 +253,8 @@ button {
   position: absolute;
   left: 20px;
   top: 20px;
-  justify-items: center;
+  place-items: center;
+  align-content: start;
   width: var(--shortcut-width);
   min-height: var(--shortcut-min-height);
   gap: var(--shortcut-gap);
@@ -259,19 +266,21 @@ button {
   letter-spacing: .08em;
   line-height: 1;
   text-decoration: none;
-  cursor: default;
+  cursor: pointer;
   touch-action: none;
   user-select: none;
 }
 
 .folder-item:hover,
 .folder-item.is-selected {
-  border-color: rgba(234, 209, 178, .5);
-  background: rgba(234, 209, 178, .12);
+  border-color: rgba(0, 0, 0, .5);
+  background: rgba(0, 0, 0, .12);
   outline: 0;
 }
 
 .folder-item img {
+  display: block;
+  justify-self: center;
   width: var(--shortcut-icon-size);
   height: var(--shortcut-icon-size);
   object-fit: contain;
@@ -319,7 +328,7 @@ button {
 .folder-window__resize-handle--nw { top: 0; left: 0; cursor: nwse-resize; }
 
 .folder-window__resize-handle:hover {
-  background: rgba(234, 209, 178, .18);
+  background: rgba(0, 0, 0, .12);
 }
 
 .experiment-window {
@@ -349,7 +358,8 @@ button {
   justify-content: space-between;
   flex: 0 0 40px;
   padding-left: 14px;
-  border-bottom: 1px solid rgba(234, 209, 178, .22);
+  border-bottom: 1px solid rgba(0, 0, 0, .22);
+  background: var(--bg);
   color: var(--fg);
   font-size: 10px;
   font-weight: 600;
@@ -375,7 +385,7 @@ button {
   z-index: 100;
   display: grid;
   place-items: center;
-  background: #000;
+  background: var(--bg);
   color: var(--fg);
   opacity: 0;
   transition: opacity 180ms ease;
@@ -404,7 +414,7 @@ button {
   display: block;
   width: 100%;
   height: 1px;
-  background: rgba(234, 209, 178, .18);
+  background: rgba(0, 0, 0, .18);
   overflow: hidden;
 }
 
