@@ -575,16 +575,4 @@ window.addEventListener("keydown", (event) => {
   }
 });
 
-if (hint) {
-  hint.textContent = isTouch ? "TAP TO OPEN" : "DOUBLE CLICK TO OPEN";
-  if (storageGet(HINT_KEY) !== "dismissed") {
-    hint.classList.add("is-visible");
-  }
-}
-
 buildApps();
-
-const initialShortcut = appsHost?.querySelector(".desktop-shortcut");
-if (hint?.classList.contains("is-visible") && initialShortcut) {
-  renderHint(initialShortcut);
-}
