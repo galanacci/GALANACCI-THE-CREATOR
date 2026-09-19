@@ -2,7 +2,6 @@ import { APPS } from "./apps.js";
 
 const GRID = 16;
 const EDGE = 20;
-const FOLDER_EDGE = 20;
 const COLLISION_GAP = 0;
 const POSITION_PREFIX = "gtc:desktop-position:";
 const HINT_KEY = "gtc:desktop-hint:v1";
@@ -16,7 +15,6 @@ const experimentWindow = document.getElementById("experiment-window");
 const experimentFrame = document.getElementById("experiment-frame");
 const experimentTitle = document.getElementById("experiment-window-title");
 const folderChrome = folderWindow?.querySelector(".folder-window__chrome");
-const folderBody = folderWindow?.querySelector(".folder-window__body");
 const folderResizeHandles = [...(folderWindow?.querySelectorAll("[data-resize]") || [])];
 const transition = document.getElementById("launch-transition");
 const launchLabel = document.getElementById("launch-label");
@@ -27,7 +25,6 @@ const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
 
 let selected = null;
 let dragging = null;
-let folderDragging = null;
 let folderResizing = null;
 let launchLocked = false;
 
@@ -55,9 +52,7 @@ function buildApps() {
     shortcut.dataset.label = app.label;
     shortcut.setAttribute("aria-label", `${app.label}. ${isTouch ? "Tap" : "Double click"} to open.`);
 
-    if (!app.enabled) {
-      shortcut.setAttribute("aria-disabled", "true");
-    }
+    if (!app.enabled) shortcut.setAttribute("aria-disabled", "true");
 
     const icon = document.createElement("img");
     icon.src = app.icon;
@@ -69,7 +64,6 @@ function buildApps() {
 
     shortcut.append(icon, label);
     appsHost.appendChild(shortcut);
-
     installShortcut(shortcut, app);
   }
 }
@@ -94,9 +88,7 @@ function readPosition(shortcut) {
 
   try {
     const parsed = JSON.parse(storageGet(key));
-    if (Number.isFinite(parsed?.x) && Number.isFinite(parsed?.y)) {
-      return parsed;
-    }
+    if (Number.isFinite(parsed?.x) && Number.isFinite(parsed?.y)) return parsed;
   } catch {
     // Fall through.
   }
@@ -153,7 +145,6 @@ function findAvailablePosition(shortcut, position) {
 
 function renderShortcut(shortcut, position) {
   const next = findAvailablePosition(shortcut, position);
-
   shortcut._desktopPosition = next;
   shortcut.style.transform = `translate3d(${next.x}px, ${next.y}px, 0)`;
 
@@ -165,26 +156,19 @@ function renderHint(shortcut) {
 
   const width = hint.offsetWidth;
   const position = shortcut._desktopPosition;
-
   const x = clamp(
     position.x + shortcut.offsetWidth / 2 - width / 2,
     8,
     Math.max(8, window.innerWidth - width - 8)
   );
-
   const below = position.y + shortcut.offsetHeight + 9;
-  const y = below + 28 <= window.innerHeight
-    ? below
-    : Math.max(8, position.y - 30);
+  const y = below + 28 <= window.innerHeight ? below : Math.max(8, position.y - 30);
 
   hint.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 }
 
 function selectShortcut(shortcut) {
-  if (selected && selected !== shortcut) {
-    selected.classList.remove("is-selected");
-  }
-
+  if (selected && selected !== shortcut) selected.classList.remove("is-selected");
   selected = shortcut;
   shortcut.classList.add("is-selected");
   renderHint(shortcut);
@@ -208,56 +192,10 @@ function dismissHint() {
 
 function closeFolderWindow() {
   if (!folderWindow) return;
-
   folderWindow.classList.remove("is-open");
   folderWindow.hidden = true;
   folderWindow.setAttribute("aria-hidden", "true");
-}
-
-function renderFolderItem(item, position) {
-  if (!folderBody) return;
-
-  const maxX = Math.max(FOLDER_EDGE, folderBody.clientWidth - item.offsetWidth - FOLDER_EDGE);
-  const maxY = Math.max(FOLDER_EDGE, folderBody.clientHeight - item.offsetHeight - FOLDER_EDGE);
-  const next = {
-    x: clamp(snap(position.x), FOLDER_EDGE, maxX),
-    y: clamp(snap(position.y), FOLDER_EDGE, maxY)
-  };
-
-  item.style.left = `${next.x}px`;
-  item.style.top = `${next.y}px`;
-  item._folderPosition = next;
-}
-
-function positionFolderItems() {
-  document.querySelectorAll(".folder-item").forEach((item) => {
-    renderFolderItem(item, item._folderPosition || {
-      x: Number.parseFloat(item.style.left) || FOLDER_EDGE,
-      y: Number.parseFloat(item.style.top) || FOLDER_EDGE
-    });
-  });
-}
-
-function moveFolderItem(event) {
-  if (!folderDragging) return;
-
-  const dx = event.clientX - folderDragging.startX;
-  const dy = event.clientY - folderDragging.startY;
-  if (Math.abs(dx) + Math.abs(dy) > 5) folderDragging.moved = true;
-  if (!folderDragging.moved) return;
-
-  renderFolderItem(folderDragging.item, {
-    x: folderDragging.origin.x + dx,
-    y: folderDragging.origin.y + dy
-  });
-}
-
-function finishFolderItem(event) {
-  if (!folderDragging) return;
-
-  folderDragging.item.releasePointerCapture?.(event.pointerId);
-  if (folderDragging.moved) folderDragging.item.dataset.folderMoved = "true";
-  folderDragging = null;
+  clearFolderSelection();
 }
 
 function openFolderWindow(app) {
@@ -267,10 +205,7 @@ function openFolderWindow(app) {
   clearSelection();
   folderWindow.hidden = false;
   folderWindow.setAttribute("aria-hidden", "false");
-  requestAnimationFrame(() => {
-    folderWindow.classList.add("is-open");
-    positionFolderItems();
-  });
+  requestAnimationFrame(() => folderWindow.classList.add("is-open"));
 }
 
 function closeExperimentWindow() {
@@ -312,9 +247,7 @@ async function launchShortcut(shortcut, app) {
   dismissHint();
   clearSelection();
 
-  if (launchLabel) {
-    launchLabel.textContent = `OPENING ${app.label}...`;
-  }
+  if (launchLabel) launchLabel.textContent = `OPENING ${app.label}...`;
 
   if (transition) {
     transition.hidden = false;
@@ -356,14 +289,10 @@ function installShortcut(shortcut, app) {
     const dx = event.clientX - dragging.startX;
     const dy = event.clientY - dragging.startY;
 
-    if (Math.abs(dx) + Math.abs(dy) > 5) {
-      dragging.moved = true;
-    }
-
+    if (Math.abs(dx) + Math.abs(dy) > 5) dragging.moved = true;
     if (!dragging.moved) return;
 
     const { maxX, maxY } = boundsFor(shortcut);
-
     renderShortcut(shortcut, {
       x: clamp(dragging.origin.x + dx, EDGE, maxX),
       y: clamp(dragging.origin.y + dy, EDGE, maxY)
@@ -376,15 +305,10 @@ function installShortcut(shortcut, app) {
     const moved = dragging.moved;
     shortcut.releasePointerCapture?.(event.pointerId);
 
-    if (moved) {
-      writePosition(shortcut, shortcut._desktopPosition);
-    }
-
+    if (moved) writePosition(shortcut, shortcut._desktopPosition);
     dragging = null;
 
-    if (!moved && isTouch) {
-      openShortcut(shortcut, app);
-    }
+    if (!moved && isTouch) openShortcut(shortcut, app);
   };
 
   shortcut.addEventListener("pointerup", finishPointer);
@@ -404,9 +328,7 @@ function installShortcut(shortcut, app) {
 }
 
 desktop?.addEventListener("pointerdown", (event) => {
-  if (event.target === desktop || event.target === appsHost) {
-    clearSelection();
-  }
+  if (event.target === desktop || event.target === appsHost) clearSelection();
 });
 
 window.addEventListener("resize", () => {
@@ -429,9 +351,11 @@ window.addEventListener("pageshow", () => {
 
 folderWindow?.querySelector("[data-close-folder]")?.addEventListener("click", closeFolderWindow);
 experimentWindow?.querySelector("[data-close-experiment]")?.addEventListener("click", closeExperimentWindow);
+
 folderWindow?.addEventListener("pointerdown", (event) => {
   if (!event.target.closest(".folder-item")) clearFolderSelection();
 });
+
 document.querySelectorAll("[data-experiment-link]").forEach((link) => {
   const openLinkedExperiment = (event) => {
     event.preventDefault();
@@ -439,12 +363,6 @@ document.querySelectorAll("[data-experiment-link]").forEach((link) => {
   };
 
   link.addEventListener("click", (event) => {
-    if (link.dataset.folderMoved === "true") {
-      link.dataset.folderMoved = "false";
-      event.preventDefault();
-      return;
-    }
-
     link.classList.add("is-selected");
     if (isTouch) openLinkedExperiment(event);
     else event.preventDefault();
@@ -461,27 +379,7 @@ document.querySelectorAll("[data-experiment-link]").forEach((link) => {
   link.addEventListener("dragstart", (event) => {
     event.preventDefault();
   });
-
-  link.addEventListener("pointerdown", (event) => {
-    if (!folderBody || (event.button !== undefined && event.button !== 0)) return;
-
-    link.classList.add("is-selected");
-    folderDragging = {
-      item: link,
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      origin: { ...(link._folderPosition || { x: 24, y: 24 }) },
-      moved: false
-    };
-
-    link.setPointerCapture?.(event.pointerId);
-  });
 });
-
-window.addEventListener("pointermove", moveFolderItem);
-window.addEventListener("pointerup", finishFolderItem);
-window.addEventListener("pointercancel", finishFolderItem);
 
 function moveFolderWindow(event) {
   if (!folderResizing || !folderWindow) return;
@@ -489,7 +387,7 @@ function moveFolderWindow(event) {
   const { direction, start, rect } = folderResizing;
   const dx = event.clientX - start.x;
   const dy = event.clientY - start.y;
-  const minWidth = 300;
+  const minWidth = 420;
   const minHeight = 220;
   let left = rect.left;
   let top = rect.top;
@@ -537,12 +435,14 @@ window.addEventListener("pointercancel", finishFolderWindowResize);
 
 folderChrome?.addEventListener("pointerdown", (event) => {
   if (!folderWindow || (event.button !== undefined && event.button !== 0)) return;
+  if (event.target.closest("button")) return;
 
+  const rect = folderWindow.getBoundingClientRect();
   const start = {
     x: event.clientX,
     y: event.clientY,
-    left: folderWindow.offsetLeft,
-    top: folderWindow.offsetTop
+    left: rect.left,
+    top: rect.top
   };
 
   const move = (moveEvent) => {
@@ -562,9 +462,6 @@ folderChrome?.addEventListener("pointerdown", (event) => {
   window.addEventListener("pointerup", stop, { once: true });
 });
 
-if (folderBody && "ResizeObserver" in window) {
-  new ResizeObserver(positionFolderItems).observe(folderBody);
-}
 window.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
 

@@ -7,7 +7,7 @@
   <meta name="description" content="GALANACCI THE CREATOR — archive, experiments, brands and worlds.">
   <title>GALANACCI THE CREATOR</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20260919-app-folder-list-v1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -21,7 +21,7 @@
 
     <div class="desktop-meta" aria-hidden="true">
       <span>GALANACCI THE CREATOR</span>
-      <span>DESKTOP_032</span>
+      <span>DESKTOP_033</span>
     </div>
   </main>
 
@@ -30,12 +30,33 @@
       <span id="folder-window-title">APPS</span>
       <button type="button" class="folder-window__close" data-close-folder aria-label="Close folder">&times;</button>
     </header>
+
     <div class="folder-window__body">
-      <a class="folder-item" data-experiment-link data-label="2(XY+T).EXE" href="./experiments/2(XY-T)/index.html" aria-label="Open 2(XY+T).EXE experiment">
-        <img src="assets/icons/XY-T.EXE.svg" alt="">
-        <span>2(XY+T).EXE</span>
-      </a>
+      <div class="folder-list" role="table" aria-label="Applications">
+        <div class="folder-list__header" role="row">
+          <span role="columnheader">NAME</span>
+          <span role="columnheader">DATE CREATED</span>
+          <span role="columnheader">CREATED BY</span>
+        </div>
+
+        <a
+          class="folder-item"
+          data-experiment-link
+          data-label="2(XY+T).EXE"
+          href="./experiments/2(XY-T)/index.html"
+          aria-label="Open 2(XY+T).EXE experiment"
+          role="row"
+        >
+          <span class="folder-item__name" role="cell">
+            <img src="assets/icons/XY-T.EXE.svg" alt="" draggable="false">
+            <span>2(XY+T).EXE</span>
+          </span>
+          <span class="folder-item__meta" role="cell">19/09/2026</span>
+          <span class="folder-item__meta" role="cell">GALANACCI</span>
+        </a>
+      </div>
     </div>
+
     <span class="folder-window__resize-handle folder-window__resize-handle--n" data-resize="n" aria-hidden="true"></span>
     <span class="folder-window__resize-handle folder-window__resize-handle--e" data-resize="e" aria-hidden="true"></span>
     <span class="folder-window__resize-handle folder-window__resize-handle--s" data-resize="s" aria-hidden="true"></span>
@@ -66,6 +87,6 @@
   </section>
 
   <script type="module" src="js/apps.js"></script>
-  <script type="module" src="js/desktop.js"></script>
+  <script type="module" src="js/desktop.js?v=20260919-app-folder-list-v1"></script>
 </body>
 </html>
