@@ -2,6 +2,15 @@
 
 Place future experimental apps in this folder.
 
+## Entry points
+
+- Live landing desktop: the repository root `index.html`.
+- Folder navigation: open `EXPERIMENTS` from the landing desktop.
+- Direct XY+T app testing: `experiments/2(XY-T)/index.html`.
+
+There is no separate experiments launcher page. The landing desktop owns the
+folder window so its app behavior stays consistent with the main desktop.
+
 Each experiment can live in its own subfolder, for example:
 
 ```text

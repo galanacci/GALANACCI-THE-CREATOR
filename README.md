@@ -43,6 +43,12 @@ Future examples:
    └─ desktop.js
 ```
 
+## Open the site
+
+Use the repository root `index.html` for local browser testing. It is also the
+GitHub Pages entry point. Open the `EXPERIMENTS` folder from that desktop to
+launch experiment apps.
+
 ## Adding applications
 
 Edit `js/apps.js`.
