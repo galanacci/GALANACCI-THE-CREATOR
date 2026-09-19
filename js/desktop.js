@@ -9,6 +9,7 @@ const LAUNCH_DELAY = 520;
 const desktop = document.getElementById("gtc-desktop");
 const appsHost = document.getElementById("desktop-apps");
 const hint = document.getElementById("desktop-hint");
+const folderWindow = document.getElementById("folder-window");
 const transition = document.getElementById("launch-transition");
 const launchLabel = document.getElementById("launch-label");
 
@@ -149,6 +150,33 @@ function dismissHint() {
   storageSet(HINT_KEY, "dismissed");
 }
 
+function closeFolderWindow() {
+  if (!folderWindow) return;
+
+  folderWindow.classList.remove("is-open");
+  folderWindow.hidden = true;
+  folderWindow.setAttribute("aria-hidden", "true");
+}
+
+function openFolderWindow(app) {
+  if (!folderWindow || !app.enabled) return;
+
+  dismissHint();
+  clearSelection();
+  folderWindow.hidden = false;
+  folderWindow.setAttribute("aria-hidden", "false");
+  requestAnimationFrame(() => folderWindow.classList.add("is-open"));
+}
+
+function openShortcut(shortcut, app) {
+  if (app.type === "folder") {
+    openFolderWindow(app);
+    return;
+  }
+
+  launchShortcut(shortcut, app);
+}
+
 async function launchShortcut(shortcut, app) {
   if (launchLocked || !app.enabled || !app.url) return;
 
@@ -227,7 +255,7 @@ function installShortcut(shortcut, app) {
     dragging = null;
 
     if (!moved && isTouch) {
-      launchShortcut(shortcut, app);
+      openShortcut(shortcut, app);
     }
   };
 
@@ -236,13 +264,13 @@ function installShortcut(shortcut, app) {
 
   shortcut.addEventListener("dblclick", (event) => {
     event.preventDefault();
-    if (!isTouch && !dragging) launchShortcut(shortcut, app);
+    if (!isTouch && !dragging) openShortcut(shortcut, app);
   });
 
   shortcut.addEventListener("keydown", (event) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      launchShortcut(shortcut, app);
+      openShortcut(shortcut, app);
     }
   });
 }
@@ -268,6 +296,11 @@ window.addEventListener("pageshow", () => {
     transition.hidden = true;
     transition.setAttribute("aria-hidden", "true");
   }
+});
+
+folderWindow?.querySelector("[data-close-folder]")?.addEventListener("click", closeFolderWindow);
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeFolderWindow();
 });
 
 if (hint) {
