@@ -10,18 +10,16 @@ export const APPS = Object.freeze([
     id: "experiments-folder",
     label: "APPS",
     icon: new URL("../assets/icons/Experiments.FOLDER.svg", import.meta.url).href,
-    url: "./experiments/",
     type: "folder",
+    folderTarget: "apps",
+    enabled: true
+  },
+  {
+    id: "ss-folder",
+    label: "SS",
+    icon: new URL("../assets/icons/Experiments.FOLDER.svg", import.meta.url).href,
+    type: "folder",
+    folderTarget: "ss",
     enabled: true
   }
-
-  // Add future applications here.
-  //
-  // {
-  //   id: "xyt-exe",
-  //   label: "XY+T.EXE",
-  //   icon: "assets/icons/XYT.EXE.svg",
-  //   url: "./experiments/xyt/",
-  //   enabled: true
-  // }
 ]);

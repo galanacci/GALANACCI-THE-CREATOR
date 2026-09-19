@@ -8,7 +8,7 @@
   <title>GALANACCI THE CREATOR</title>
 
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="styles/app-folder-list.css?v=20260919-v2">
+  <link rel="stylesheet" href="styles/app-folder-list.css?v=20260919-ss-folder-v3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -20,14 +20,22 @@
     <p id="desktop-hint" class="desktop-hint" aria-hidden="true"></p>
     <div class="desktop-meta" aria-hidden="true">
       <span>GALANACCI THE CREATOR</span>
-      <span>DESKTOP_036</span>
+      <span>DESKTOP_037</span>
     </div>
   </main>
 
-  <section id="folder-window" class="folder-window" hidden aria-hidden="true" role="dialog" aria-labelledby="folder-window-title">
+  <section
+    id="apps-folder-window"
+    class="folder-window app-folder-window"
+    data-folder-window="apps"
+    hidden
+    aria-hidden="true"
+    role="dialog"
+    aria-labelledby="apps-folder-title"
+  >
     <header class="folder-window__chrome">
-      <span id="folder-window-title">APPS</span>
-      <button type="button" class="folder-window__close" data-close-folder aria-label="Close folder">&times;</button>
+      <span id="apps-folder-title">APPS</span>
+      <button type="button" class="folder-window__close" data-close-folder aria-label="Close APPS folder">&times;</button>
     </header>
 
     <div class="folder-window__body app-folder-body">
@@ -40,7 +48,7 @@
 
         <a
           class="app-list__row"
-          data-experiment-link
+          data-app-link
           data-label="2(XY+T).EXE"
           href="./experiments/2(XY-T)/index.html"
           aria-label="Open 2(XY+T).EXE experiment"
@@ -66,13 +74,51 @@
     <span class="folder-window__resize-handle folder-window__resize-handle--nw" data-resize="nw" aria-hidden="true"></span>
   </section>
 
+  <section
+    id="ss-folder-window"
+    class="folder-window app-folder-window"
+    data-folder-window="ss"
+    hidden
+    aria-hidden="true"
+    role="dialog"
+    aria-labelledby="ss-folder-title"
+  >
+    <header class="folder-window__chrome">
+      <span id="ss-folder-title">SS</span>
+      <button type="button" class="folder-window__close" data-close-folder aria-label="Close SS folder">&times;</button>
+    </header>
+
+    <div class="folder-window__body app-folder-body">
+      <div class="app-list" role="table" aria-label="SS archive">
+        <div class="app-list__header" role="row">
+          <span role="columnheader">NAME</span>
+          <span role="columnheader">DATE CREATED</span>
+          <span role="columnheader">CREATED BY</span>
+        </div>
+
+        <div class="app-list__empty" role="row">
+          <span>THIS FOLDER IS EMPTY</span>
+        </div>
+      </div>
+    </div>
+
+    <span class="folder-window__resize-handle folder-window__resize-handle--n" data-resize="n" aria-hidden="true"></span>
+    <span class="folder-window__resize-handle folder-window__resize-handle--e" data-resize="e" aria-hidden="true"></span>
+    <span class="folder-window__resize-handle folder-window__resize-handle--s" data-resize="s" aria-hidden="true"></span>
+    <span class="folder-window__resize-handle folder-window__resize-handle--w" data-resize="w" aria-hidden="true"></span>
+    <span class="folder-window__resize-handle folder-window__resize-handle--ne" data-resize="ne" aria-hidden="true"></span>
+    <span class="folder-window__resize-handle folder-window__resize-handle--se" data-resize="se" aria-hidden="true"></span>
+    <span class="folder-window__resize-handle folder-window__resize-handle--sw" data-resize="sw" aria-hidden="true"></span>
+    <span class="folder-window__resize-handle folder-window__resize-handle--nw" data-resize="nw" aria-hidden="true"></span>
+  </section>
+
   <section id="experiment-window" class="experiment-window" hidden aria-hidden="true" role="dialog" aria-labelledby="experiment-window-title">
     <header class="experiment-window__chrome">
-      <span id="experiment-window-title">2(XY+T).EXE</span>
-      <button type="button" class="folder-window__close" data-close-experiment aria-label="Close experiment">&times;</button>
+      <span id="experiment-window-title">APP</span>
+      <button type="button" class="folder-window__close" data-close-experiment aria-label="Close app">&times;</button>
     </header>
     <div class="experiment-window__body">
-      <iframe id="experiment-frame" title="2(XY+T).EXE" allow="autoplay; fullscreen"></iframe>
+      <iframe id="experiment-frame" title="App" allow="autoplay; fullscreen"></iframe>
     </div>
   </section>
 
@@ -85,7 +131,7 @@
     </div>
   </section>
 
-  <script type="module" src="js/apps.js"></script>
-  <script type="module" src="js/desktop.js?v=20260919-app-folder-v2"></script>
+  <script type="module" src="js/apps.js?v=20260919-ss-folder-v3"></script>
+  <script type="module" src="js/desktop.js?v=20260919-ss-folder-v3"></script>
 </body>
 </html>
