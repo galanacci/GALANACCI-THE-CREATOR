@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
-  <title>2(XY-T) experiment</title>
+  <title>2(XY+T) experiment</title>
   <rect x="8" y="8" width="112" height="112" fill="#000" stroke="#ead1b2" stroke-width="4"/>
   <path fill="#ead1b2" d="M25 29h18l21 27 21-27h18L73 68v31H55V68L25 29Zm53 54h25v16H78V83Z"/>
   <path fill="#000" d="M29 38h10l17 22-6 8L29 45zm60 0h10L82 65l-6-8z"/>
