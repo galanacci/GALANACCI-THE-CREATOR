@@ -1,0 +1,16 @@
+{
+  "title": "GALANACCI DRAWING ARCHIVE",
+  "page_count": 2,
+  "pages": [
+    {
+      "page": 1,
+      "image": "full/001.webp",
+      "thumbnail": "thumbs/001.webp"
+    },
+    {
+      "page": 2,
+      "image": "full/002.webp",
+      "thumbnail": "thumbs/002.webp"
+    }
+  ]
+}

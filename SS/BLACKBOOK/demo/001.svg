@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1900" viewBox="0 0 1400 1900">
+  <rect width="1400" height="1900" fill="#f1eee8"/>
+  <path d="M180 335 C 390 170, 720 398, 1190 302" fill="none" stroke="#111" stroke-width="13" stroke-linecap="round"/>
+  <path d="M240 665 C 520 540, 790 915, 1140 778" fill="none" stroke="#111" stroke-width="8" stroke-linecap="round"/>
+  <path d="M210 1270 C 430 1030, 740 1477, 1160 1272" fill="none" stroke="#111" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="400" cy="1465" r="85" fill="none" stroke="#111" stroke-width="7"/>
+  <text x="82" y="1780" font-family="Arial, Helvetica, sans-serif" font-size="44" letter-spacing="7" fill="#111">GALANACCI / 001</text>
+</svg>

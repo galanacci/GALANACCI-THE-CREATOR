@@ -1,0 +1,178 @@
+﻿(() => {
+  "use strict";
+
+  const DESCRIPTIONS = Object.freeze({
+    "2(XY-T)": "An iteration of Bradley Tangonan's XY - T project.",
+    "2(XY-T).EXE": "An iteration of Bradley Tangonan's XY - T project.",
+    "2(XY+T)": "An iteration of Bradley Tangonan's XY - T project.",
+    "2(XY+T).EXE": "An iteration of Bradley Tangonan's XY - T project.",
+    "WARRIORSOFBOXING": "Ink drawings of boxing's hall of famers.",
+    "WARRIORSOFBOXING.EXE": "Ink drawings of boxing's hall of famers.",
+    "EVERYDAYS": "Mixed media digital art inspired by Beeple.",
+    "EVERYDAYS.EXE": "Mixed media digital art inspired by Beeple.",
+    "RENAISSANCE": "Digital paintings inspired by Caravaggio.",
+    "RENAISSANCE.EXE": "Digital paintings inspired by Caravaggio.",
+    "BLACKBOOK": "Old diary ink drawings.",
+    "BLACKBOOK.EXE": "Old diary ink drawings."
+  });
+
+  function parseCreatedDate(value) {
+    const raw = String(value || "").trim();
+    if (!raw) return Number.NEGATIVE_INFINITY;
+
+    let match = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (match) {
+      return Date.UTC(
+        Number(match[3]),
+        Number(match[2]) - 1,
+        Number(match[1])
+      );
+    }
+
+    match = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (match) {
+      return Date.UTC(
+        Number(match[1]),
+        Number(match[2]) - 1,
+        Number(match[3])
+      );
+    }
+
+    match = raw.match(/^(\d{1,2})\/(\d{4})$/);
+    if (match) {
+      return Date.UTC(
+        Number(match[2]),
+        Number(match[1]) - 1,
+        1
+      );
+    }
+
+    match = raw.match(/^(\d{4})$/);
+    if (match) {
+      return Date.UTC(Number(match[1]), 0, 1);
+    }
+
+    const parsed = Date.parse(raw);
+    return Number.isFinite(parsed)
+      ? parsed
+      : Number.NEGATIVE_INFINITY;
+  }
+
+  function normaliseLabel(value) {
+    return String(value || "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toUpperCase();
+  }
+
+  function findDescription(label) {
+    const normalised = normaliseLabel(label);
+
+    const key = Object.keys(DESCRIPTIONS)
+      .sort((a, b) => b.length - a.length)
+      .find((candidate) => normalised.includes(candidate));
+
+    return key ? DESCRIPTIONS[key] : "";
+  }
+
+  function enhanceList(list) {
+    const header =
+      list.querySelector(":scope > .app-list__header") ||
+      list.querySelector(".app-list__header");
+
+    if (header && !header.querySelector(".app-list__description-header")) {
+      const descriptionHeader = document.createElement("span");
+      descriptionHeader.className = "app-list__description-header";
+      descriptionHeader.textContent = "DESCRIPTION";
+      header.appendChild(descriptionHeader);
+    }
+
+    const rows = [
+      ...list.querySelectorAll(":scope > .app-list__row")
+    ];
+
+    rows.forEach((row) => {
+      let descriptionCell =
+        row.querySelector(":scope > .app-list__description");
+
+      if (!descriptionCell) {
+        descriptionCell = document.createElement("span");
+        descriptionCell.className = "app-list__description";
+        row.appendChild(descriptionCell);
+      }
+
+      const nameCell = row.querySelector(".app-list__name");
+      descriptionCell.textContent =
+        findDescription(nameCell?.textContent || "");
+    });
+
+    rows
+      .map((row, originalIndex) => {
+        const cells = row.querySelectorAll(":scope > span");
+
+        return {
+          row,
+          originalIndex,
+          timestamp: parseCreatedDate(
+            cells[1]?.textContent || ""
+          )
+        };
+      })
+      .sort((a, b) => {
+        if (a.timestamp !== b.timestamp) {
+          return b.timestamp - a.timestamp;
+        }
+
+        return a.originalIndex - b.originalIndex;
+      })
+      .forEach(({ row }) => list.appendChild(row));
+  }
+
+  function enhanceFolders() {
+    document
+      .querySelectorAll(".app-list")
+      .forEach(enhanceList);
+  }
+
+  function initNotice() {
+    const layer =
+      document.getElementById("portfolio-notice-layer");
+
+    if (!layer) return;
+
+    const closeNotice = () => {
+      layer.hidden = true;
+      layer.setAttribute("aria-hidden", "true");
+    };
+
+    layer
+      .querySelectorAll("[data-close-portfolio-notice]")
+      .forEach((button) => {
+        button.addEventListener(
+          "click",
+          closeNotice,
+          { once: false }
+        );
+      });
+
+    layer.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeNotice();
+      }
+    });
+
+    layer.hidden = false;
+    layer.setAttribute("aria-hidden", "false");
+
+    requestAnimationFrame(() => {
+      layer
+        .querySelector(".portfolio-notice__ok")
+        ?.focus();
+    });
+  }
+
+  // Run once. No MutationObserver, no pointer handlers, no app interception.
+  enhanceFolders();
+  initNotice();
+})();

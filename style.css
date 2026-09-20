@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --bg: #ead1b2;
   --fg: #000;
   --accent: #000;
@@ -182,11 +182,11 @@ button {
   resize: none;
   border: 1px solid rgba(0, 0, 0, .5);
   background: var(--bg);
-  box-shadow: 0 18px 60px rgba(0, 0, 0, .62);
-  opacity: 0;
+  box-shadow: none;
+  opacity: 1;
   pointer-events: none;
-  transform: translate(-50%, -50%) scale(.98);
-  transition: opacity 160ms ease, transform 160ms ease;
+  transform: translate(-50%, -50%) scale(1);
+  transition: none;
 }
 
 .folder-window[hidden] {
@@ -338,9 +338,9 @@ button {
   display: flex;
   flex-direction: column;
   background: #000;
-  opacity: 0;
+  opacity: 1;
   pointer-events: none;
-  transition: opacity 160ms ease;
+  transition: none;
 }
 
 .experiment-window[hidden] {
@@ -483,3 +483,811 @@ button {
     width: 100%;
   }
 }
+
+/* GTC PORTFOLIO NOTICE V1 START */
+.portfolio-notice-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: transparent;
+}
+.portfolio-notice-layer[hidden] { display: none !important; }
+.portfolio-notice {
+  width: min(390px, calc(100vw - 36px));
+  border: 1px solid #111;
+  background: #e8dfd2;
+  color: #111;
+  box-shadow: none;
+  font-family: inherit;
+}
+.portfolio-notice__chrome {
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 7px 4px 9px;
+  border-bottom: 1px solid #111;
+  background: #ead1b2;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  user-select: none;
+}
+.portfolio-notice__close {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #111;
+  font: inherit;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+.portfolio-notice__body {
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 24px 14px;
+}
+.portfolio-notice__icon { width: 42px; height: 42px; display: block; object-fit: contain; }
+.portfolio-notice__body p { margin: 0; font-size: 13px; line-height: 1.45; letter-spacing: .035em; }
+.portfolio-notice__footer { display: flex; justify-content: center; padding: 8px 24px 20px; }
+.portfolio-notice__ok {
+  min-width: 74px;
+  min-height: 28px;
+  padding: 3px 16px;
+  border: 1px solid #111;
+  background: #ead1b2;
+  color: #111;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 0;
+  box-shadow: none;
+}
+.portfolio-notice__ok:active { transform: translate(1px, 1px); }
+@media (max-width: 600px) {
+  .portfolio-notice { width: min(330px, calc(100vw - 28px)); }
+  .portfolio-notice__body { grid-template-columns: 38px 1fr; gap: 13px; padding: 18px 18px 11px; }
+  .portfolio-notice__icon { width: 36px; height: 36px; }
+  .portfolio-notice__body p { font-size: 12px; }
+  .portfolio-notice__footer { padding-bottom: 16px; }
+}
+/* GTC PORTFOLIO NOTICE V1 END */
+
+/* GTC FOLDER WHITE + NOTICE MATCH V2 START */
+
+/* Folder windows:
+   white interior / cream title bar. */
+.folder-window {
+  background: #ffffff !important;
+}
+
+.folder-window__chrome {
+  background: #ead1b2 !important;
+}
+
+.folder-window__body,
+.app-folder-body,
+.folder-window .app-list {
+  background: #ffffff !important;
+}
+
+/* Keep ordinary list rows visually on the white folder surface.
+   Existing hover / selected states are intentionally left alone. */
+.folder-window .app-list__row:not(.is-selected):not(:hover) {
+  background: #ffffff;
+}
+
+/* Initial portfolio notice:
+   same visual grammar as the folder pop-up window. */
+.portfolio-notice-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: transparent;
+}
+
+.portfolio-notice-layer[hidden] {
+  display: none !important;
+}
+
+.portfolio-notice {
+  width: min(430px, calc(100vw - 36px));
+  border: 1px solid #111;
+  background: #ffffff;
+  color: #111;
+  box-shadow: none;
+  font-family: inherit;
+}
+
+.portfolio-notice__chrome {
+  min-height: 28px;
+  cursor: default;
+}
+
+.portfolio-notice__body {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  grid-template-areas:
+    "icon copy"
+    ". button";
+  align-items: center;
+  column-gap: 16px;
+  row-gap: 16px;
+  padding: 22px 24px 20px;
+  background: #ffffff !important;
+}
+
+.portfolio-notice__icon {
+  grid-area: icon;
+  width: 42px;
+  height: 42px;
+  display: block;
+  object-fit: contain;
+}
+
+.portfolio-notice__body p {
+  grid-area: copy;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  letter-spacing: .035em;
+}
+
+.portfolio-notice__ok {
+  grid-area: button;
+  justify-self: center;
+  min-width: 76px;
+  min-height: 28px;
+  padding: 3px 16px;
+  border: 1px solid #111;
+  background: #ead1b2;
+  color: #111;
+  border-radius: 0;
+  box-shadow: none;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.portfolio-notice__ok:active {
+  transform: translate(1px, 1px);
+}
+
+@media (max-width: 600px) {
+  .portfolio-notice {
+    width: min(340px, calc(100vw - 28px));
+  }
+
+  .portfolio-notice__body {
+    grid-template-columns: 38px minmax(0, 1fr);
+    column-gap: 13px;
+    row-gap: 14px;
+    padding: 18px 18px 16px;
+  }
+
+  .portfolio-notice__icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .portfolio-notice__body p {
+    font-size: 12px;
+  }
+}
+
+/* GTC FOLDER WHITE + NOTICE MATCH V2 END */
+
+/* GTC FOLDER GRID + NOTIFICATION V3 START */
+
+/* Folder window interior stays white; chrome stays GALANACCI cream. */
+.folder-window {
+  background: #ffffff !important;
+}
+
+.folder-window__chrome {
+  background: #ead1b2 !important;
+}
+
+.folder-window__body,
+.app-folder-body {
+  padding: 0 !important;
+  background: #ffffff !important;
+  overflow: hidden;
+}
+
+/* Make the list and its grid lines reach the folder-window edges. */
+.folder-window .app-list,
+.folder-window .folder-list {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #ffffff !important;
+}
+
+/* Column header row: white, not cream. */
+.folder-window .app-list__header,
+.folder-window .folder-list__header {
+  width: 100% !important;
+  margin: 0 !important;
+  background: #ffffff !important;
+  color: #111111 !important;
+  border-bottom: 1px solid #d3d3d3 !important;
+}
+
+/* Data rows fill the complete popup width. */
+.folder-window .app-list__row,
+.folder-window .folder-item {
+  width: 100% !important;
+  margin: 0 !important;
+  background: #ffffff;
+  border-bottom: 1px solid #d3d3d3 !important;
+}
+
+/* Extend the vertical grid dividers from one edge of every row to the other. */
+.folder-window .app-list__header > span,
+.folder-window .app-list__row > span,
+.folder-window .folder-list__header > span,
+.folder-window .folder-item > span {
+  min-width: 0;
+  height: 100%;
+  border-right: 1px solid #d3d3d3;
+}
+
+.folder-window .app-list__header > span:last-child,
+.folder-window .app-list__row > span:last-child,
+.folder-window .folder-list__header > span:last-child,
+.folder-window .folder-item > span:last-child {
+  border-right: 0;
+}
+
+/* Generic placeholder icon for every .EXE row. */
+.folder-window .app-list__name img,
+.folder-window .folder-item__name img {
+  width: 26px !important;
+  height: 26px !important;
+  object-fit: contain !important;
+  flex: 0 0 26px !important;
+}
+
+/* Initial notification: same chrome language as folder windows,
+   but compact and unmistakably a notification. */
+.portfolio-notice-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: transparent;
+}
+
+.portfolio-notice-layer[hidden] {
+  display: none !important;
+}
+
+.portfolio-notice {
+  width: min(360px, calc(100vw - 32px));
+  border: 1px solid #111111;
+  background: #ead1b2;
+  color: #111111;
+  box-shadow: none !important;
+  font-family: inherit;
+}
+
+.portfolio-notice__chrome {
+  /* Uses folder-window__chrome so height/padding match folder windows. */
+  background: #ead1b2 !important;
+}
+
+.portfolio-notice__body {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  min-height: 118px;
+  padding: 22px 24px 20px !important;
+  background: #ead1b2 !important;
+  text-align: center;
+}
+
+.portfolio-notice__body p {
+  margin: 0;
+  max-width: 280px;
+  font-size: 12px;
+  line-height: 1.45;
+  letter-spacing: .035em;
+}
+
+.portfolio-notice__ok {
+  min-width: 76px;
+  min-height: 28px;
+  padding: 3px 18px;
+  border: 1px solid #111111;
+  border-radius: 0 !important;
+  background: #ead1b2;
+  color: #111111;
+  box-shadow: none !important;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.portfolio-notice__ok:active {
+  transform: translate(1px, 1px);
+}
+
+/* Explicitly suppress any old notification icon left over from previous CSS. */
+.portfolio-notice__icon {
+  display: none !important;
+}
+
+/* GTC FOLDER GRID + NOTIFICATION V3 END */
+
+/* GTC DESCRIPTION + OS NOTICE V4 START */
+
+/* ----------------------------------------------------------
+   FOLDER LIST â€” add DESCRIPTION as fourth column.
+   ---------------------------------------------------------- */
+
+.folder-window .app-list__header,
+.folder-window .app-list__row {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns:
+    minmax(150px, 1.7fr)
+    105px
+    110px
+    minmax(190px, 2.3fr) !important;
+  align-items: stretch;
+}
+
+.folder-window .app-list__header {
+  background: #ffffff !important;
+  color: #111111 !important;
+}
+
+.folder-window .app-list__header > span,
+.folder-window .app-list__row > span {
+  min-width: 0;
+  border-right: 1px solid #d3d3d3;
+}
+
+.folder-window .app-list__header > span:last-child,
+.folder-window .app-list__row > span:last-child {
+  border-right: 0;
+}
+
+.folder-window .app-list__description-header {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background: #ffffff;
+  color: #111111;
+  font: inherit;
+}
+
+.folder-window .app-list__description {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background: #ffffff;
+  color: #111111;
+  font-size: 11px;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+/* Keep grid lines running to the complete window edges. */
+.folder-window__body,
+.app-folder-body {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.folder-window .app-list {
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* ----------------------------------------------------------
+   GALANACCI OS 26 notification.
+   White body/window + cream header and cream OK button.
+   ---------------------------------------------------------- */
+
+.portfolio-notice-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: transparent;
+}
+
+.portfolio-notice-layer[hidden] {
+  display: none !important;
+}
+
+.portfolio-notice {
+  width: min(390px, calc(100vw - 32px));
+  border: 1px solid #111111;
+  background: #ffffff !important;
+  color: #111111;
+  box-shadow: none !important;
+  font-family: inherit;
+}
+
+.portfolio-notice__chrome {
+  background: #ead1b2 !important;
+}
+
+.portfolio-notice__body {
+  display: grid !important;
+  grid-template-columns: 42px minmax(0, 1fr);
+  grid-template-areas:
+    "icon copy"
+    ". button";
+  align-items: center;
+  column-gap: 16px;
+  row-gap: 18px;
+  min-height: 124px;
+  padding: 22px 24px 20px !important;
+  background: #ffffff !important;
+}
+
+.portfolio-notice__icon {
+  grid-area: icon;
+  display: block !important;
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  /* Existing transparent favicon becomes solid black in this window only. */
+  filter: brightness(0) saturate(100%);
+}
+
+.portfolio-notice__body p {
+  grid-area: copy;
+  margin: 0;
+  color: #111111;
+  font-size: 13px;
+  line-height: 1.45;
+  letter-spacing: .025em;
+  text-transform: none;
+}
+
+.portfolio-notice__ok {
+  grid-area: button;
+  justify-self: center;
+  min-width: 76px;
+  min-height: 28px;
+  padding: 3px 18px;
+  border: 1px solid #111111;
+  border-radius: 0 !important;
+  background: #ead1b2 !important;
+  color: #111111;
+  box-shadow: none !important;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.portfolio-notice__ok:active {
+  transform: translate(1px, 1px);
+}
+
+@media (max-width: 760px) {
+  .folder-window .app-list__header,
+  .folder-window .app-list__row {
+    grid-template-columns:
+      minmax(130px, 1.5fr)
+      86px
+      92px
+      minmax(170px, 2fr) !important;
+  }
+
+  .folder-window .app-list__description {
+    font-size: 10px;
+  }
+
+  .portfolio-notice {
+    width: min(340px, calc(100vw - 28px));
+  }
+
+  .portfolio-notice__body {
+    grid-template-columns: 36px minmax(0, 1fr);
+    column-gap: 13px;
+    padding: 18px 18px 16px !important;
+  }
+
+  .portfolio-notice__icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .portfolio-notice__body p {
+    font-size: 12px;
+  }
+}
+
+/* GTC DESCRIPTION + OS NOTICE V4 END */
+
+/* GTC STABLE ROW HIGHLIGHT V5.2 START */
+
+/* Whole-row highlight, restored to neutral grey. */
+.folder-window .app-list__row {
+  cursor: pointer;
+}
+
+.folder-window .app-list__row:hover,
+.folder-window .app-list__row.is-selected,
+.folder-window .app-list__row[aria-selected="true"],
+.folder-window .app-list__row:focus-within {
+  background: #e9e9e9 !important;
+}
+
+.folder-window .app-list__row:hover > *,
+.folder-window .app-list__row.is-selected > *,
+.folder-window .app-list__row[aria-selected="true"] > *,
+.folder-window .app-list__row:focus-within > * {
+  background: #e9e9e9 !important;
+}
+
+/* Keep the OS notification white and centered. */
+.portfolio-notice-layer[hidden] {
+  display: none !important;
+}
+
+.portfolio-notice__icon {
+  display: none !important;
+}
+
+.portfolio-notice__body {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  min-height: 124px;
+  padding: 22px 24px 20px !important;
+  background: #ffffff !important;
+  text-align: center;
+}
+
+.portfolio-notice__body p {
+  width: 100%;
+  max-width: 290px;
+  margin: 0 auto !important;
+  text-align: center;
+}
+
+.portfolio-notice__ok {
+  align-self: center;
+  border-radius: 0 !important;
+}
+
+/* GTC STABLE ROW HIGHLIGHT V5.2 END */
+
+/* GTC LEGACY MOBILE WINDOW SYSTEM V6.6 START */
+
+/* Old backup window geometry:
+   same floating folder-window model on desktop and mobile. */
+.folder-window {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+
+  top: 50%;
+  left: 50%;
+
+  width: min(520px, calc(100vw - 32px));
+  height: min(360px, calc(100vh - 48px));
+
+  min-width: min(300px, calc(100vw - 16px));
+  min-height: min(220px, calc(100vh - 16px));
+
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 16px);
+
+  overflow: hidden;
+  resize: none;
+
+  transform: translate(-50%, -50%);
+}
+
+@supports (height: 100dvh) {
+  .folder-window {
+    height: min(360px, calc(100dvh - 48px));
+    min-height: min(220px, calc(100dvh - 16px));
+    max-height: calc(100dvh - 16px);
+  }
+}
+
+.folder-window.is-open {
+  transform: translate(-50%, -50%);
+}
+
+.folder-window__chrome {
+  cursor: move;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.folder-window__body,
+.app-folder-body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Restore the exact 8-handle architecture visible in the old backup. */
+.folder-window__resize-handle {
+  position: absolute;
+  z-index: 30;
+  touch-action: none;
+}
+
+.folder-window__resize-handle--n,
+.folder-window__resize-handle--s {
+  left: 12px;
+  right: 12px;
+  height: 8px;
+  cursor: ns-resize;
+}
+
+.folder-window__resize-handle--n {
+  top: 0;
+}
+
+.folder-window__resize-handle--s {
+  bottom: 0;
+}
+
+.folder-window__resize-handle--e,
+.folder-window__resize-handle--w {
+  top: 12px;
+  bottom: 12px;
+  width: 8px;
+  cursor: ew-resize;
+}
+
+.folder-window__resize-handle--e {
+  right: 0;
+}
+
+.folder-window__resize-handle--w {
+  left: 0;
+}
+
+.folder-window__resize-handle--ne,
+.folder-window__resize-handle--se,
+.folder-window__resize-handle--sw,
+.folder-window__resize-handle--nw {
+  width: 16px;
+  height: 16px;
+}
+
+.folder-window__resize-handle--ne {
+  top: 0;
+  right: 0;
+  cursor: nesw-resize;
+}
+
+.folder-window__resize-handle--se {
+  right: 0;
+  bottom: 0;
+  cursor: nwse-resize;
+}
+
+.folder-window__resize-handle--sw {
+  bottom: 0;
+  left: 0;
+  cursor: nesw-resize;
+}
+
+.folder-window__resize-handle--nw {
+  top: 0;
+  left: 0;
+  cursor: nwse-resize;
+}
+
+/* Current table layout remains:
+   NAME | DESCRIPTION | DATE CREATED | CREATED BY */
+.folder-window .app-list__header,
+.folder-window .app-list__row {
+  display: grid !important;
+  grid-template-columns:
+    minmax(190px, 1.45fr)
+    minmax(240px, 2fr)
+    110px
+    120px !important;
+  width: 100% !important;
+  align-items: stretch;
+}
+
+.folder-window .app-list__description {
+  color: inherit !important;
+}
+
+/* Mobile: window stays desktop-like.
+   Only the wide table scrolls horizontally. */
+@media (max-width: 760px) {
+  .folder-window {
+    width: min(520px, calc(100vw - 24px));
+    height: min(360px, calc(100vh - 56px));
+
+    min-width: min(280px, calc(100vw - 16px));
+    min-height: min(220px, calc(100vh - 16px));
+  }
+
+  @supports (height: 100dvh) {
+    .folder-window {
+      height: min(360px, calc(100dvh - 56px));
+      min-height: min(220px, calc(100dvh - 16px));
+    }
+  }
+
+  .folder-window .app-list {
+    width: 860px !important;
+    min-width: 860px !important;
+    max-width: none !important;
+  }
+
+  .folder-window .app-list__header,
+  .folder-window .app-list__row {
+    width: 860px !important;
+    min-width: 860px !important;
+    max-width: 860px !important;
+
+    grid-template-columns:
+      230px
+      350px
+      120px
+      160px !important;
+  }
+
+  .folder-window .app-list__header > *,
+  .folder-window .app-list__row > *,
+  .folder-window .app-list__name,
+  .folder-window .app-list__description,
+  .folder-window .gtc-date-cell,
+  .folder-window .gtc-created-cell {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  /* Slightly larger invisible corners for finger resizing,
+     while keeping the old visual behavior. */
+  .folder-window__resize-handle--ne,
+  .folder-window__resize-handle--se,
+  .folder-window__resize-handle--sw,
+  .folder-window__resize-handle--nw {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* GTC LEGACY MOBILE WINDOW SYSTEM V6.6 END */
+

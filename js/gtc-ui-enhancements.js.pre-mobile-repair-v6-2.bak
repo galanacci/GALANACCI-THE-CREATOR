@@ -1,0 +1,276 @@
+﻿(() => {
+  "use strict";
+
+  const DESCRIPTIONS = Object.freeze({
+    "2(XY-T)": "An iteration of Bradley Tangonan's XY - T project.",
+    "2(XY-T).EXE": "An iteration of Bradley Tangonan's XY - T project.",
+    "2(XY+T)": "An iteration of Bradley Tangonan's XY - T project.",
+    "2(XY+T).EXE": "An iteration of Bradley Tangonan's XY - T project.",
+    "WARRIORSOFBOXING": "Ink drawings of boxing's hall of famers.",
+    "WARRIORSOFBOXING.EXE": "Ink drawings of boxing's hall of famers.",
+    "EVERYDAYS": "Mixed media digital art inspired by Beeple.",
+    "EVERYDAYS.EXE": "Mixed media digital art inspired by Beeple.",
+    "RENAISSANCE": "Digital paintings inspired by Caravaggio.",
+    "RENAISSANCE.EXE": "Digital paintings inspired by Caravaggio.",
+    "BLACKBOOK": "Old diary ink drawings.",
+    "BLACKBOOK.EXE": "Old diary ink drawings."
+  });
+
+  function normalise(value) {
+    return String(value || "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toUpperCase();
+  }
+
+  function descriptionFor(value) {
+    const label = normalise(value);
+
+    const key = Object.keys(DESCRIPTIONS)
+      .sort((a, b) => b.length - a.length)
+      .find((candidate) => label.includes(candidate));
+
+    return key ? DESCRIPTIONS[key] : "";
+  }
+
+  function parseCreatedDate(value) {
+    const raw = String(value || "").trim();
+
+    if (!raw) return Number.NEGATIVE_INFINITY;
+
+    let match = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+
+    if (match) {
+      return Date.UTC(
+        Number(match[3]),
+        Number(match[2]) - 1,
+        Number(match[1])
+      );
+    }
+
+    match = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+
+    if (match) {
+      return Date.UTC(
+        Number(match[1]),
+        Number(match[2]) - 1,
+        Number(match[3])
+      );
+    }
+
+    match = raw.match(/^(\d{1,2})\/(\d{4})$/);
+
+    if (match) {
+      return Date.UTC(
+        Number(match[2]),
+        Number(match[1]) - 1,
+        1
+      );
+    }
+
+    match = raw.match(/^(\d{4})$/);
+
+    if (match) {
+      return Date.UTC(Number(match[1]), 0, 1);
+    }
+
+    const parsed = Date.parse(raw);
+
+    return Number.isFinite(parsed)
+      ? parsed
+      : Number.NEGATIVE_INFINITY;
+  }
+
+  function tagHeaderCells(header) {
+    const cells = [...header.children];
+
+    cells.forEach((cell) => {
+      const text = normalise(cell.textContent);
+
+      if (text === "NAME") {
+        cell.classList.add("gtc-name-header");
+      } else if (text === "DATE CREATED") {
+        cell.classList.add("gtc-date-header");
+      } else if (text === "CREATED BY") {
+        cell.classList.add("gtc-created-header");
+      } else if (text === "DESCRIPTION") {
+        cell.classList.add(
+          "app-list__description-header",
+          "gtc-description-header"
+        );
+      }
+    });
+
+    let descriptionHeader =
+      header.querySelector(".gtc-description-header");
+
+    if (!descriptionHeader) {
+      descriptionHeader = document.createElement("span");
+      descriptionHeader.className =
+        "app-list__description-header gtc-description-header";
+      descriptionHeader.textContent = "DESCRIPTION";
+    }
+
+    const nameHeader =
+      header.querySelector(".gtc-name-header") ||
+      header.children[0];
+
+    const dateHeader =
+      header.querySelector(".gtc-date-header") ||
+      header.children[1];
+
+    const createdHeader =
+      header.querySelector(".gtc-created-header") ||
+      header.children[2];
+
+    [
+      nameHeader,
+      descriptionHeader,
+      dateHeader,
+      createdHeader
+    ].forEach((cell) => {
+      if (cell) header.appendChild(cell);
+    });
+  }
+
+  function tagRowCells(row) {
+    const nameCell =
+      row.querySelector(".app-list__name") ||
+      row.children[0];
+
+    let descriptionCell =
+      row.querySelector(".app-list__description");
+
+    const directChildren = [...row.children];
+
+    const metaCells = directChildren.filter(
+      (cell) =>
+        cell !== nameCell &&
+        cell !== descriptionCell
+    );
+
+    const dateCell =
+      row.querySelector(".gtc-date-cell") ||
+      metaCells[0];
+
+    const createdCell =
+      row.querySelector(".gtc-created-cell") ||
+      metaCells[1];
+
+    if (dateCell) {
+      dateCell.classList.add(
+        "gtc-date-cell",
+        "app-list__meta"
+      );
+    }
+
+    if (createdCell) {
+      createdCell.classList.add(
+        "gtc-created-cell",
+        "app-list__meta"
+      );
+    }
+
+    if (!descriptionCell) {
+      descriptionCell = document.createElement("span");
+    }
+
+    descriptionCell.classList.add(
+      "app-list__description",
+      "app-list__meta"
+    );
+
+    descriptionCell.textContent =
+      descriptionFor(nameCell?.textContent || "");
+
+    [
+      nameCell,
+      descriptionCell,
+      dateCell,
+      createdCell
+    ].forEach((cell) => {
+      if (cell) row.appendChild(cell);
+    });
+  }
+
+  function enhanceList(list) {
+    const header =
+      list.querySelector(":scope > .app-list__header") ||
+      list.querySelector(".app-list__header");
+
+    if (header) {
+      tagHeaderCells(header);
+    }
+
+    const rows = [
+      ...list.querySelectorAll(":scope > .app-list__row")
+    ];
+
+    rows.forEach(tagRowCells);
+
+    rows
+      .map((row, originalIndex) => {
+        const dateCell = row.querySelector(".gtc-date-cell");
+
+        return {
+          row,
+          originalIndex,
+          timestamp: parseCreatedDate(
+            dateCell?.textContent || ""
+          )
+        };
+      })
+      .sort((a, b) => {
+        if (a.timestamp !== b.timestamp) {
+          return b.timestamp - a.timestamp;
+        }
+
+        return a.originalIndex - b.originalIndex;
+      })
+      .forEach(({ row }) => list.appendChild(row));
+  }
+
+  function updateFolderWindowTitles() {
+    document
+      .querySelectorAll(".folder-window")
+      .forEach((folderWindow) => {
+        const chrome =
+          folderWindow.querySelector(".folder-window__chrome");
+
+        if (!chrome) return;
+
+        const title =
+          chrome.querySelector(":scope > span") ||
+          chrome.querySelector(
+            "[id$='-title'], .folder-window__title"
+          );
+
+        if (!title) return;
+
+        const current = normalise(title.textContent);
+        const id = normalise(folderWindow.id);
+
+        if (
+          current === "APPS" ||
+          id.includes("APPS")
+        ) {
+          title.textContent = "APPS - CODING EXPERIMENTS";
+        } else if (
+          current === "SS" ||
+          id.includes("SS-FOLDER")
+        ) {
+          title.textContent = "SS - ARCHIVE WORKS";
+        }
+      });
+  }
+
+  function enhanceAll() {
+    document
+      .querySelectorAll(".app-list")
+      .forEach(enhanceList);
+
+    updateFolderWindowTitles();
+  }
+
+  enhanceAll();
+})();

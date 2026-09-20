@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "count": 2,
+  "artworks": [
+    {
+      "id": "001",
+      "title": "Demo Painting 001",
+      "year": 2021,
+      "width": 2200,
+      "height": 1600,
+      "overview": "./overview/001.webp",
+      "tiles": "./tiles/001",
+      "tile_size": 512,
+      "levels": [
+        {
+          "id": "L0",
+          "scale": 0.5,
+          "width": 1100,
+          "height": 800,
+          "cols": 3,
+          "rows": 2
+        },
+        {
+          "id": "L1",
+          "scale": 1.0,
+          "width": 2200,
+          "height": 1600,
+          "cols": 5,
+          "rows": 4
+        }
+      ]
+    },
+    {
+      "id": "002",
+      "title": "Demo Painting 002",
+      "year": 2021,
+      "width": 2200,
+      "height": 1600,
+      "overview": "./overview/002.webp",
+      "tiles": "./tiles/002",
+      "tile_size": 512,
+      "levels": [
+        {
+          "id": "L0",
+          "scale": 0.5,
+          "width": 1100,
+          "height": 800,
+          "cols": 3,
+          "rows": 2
+        },
+        {
+          "id": "L1",
+          "scale": 1.0,
+          "width": 2200,
+          "height": 1600,
+          "cols": 5,
+          "rows": 4
+        }
+      ]
+    }
+  ]
+}

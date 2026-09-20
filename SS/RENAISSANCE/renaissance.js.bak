@@ -1,0 +1,670 @@
+const ARCHIVE_MANIFEST = "./archive/renaissance.json";
+const DEMO_MANIFEST = "./demo/renaissance.json";
+
+const canvas = document.getElementById("art-canvas");
+const ctx = canvas.getContext("2d", { alpha: false });
+
+const navigator = document.getElementById("navigator");
+const navigatorImage = document.getElementById("navigator-image");
+const navigatorWindow = document.getElementById("navigator-window");
+
+const previousButton = document.getElementById("previous");
+const nextButton = document.getElementById("next");
+const counter = document.getElementById("counter");
+const status = document.getElementById("status");
+const viewer = document.getElementById("viewer");
+
+const DPR_CAP = 2;
+const DETAIL_ZOOM = 3.2;
+const TOUCH_DETAIL_ZOOM = 3.0;
+const ZOOM_EASE = 0.14;
+const FOCUS_EASE = 0.17;
+const TILE_CACHE_LIMIT = 90;
+
+let manifestUrl = null;
+let artworks = [];
+let currentIndex = 0;
+
+let overviewImage = null;
+let currentArtwork = null;
+
+let zoom = 1;
+let targetZoom = 1;
+
+let focusX = .5;
+let focusY = .5;
+let targetFocusX = .5;
+let targetFocusY = .5;
+
+let pointerInside = false;
+let touchExploring = false;
+let renderRaf = 0;
+let loadToken = 0;
+
+const tileCache = new Map();
+
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+const pad = (value, digits) => String(value).padStart(digits, "0");
+
+function resolveAsset(path) {
+  return new URL(path, manifestUrl).href;
+}
+
+async function loadManifest() {
+  for (const path of [ARCHIVE_MANIFEST, DEMO_MANIFEST]) {
+    try {
+      const url = new URL(path, window.location.href);
+      const response = await fetch(url, { cache: "no-store" });
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const data = await response.json();
+
+      if (!Array.isArray(data.artworks) || data.artworks.length === 0) {
+        throw new Error("Manifest contains no artworks.");
+      }
+
+      manifestUrl = url;
+      return data.artworks;
+    } catch (error) {
+      if (path === DEMO_MANIFEST) throw error;
+    }
+  }
+
+  throw new Error("No RENAISSANCE manifest found.");
+}
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.decoding = "async";
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
+  });
+}
+
+function loadTile(src) {
+  if (tileCache.has(src)) return tileCache.get(src);
+
+  const promise = loadImage(src)
+    .catch((error) => {
+      tileCache.delete(src);
+      throw error;
+    });
+
+  tileCache.set(src, promise);
+
+  if (tileCache.size > TILE_CACHE_LIMIT) {
+    const extra = tileCache.size - TILE_CACHE_LIMIT;
+    const keys = [...tileCache.keys()];
+
+    for (let i = 0; i < extra; i += 1) {
+      tileCache.delete(keys[i]);
+    }
+  }
+
+  return promise;
+}
+
+function resizeCanvas() {
+  const dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
+  const width = Math.max(1, viewer.clientWidth);
+  const height = Math.max(1, viewer.clientHeight);
+
+  const pixelWidth = Math.round(width * dpr);
+  const pixelHeight = Math.round(height * dpr);
+
+  if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+    canvas.width = pixelWidth;
+    canvas.height = pixelHeight;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+  }
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  return { width, height, dpr };
+}
+
+function currentCrop() {
+  const { width: viewportWidth, height: viewportHeight } = resizeCanvas();
+  const art = currentArtwork;
+
+  const fitScale = Math.min(
+    viewportWidth / art.width,
+    viewportHeight / art.height
+  );
+
+  if (zoom <= 1.001) {
+    return {
+      x: 0,
+      y: 0,
+      width: art.width,
+      height: art.height,
+      fitScale,
+      fullView: true,
+      viewportWidth,
+      viewportHeight
+    };
+  }
+
+  const sourceWidth = viewportWidth / (fitScale * zoom);
+  const sourceHeight = viewportHeight / (fitScale * zoom);
+
+  const centerX = focusX * art.width;
+  const centerY = focusY * art.height;
+
+  const x = clamp(
+    centerX - sourceWidth / 2,
+    0,
+    Math.max(0, art.width - sourceWidth)
+  );
+
+  const y = clamp(
+    centerY - sourceHeight / 2,
+    0,
+    Math.max(0, art.height - sourceHeight)
+  );
+
+  return {
+    x,
+    y,
+    width: Math.min(sourceWidth, art.width),
+    height: Math.min(sourceHeight, art.height),
+    fitScale,
+    fullView: false,
+    viewportWidth,
+    viewportHeight
+  };
+}
+
+function drawOverview(crop) {
+  const vw = crop.viewportWidth;
+  const vh = crop.viewportHeight;
+
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, vw, vh);
+
+  if (!overviewImage) return;
+
+  if (crop.fullView) {
+    const scale = Math.min(
+      vw / overviewImage.naturalWidth,
+      vh / overviewImage.naturalHeight
+    );
+
+    const drawWidth = overviewImage.naturalWidth * scale;
+    const drawHeight = overviewImage.naturalHeight * scale;
+    const dx = (vw - drawWidth) / 2;
+    const dy = (vh - drawHeight) / 2;
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(
+      overviewImage,
+      dx,
+      dy,
+      drawWidth,
+      drawHeight
+    );
+
+    return;
+  }
+
+  const overviewScaleX = overviewImage.naturalWidth / currentArtwork.width;
+  const overviewScaleY = overviewImage.naturalHeight / currentArtwork.height;
+
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+
+  ctx.drawImage(
+    overviewImage,
+    crop.x * overviewScaleX,
+    crop.y * overviewScaleY,
+    crop.width * overviewScaleX,
+    crop.height * overviewScaleY,
+    0,
+    0,
+    vw,
+    vh
+  );
+}
+
+function chooseLevel(crop) {
+  const levels = currentArtwork.levels || [];
+  const dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
+
+  const neededScale = Math.min(
+    1,
+    crop.fitScale * zoom * dpr
+  );
+
+  const sorted = [...levels].sort((a, b) => a.scale - b.scale);
+
+  return (
+    sorted.find((level) => level.scale >= neededScale) ||
+    sorted[sorted.length - 1]
+  );
+}
+
+function tilePath(art, level, col, row) {
+  return resolveAsset(
+    `${art.tiles}/${level.id}/${col}_${row}.webp`
+  );
+}
+
+function drawTileImage(image, level, col, row, crop) {
+  const tileSize = currentArtwork.tile_size;
+  const levelScale = level.scale;
+
+  const tileX = col * tileSize;
+  const tileY = row * tileSize;
+
+  const originalX = tileX / levelScale;
+  const originalY = tileY / levelScale;
+  const originalWidth = image.naturalWidth / levelScale;
+  const originalHeight = image.naturalHeight / levelScale;
+
+  const intersectionX = Math.max(originalX, crop.x);
+  const intersectionY = Math.max(originalY, crop.y);
+  const intersectionRight = Math.min(
+    originalX + originalWidth,
+    crop.x + crop.width
+  );
+  const intersectionBottom = Math.min(
+    originalY + originalHeight,
+    crop.y + crop.height
+  );
+
+  if (
+    intersectionRight <= intersectionX ||
+    intersectionBottom <= intersectionY
+  ) {
+    return;
+  }
+
+  const sourceX = (intersectionX - originalX) * levelScale;
+  const sourceY = (intersectionY - originalY) * levelScale;
+  const sourceWidth = (intersectionRight - intersectionX) * levelScale;
+  const sourceHeight = (intersectionBottom - intersectionY) * levelScale;
+
+  const dx =
+    ((intersectionX - crop.x) / crop.width) *
+    crop.viewportWidth;
+
+  const dy =
+    ((intersectionY - crop.y) / crop.height) *
+    crop.viewportHeight;
+
+  const dw =
+    ((intersectionRight - intersectionX) / crop.width) *
+    crop.viewportWidth;
+
+  const dh =
+    ((intersectionBottom - intersectionY) / crop.height) *
+    crop.viewportHeight;
+
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+
+  ctx.drawImage(
+    image,
+    sourceX,
+    sourceY,
+    sourceWidth,
+    sourceHeight,
+    dx,
+    dy,
+    dw,
+    dh
+  );
+}
+
+function requestTiles(crop) {
+  if (crop.fullView) return;
+
+  const level = chooseLevel(crop);
+  if (!level) return;
+
+  const tileSize = currentArtwork.tile_size;
+  const levelScale = level.scale;
+
+  const left = crop.x * levelScale;
+  const top = crop.y * levelScale;
+  const right = (crop.x + crop.width) * levelScale;
+  const bottom = (crop.y + crop.height) * levelScale;
+
+  const minCol = clamp(
+    Math.floor(left / tileSize),
+    0,
+    level.cols - 1
+  );
+
+  const maxCol = clamp(
+    Math.floor((right - 1) / tileSize),
+    0,
+    level.cols - 1
+  );
+
+  const minRow = clamp(
+    Math.floor(top / tileSize),
+    0,
+    level.rows - 1
+  );
+
+  const maxRow = clamp(
+    Math.floor((bottom - 1) / tileSize),
+    0,
+    level.rows - 1
+  );
+
+  for (let row = minRow; row <= maxRow; row += 1) {
+    for (let col = minCol; col <= maxCol; col += 1) {
+      const src = tilePath(currentArtwork, level, col, row);
+
+      loadTile(src)
+        .then(() => scheduleRender())
+        .catch(() => {});
+    }
+  }
+}
+
+function drawLoadedTiles(crop) {
+  if (crop.fullView) return;
+
+  const level = chooseLevel(crop);
+  if (!level) return;
+
+  const tileSize = currentArtwork.tile_size;
+  const levelScale = level.scale;
+
+  const left = crop.x * levelScale;
+  const top = crop.y * levelScale;
+  const right = (crop.x + crop.width) * levelScale;
+  const bottom = (crop.y + crop.height) * levelScale;
+
+  const minCol = clamp(
+    Math.floor(left / tileSize),
+    0,
+    level.cols - 1
+  );
+
+  const maxCol = clamp(
+    Math.floor((right - 1) / tileSize),
+    0,
+    level.cols - 1
+  );
+
+  const minRow = clamp(
+    Math.floor(top / tileSize),
+    0,
+    level.rows - 1
+  );
+
+  const maxRow = clamp(
+    Math.floor((bottom - 1) / tileSize),
+    0,
+    level.rows - 1
+  );
+
+  for (let row = minRow; row <= maxRow; row += 1) {
+    for (let col = minCol; col <= maxCol; col += 1) {
+      const src = tilePath(currentArtwork, level, col, row);
+      const cached = tileCache.get(src);
+
+      if (!cached) continue;
+
+      cached.then((image) => {
+        drawTileImage(image, level, col, row, crop);
+      }).catch(() => {});
+    }
+  }
+}
+
+function updateNavigator(crop) {
+  if (!currentArtwork || !navigatorImage.complete) return;
+
+  if (crop.fullView) {
+    navigatorWindow.style.left = "0%";
+    navigatorWindow.style.top = "0%";
+    navigatorWindow.style.width = "100%";
+    navigatorWindow.style.height = "100%";
+    return;
+  }
+
+  const imageRect = navigatorImage.getBoundingClientRect();
+
+  const naturalAspect = currentArtwork.width / currentArtwork.height;
+  const boxAspect = imageRect.width / imageRect.height;
+
+  let renderedWidth = imageRect.width;
+  let renderedHeight = imageRect.height;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  if (naturalAspect > boxAspect) {
+    renderedHeight = renderedWidth / naturalAspect;
+    offsetY = (imageRect.height - renderedHeight) / 2;
+  } else {
+    renderedWidth = renderedHeight * naturalAspect;
+    offsetX = (imageRect.width - renderedWidth) / 2;
+  }
+
+  navigatorWindow.style.left =
+    `${offsetX + (crop.x / currentArtwork.width) * renderedWidth}px`;
+
+  navigatorWindow.style.top =
+    `${offsetY + (crop.y / currentArtwork.height) * renderedHeight}px`;
+
+  navigatorWindow.style.width =
+    `${(crop.width / currentArtwork.width) * renderedWidth}px`;
+
+  navigatorWindow.style.height =
+    `${(crop.height / currentArtwork.height) * renderedHeight}px`;
+}
+
+function renderFrame() {
+  renderRaf = 0;
+
+  if (!currentArtwork || !overviewImage) return;
+
+  zoom += (targetZoom - zoom) * ZOOM_EASE;
+  focusX += (targetFocusX - focusX) * FOCUS_EASE;
+  focusY += (targetFocusY - focusY) * FOCUS_EASE;
+
+  if (Math.abs(targetZoom - zoom) < .002) zoom = targetZoom;
+  if (Math.abs(targetFocusX - focusX) < .0005) focusX = targetFocusX;
+  if (Math.abs(targetFocusY - focusY) < .0005) focusY = targetFocusY;
+
+  const crop = currentCrop();
+
+  drawOverview(crop);
+  requestTiles(crop);
+  drawLoadedTiles(crop);
+  updateNavigator(crop);
+
+  if (
+    Math.abs(targetZoom - zoom) > .002 ||
+    Math.abs(targetFocusX - focusX) > .0005 ||
+    Math.abs(targetFocusY - focusY) > .0005
+  ) {
+    scheduleRender();
+  }
+}
+
+function scheduleRender() {
+  if (renderRaf) return;
+  renderRaf = requestAnimationFrame(renderFrame);
+}
+
+function setFocusFromPointer(event) {
+  const rect = viewer.getBoundingClientRect();
+
+  targetFocusX = clamp(
+    (event.clientX - rect.left) / Math.max(1, rect.width),
+    0,
+    1
+  );
+
+  targetFocusY = clamp(
+    (event.clientY - rect.top) / Math.max(1, rect.height),
+    0,
+    1
+  );
+
+  scheduleRender();
+}
+
+async function setArtwork(index) {
+  index = clamp(index, 0, artworks.length - 1);
+
+  const token = ++loadToken;
+  currentIndex = index;
+  currentArtwork = artworks[index];
+
+  zoom = 1;
+  targetZoom = 1;
+  focusX = .5;
+  focusY = .5;
+  targetFocusX = .5;
+  targetFocusY = .5;
+
+  status.textContent = "LOADING ARTWORK...";
+
+  const overview = await loadImage(
+    resolveAsset(currentArtwork.overview)
+  );
+
+  if (token !== loadToken) return;
+
+  overviewImage = overview;
+  navigatorImage.src = overview.src;
+  navigatorImage.alt = currentArtwork.title || `Artwork ${index + 1}`;
+
+  const digits = Math.max(3, String(artworks.length).length);
+
+  counter.textContent =
+    `${pad(index + 1, digits)} / ${pad(artworks.length, digits)}`;
+
+  previousButton.disabled = index === 0;
+  nextButton.disabled = index === artworks.length - 1;
+
+  status.textContent = "";
+
+  tileCache.clear();
+
+  scheduleRender();
+}
+
+viewer.addEventListener("pointerenter", (event) => {
+  if (event.pointerType !== "mouse") return;
+
+  if (event.target.closest(".controls")) return;
+
+  pointerInside = true;
+  targetZoom = DETAIL_ZOOM;
+  setFocusFromPointer(event);
+});
+
+viewer.addEventListener("pointermove", (event) => {
+  if (event.pointerType === "mouse") {
+    if (event.target.closest(".controls")) return;
+
+    pointerInside = true;
+    targetZoom = DETAIL_ZOOM;
+    setFocusFromPointer(event);
+    return;
+  }
+
+  if (!touchExploring) return;
+
+  event.preventDefault();
+  targetZoom = TOUCH_DETAIL_ZOOM;
+  setFocusFromPointer(event);
+});
+
+viewer.addEventListener("pointerleave", (event) => {
+  if (event.pointerType !== "mouse") return;
+
+  pointerInside = false;
+  targetZoom = 1;
+  targetFocusX = .5;
+  targetFocusY = .5;
+  scheduleRender();
+});
+
+viewer.addEventListener("pointerdown", (event) => {
+  if (event.pointerType === "mouse") return;
+  if (event.target.closest(".controls")) return;
+
+  event.preventDefault();
+
+  touchExploring = true;
+  viewer.setPointerCapture?.(event.pointerId);
+
+  targetZoom = TOUCH_DETAIL_ZOOM;
+  setFocusFromPointer(event);
+});
+
+function endTouch(event) {
+  if (event.pointerType === "mouse") return;
+
+  touchExploring = false;
+  viewer.releasePointerCapture?.(event.pointerId);
+
+  // Keep the last inspected detail in place after the finger is lifted.
+  scheduleRender();
+}
+
+viewer.addEventListener("pointerup", endTouch);
+viewer.addEventListener("pointercancel", endTouch);
+
+previousButton.addEventListener("click", (event) => {
+  event.stopPropagation();
+
+  if (currentIndex > 0) {
+    setArtwork(currentIndex - 1);
+  }
+});
+
+nextButton.addEventListener("click", (event) => {
+  event.stopPropagation();
+
+  if (currentIndex < artworks.length - 1) {
+    setArtwork(currentIndex + 1);
+  }
+});
+
+window.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowLeft" && currentIndex > 0) {
+    setArtwork(currentIndex - 1);
+  }
+
+  if (event.key === "ArrowRight" && currentIndex < artworks.length - 1) {
+    setArtwork(currentIndex + 1);
+  }
+
+  if (event.key === "Escape") {
+    targetZoom = 1;
+    targetFocusX = .5;
+    targetFocusY = .5;
+    scheduleRender();
+  }
+});
+
+window.addEventListener("resize", () => {
+  scheduleRender();
+});
+
+async function init() {
+  try {
+    artworks = await loadManifest();
+    await setArtwork(0);
+  } catch (error) {
+    console.error(error);
+    status.textContent = "RENAISSANCE ARCHIVE COULD NOT BE LOADED.";
+  }
+}
+
+init();

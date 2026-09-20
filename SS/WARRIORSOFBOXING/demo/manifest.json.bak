@@ -1,0 +1,7 @@
+{
+  "entries": [
+    { "name": "Muhammad Ali", "image": "./demo/images/muhammad-ali.svg" },
+    { "name": "Joe Frazier", "image": "./demo/images/joe-frazier.svg" },
+    { "name": "Mike Tyson", "image": "./demo/images/mike-tyson.svg" }
+  ]
+}

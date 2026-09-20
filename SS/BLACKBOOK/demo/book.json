@@ -1,0 +1,42 @@
+{
+  "title": "GALANACCI FLIPBOOK DEMO",
+  "page_count": 6,
+  "pages": [
+    {
+      "page": 1,
+      "image": "001.svg",
+      "thumbnail": null,
+      "title": "Demo drawing 1"
+    },
+    {
+      "page": 2,
+      "image": "002.svg",
+      "thumbnail": null,
+      "title": "Demo drawing 2"
+    },
+    {
+      "page": 3,
+      "image": "003.svg",
+      "thumbnail": null,
+      "title": "Demo drawing 3"
+    },
+    {
+      "page": 4,
+      "image": "004.svg",
+      "thumbnail": null,
+      "title": "Demo drawing 4"
+    },
+    {
+      "page": 5,
+      "image": "005.svg",
+      "thumbnail": null,
+      "title": "Demo drawing 5"
+    },
+    {
+      "page": 6,
+      "image": "006.svg",
+      "thumbnail": null,
+      "title": "Demo drawing 6"
+    }
+  ]
+}

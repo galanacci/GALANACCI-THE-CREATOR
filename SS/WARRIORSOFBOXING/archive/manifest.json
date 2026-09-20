@@ -1,0 +1,392 @@
+{
+  "entries": [
+    {
+      "name": "Alexis Arguello",
+      "image": "./images/001.webp"
+    },
+    {
+      "name": "Antonio Cervantes",
+      "image": "./images/002.webp"
+    },
+    {
+      "name": "Archie Moore",
+      "image": "./images/003.webp"
+    },
+    {
+      "name": "Arturo Gatti",
+      "image": "./images/004.webp"
+    },
+    {
+      "name": "Barry Mcguian",
+      "image": "./images/005.webp"
+    },
+    {
+      "name": "Beau Jack",
+      "image": "./images/006.webp"
+    },
+    {
+      "name": "Bernard Hopkins",
+      "image": "./images/007.webp"
+    },
+    {
+      "name": "Billy Conn",
+      "image": "./images/008.webp"
+    },
+    {
+      "name": "Billy Graham",
+      "image": "./images/009.webp"
+    },
+    {
+      "name": "Bob Foster",
+      "image": "./images/010.webp"
+    },
+    {
+      "name": "Bob Montgomery",
+      "image": "./images/011.webp"
+    },
+    {
+      "name": "Bobby Chacon",
+      "image": "./images/012.webp"
+    },
+    {
+      "name": "Brian Mitchell",
+      "image": "./images/013.webp"
+    },
+    {
+      "name": "Carlos Monzon",
+      "image": "./images/014.webp"
+    },
+    {
+      "name": "Carmen Basilio",
+      "image": "./images/015.webp"
+    },
+    {
+      "name": "Charley Burley",
+      "image": "./images/016.webp"
+    },
+    {
+      "name": "Curtis Cokes",
+      "image": "./images/017.webp"
+    },
+    {
+      "name": "Danny Lopez",
+      "image": "./images/018.webp"
+    },
+    {
+      "name": "Donald Curry",
+      "image": "./images/019.webp"
+    },
+    {
+      "name": "Duilio Loi",
+      "image": "./images/020.webp"
+    },
+    {
+      "name": "Eder Jofre",
+      "image": "./images/021.webp"
+    },
+    {
+      "name": "Emile Griffith",
+      "image": "./images/022.webp"
+    },
+    {
+      "name": "Erik Morales",
+      "image": "./images/023.webp"
+    },
+    {
+      "name": "Evander Holifield",
+      "image": "./images/024.webp"
+    },
+    {
+      "name": "Ezzard Charles",
+      "image": "./images/025.webp"
+    },
+    {
+      "name": "Floyd Mayweather",
+      "image": "./images/026.webp"
+    },
+    {
+      "name": "Fred Apostoli",
+      "image": "./images/027.webp"
+    },
+    {
+      "name": "Gabriel Flash Elorde",
+      "image": "./images/028.webp"
+    },
+    {
+      "name": "Gene Fullmer",
+      "image": "./images/029.webp"
+    },
+    {
+      "name": "George Foreman",
+      "image": "./images/030.webp"
+    },
+    {
+      "name": "Harold Johnson",
+      "image": "./images/031.webp"
+    },
+    {
+      "name": "Hector Camacho",
+      "image": "./images/032.webp"
+    },
+    {
+      "name": "Henry Armstrong",
+      "image": "./images/033.webp"
+    },
+    {
+      "name": "Herbert Lewis Hardwick",
+      "image": "./images/034.webp"
+    },
+    {
+      "name": "Humberto Gonzalez",
+      "image": "./images/035.webp"
+    },
+    {
+      "name": "Ingemar Johansson",
+      "image": "./images/036.webp"
+    },
+    {
+      "name": "Ismael Laguna",
+      "image": "./images/037.webp"
+    },
+    {
+      "name": "Jackie Kid Berg",
+      "image": "./images/038.webp"
+    },
+    {
+      "name": "Jake Lamotta",
+      "image": "./images/039.webp"
+    },
+    {
+      "name": "James Buddy Mcgirt",
+      "image": "./images/040.webp"
+    },
+    {
+      "name": "Jeff Chandler",
+      "image": "./images/041.webp"
+    },
+    {
+      "name": "Jeff Fenech",
+      "image": "./images/042.webp"
+    },
+    {
+      "name": "Jimmy Bivins",
+      "image": "./images/043.webp"
+    },
+    {
+      "name": "Jimmy Carter",
+      "image": "./images/044.webp"
+    },
+    {
+      "name": "Joe Brown",
+      "image": "./images/045.webp"
+    },
+    {
+      "name": "Joe Calzaghe",
+      "image": "./images/046.webp"
+    },
+    {
+      "name": "Joe Fraizer",
+      "image": "./images/047.webp"
+    },
+    {
+      "name": "Joe Louis",
+      "image": "./images/048.webp"
+    },
+    {
+      "name": "Joey Giardello",
+      "image": "./images/049.webp"
+    },
+    {
+      "name": "Joey Maxim",
+      "image": "./images/050.webp"
+    },
+    {
+      "name": "Juan Manuel Marquez",
+      "image": "./images/051.webp"
+    },
+    {
+      "name": "Julian Jackson",
+      "image": "./images/052.webp"
+    },
+    {
+      "name": "Julio Cesar Chavez",
+      "image": "./images/053.webp"
+    },
+    {
+      "name": "Jung Koo Chang",
+      "image": "./images/054.webp"
+    },
+    {
+      "name": "Ken Buchanan",
+      "image": "./images/055.webp"
+    },
+    {
+      "name": "Khaosai Galaxy",
+      "image": "./images/056.webp"
+    },
+    {
+      "name": "Kid Gavilan",
+      "image": "./images/057.webp"
+    },
+    {
+      "name": "Larry Holmes",
+      "image": "./images/058.webp"
+    },
+    {
+      "name": "Lennox Lewis",
+      "image": "./images/059.webp"
+    },
+    {
+      "name": "Lew Jenkins",
+      "image": "./images/060.webp"
+    },
+    {
+      "name": "Llyod Marshall",
+      "image": "./images/061.webp"
+    },
+    {
+      "name": "Manny Pacquiao",
+      "image": "./images/062.webp"
+    },
+    {
+      "name": "Marcel Cerdan",
+      "image": "./images/063.webp"
+    },
+    {
+      "name": "Marco Antonio Barrera",
+      "image": "./images/064.webp"
+    },
+    {
+      "name": "Marevlous Marvin Hagler",
+      "image": "./images/065.webp"
+    },
+    {
+      "name": "Mark Johnson",
+      "image": "./images/066.webp"
+    },
+    {
+      "name": "Masahiko Fighting Harada",
+      "image": "./images/067.webp"
+    },
+    {
+      "name": "Michael Carbajal",
+      "image": "./images/068.webp"
+    },
+    {
+      "name": "Miguel Canto",
+      "image": "./images/069.webp"
+    },
+    {
+      "name": "Miguel Cotto",
+      "image": "./images/070.webp"
+    },
+    {
+      "name": "Mike Mccallum",
+      "image": "./images/071.webp"
+    },
+    {
+      "name": "Mike Tyson",
+      "image": "./images/072.webp"
+    },
+    {
+      "name": "Muhammad Ali",
+      "image": "./images/073.webp"
+    },
+    {
+      "name": "Naseem Hamed",
+      "image": "./images/074.webp"
+    },
+    {
+      "name": "Nicolino Locche",
+      "image": "./images/075.webp"
+    },
+    {
+      "name": "Nino Benvenuti 3",
+      "image": "./images/076.webp"
+    },
+    {
+      "name": "Nino Benvenuti",
+      "image": "./images/077.webp"
+    },
+    {
+      "name": "Orlando Canizales",
+      "image": "./images/078.webp"
+    },
+    {
+      "name": "Oscar Dela Hoya",
+      "image": "./images/079.webp"
+    },
+    {
+      "name": "Pipino Cuevas",
+      "image": "./images/080.webp"
+    },
+    {
+      "name": "Ray Mancini",
+      "image": "./images/081.webp"
+    },
+    {
+      "name": "Ricardo Finito Lopez",
+      "image": "./images/082.webp"
+    },
+    {
+      "name": "Riddick Bowe",
+      "image": "./images/083.webp"
+    },
+    {
+      "name": "Roberto Duran",
+      "image": "./images/084.webp"
+    },
+    {
+      "name": "Rocky Graziano",
+      "image": "./images/085.webp"
+    },
+    {
+      "name": "Rocky Marciano",
+      "image": "./images/086.webp"
+    },
+    {
+      "name": "Roy Jones Jr",
+      "image": "./images/087.webp"
+    },
+    {
+      "name": "Sammy Angott",
+      "image": "./images/088.webp"
+    },
+    {
+      "name": "Sonny Liston",
+      "image": "./images/089.webp"
+    },
+    {
+      "name": "Sugar Ray Leonard",
+      "image": "./images/090.webp"
+    },
+    {
+      "name": "Thomas Hearns",
+      "image": "./images/091.webp"
+    },
+    {
+      "name": "Victor Galindez",
+      "image": "./images/092.webp"
+    },
+    {
+      "name": "Virgil Hill",
+      "image": "./images/093.webp"
+    },
+    {
+      "name": "Vitali Klitshcko",
+      "image": "./images/094.webp"
+    },
+    {
+      "name": "Wildredo Gomez",
+      "image": "./images/095.webp"
+    },
+    {
+      "name": "Wilfred Benitez",
+      "image": "./images/096.webp"
+    },
+    {
+      "name": "Wladimir Klitschko",
+      "image": "./images/097.webp"
+    }
+  ]
+}

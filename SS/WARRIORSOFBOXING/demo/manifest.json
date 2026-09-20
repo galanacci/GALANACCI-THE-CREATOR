@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "name": "Muhammad Ali",
+      "image": "./images/muhammad-ali.svg"
+    },
+    {
+      "name": "Joe Frazier",
+      "image": "./images/joe-frazier.svg"
+    },
+    {
+      "name": "Mike Tyson",
+      "image": "./images/mike-tyson.svg"
+    }
+  ]
+}

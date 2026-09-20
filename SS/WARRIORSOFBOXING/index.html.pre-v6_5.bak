@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>WARRIORSOFBOXING.EXE</title>
+  <link rel="stylesheet" href="./styles.css?v=topname-v6-4">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="app-title">WARRIORSOFBOXING.EXE</div>
+      <button class="app-close" type="button" aria-label="Close viewer">×</button>
+    </header>
+
+    <main class="app-main" id="appMain">
+      <canvas id="viewer" aria-label="Morphing portrait viewer"></canvas>
+      <div class="hud hud--name" aria-live="polite">
+        <span id="fighterName">LOADING…</span>
+      </div>
+    </main>
+  </div>
+
+  <script src="./app.js?v=topname-v6-4"></script>
+</body>
+</html>

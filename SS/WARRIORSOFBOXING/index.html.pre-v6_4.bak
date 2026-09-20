@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>WARRIORSOFBOXING.EXE</title>
+  <link rel="stylesheet" href="./styles.css?v=20260920-drag-v4">
+</head>
+<body>
+  <main id="appMain" class="app-main" aria-label="WARRIORSOFBOXING portrait viewer">
+    <canvas id="viewer" aria-label="Drag horizontally to move through the boxing portraits"></canvas>
+
+    <div class="hud hud--name" aria-live="polite">
+      <span id="fighterNameCurrent" class="fighter-name fighter-name--current">LOADING…</span>
+      <span id="fighterNameNext" class="fighter-name fighter-name--next"></span>
+    </div>
+
+    <div class="hud hud--count">
+      <span id="fighterCount">000 / 000</span>
+    </div>
+  </main>
+
+  <script src="./app.js?v=shiftup-v6-3-1"></script>
+</body>
+</html>

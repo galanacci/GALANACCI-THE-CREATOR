@@ -1,0 +1,317 @@
+{
+  "version": 1,
+  "count": 9,
+  "artworks": [
+    {
+      "id": "001",
+      "title": "210828",
+      "year": 2021,
+      "source": "210828.jpg",
+      "source_width": 2480,
+      "source_height": 3508,
+      "width": 2480,
+      "height": 3508,
+      "overview": "./overview/001.webp",
+      "tiles": "./tiles/001",
+      "tile_size": 512,
+      "levels": [
+        {
+          "id": "L0",
+          "scale": 0.5,
+          "width": 1240,
+          "height": 1754,
+          "cols": 3,
+          "rows": 4
+        },
+        {
+          "id": "L1",
+          "scale": 1.0,
+          "width": 2480,
+          "height": 3508,
+          "cols": 5,
+          "rows": 7
+        }
+      ]
+    },
+    {
+      "id": "002",
+      "title": "210905",
+      "year": 2021,
+      "source": "210905.jpg",
+      "source_width": 2480,
+      "source_height": 3508,
+      "width": 2480,
+      "height": 3508,
+      "overview": "./overview/002.webp",
+      "tiles": "./tiles/002",
+      "tile_size": 512,
+      "levels": [
+        {
+          "id": "L0",
+          "scale": 0.5,
+          "width": 1240,
+          "height": 1754,
+          "cols": 3,
+          "rows": 4
+        },
+        {
+          "id": "L1",
+          "scale": 1.0,
+          "width": 2480,
+          "height": 3508,
+          "cols": 5,
+          "rows": 7
+        }
+      ]
+    },
+    {
+      "id": "003",
+      "title": "210908",
+      "year": 2021,
+      "source": "210908.jpg",
+      "source_width": 2480,
+      "source_height": 3508,
+      "width": 2480,
+      "height": 3508,
+      "overview": "./overview/003.webp",
+      "tiles": "./tiles/003",
+      "tile_size": 512,
+      "levels": [
+        {
+          "id": "L0",
+          "scale": 0.5,
+          "width": 1240,
+          "height": 1754,
+          "cols": 3,
+          "rows": 4
+        },
+        {
+          "id": "L1",
+          "scale": 1.0,
+          "width": 2480,
+          "height": 3508,
+          "cols": 5,
+          "rows": 7
+        }
+      ]
+    },
+    {
+      "id": "004",
+      "title": "210917",
+      "year": 2021,
+      "source": "210917.jpg",
+      "source_width": 2480,
+      "source_height": 3508,
+      "width": 2480,
+      "height": 3508,
+      "overview": "./overview/004.webp",
+      "tiles": "./tiles/004",
+      "tile_size": 512,
+      "levels": [
+        {
+          "id": "L0",
+          "scale": 0.5,
+          "width": 1240,
+          "height": 1754,
+          "cols": 3,
+          "rows": 4
+        },
+        {
+          "id": "L1",
+          "scale": 1.0,
+          "width": 2480,
+          "height": 3508,
+          "cols": 5,
+          "rows": 7
+        }
+      ]
+    },
+    {
+      "id": "005",
+      "title": "210925",
+      "year": 2021,
+      "source": "210925.jpg",
+      "source_width": 2480,
+      "source_height": 3508,
+      "width": 2480,
+      "height": 3508,
+      "overview": "./overview/005.webp",
+      "tiles": "./tiles/005",
+      "tile_size": 512,
+      "levels": [
+        {
+          "id": "L0",
+          "scale": 0.5,
+          "width": 1240,
+          "height": 1754,
+          "cols": 3,
+          "rows": 4
+        },
+        {
+          "id": "L1",
+          "scale": 1.0,
+          "width": 2480,
+          "height": 3508,
+          "cols": 5,
+          "rows": 7
+        }
+      ]
+    },
+    {
+      "id": "006",
+      "title": "211101",
+      "year": 2021,
+      "source": "211101.jpg",
+      "source_width": 4016,
+      "source_height": 5315,
+      "width": 4016,
+      "height": 5315,
+      "overview": "./overview/006.webp",
+      "tiles": "./tiles/006",
+      "tile_size": 512,
+      "levels": [
+        {
+          "id": "L0",
+          "scale": 0.25,
+          "width": 1004,
+          "height": 1329,
+          "cols": 2,
+          "rows": 3
+        },
+        {
+          "id": "L1",
+          "scale": 0.5,
+          "width": 2008,
+          "height": 2658,
+          "cols": 4,
+          "rows": 6
+        },
+        {
+          "id": "L2",
+          "scale": 1.0,
+          "width": 4016,
+          "height": 5315,
+          "cols": 8,
+          "rows": 11
+        }
+      ]
+    },
+    {
+      "id": "007",
+      "title": "ELON_MUSK",
+      "year": 2021,
+      "source": "ELON_MUSK.jpg",
+      "source_width": 4016,
+      "source_height": 5315,
+      "width": 4016,
+      "height": 5315,
+      "overview": "./overview/007.webp",
+      "tiles": "./tiles/007",
+      "tile_size": 512,
+      "levels": [
+        {
+          "id": "L0",
+          "scale": 0.25,
+          "width": 1004,
+          "height": 1329,
+          "cols": 2,
+          "rows": 3
+        },
+        {
+          "id": "L1",
+          "scale": 0.5,
+          "width": 2008,
+          "height": 2658,
+          "cols": 4,
+          "rows": 6
+        },
+        {
+          "id": "L2",
+          "scale": 1.0,
+          "width": 4016,
+          "height": 5315,
+          "cols": 8,
+          "rows": 11
+        }
+      ]
+    },
+    {
+      "id": "008",
+      "title": "SAMUEL_ROSS",
+      "year": 2021,
+      "source": "SAMUEL_ROSS.jpg",
+      "source_width": 4016,
+      "source_height": 5315,
+      "width": 4016,
+      "height": 5315,
+      "overview": "./overview/008.webp",
+      "tiles": "./tiles/008",
+      "tile_size": 512,
+      "levels": [
+        {
+          "id": "L0",
+          "scale": 0.25,
+          "width": 1004,
+          "height": 1329,
+          "cols": 2,
+          "rows": 3
+        },
+        {
+          "id": "L1",
+          "scale": 0.5,
+          "width": 2008,
+          "height": 2658,
+          "cols": 4,
+          "rows": 6
+        },
+        {
+          "id": "L2",
+          "scale": 1.0,
+          "width": 4016,
+          "height": 5315,
+          "cols": 8,
+          "rows": 11
+        }
+      ]
+    },
+    {
+      "id": "009",
+      "title": "TUPAC_SHAKUR",
+      "year": 2021,
+      "source": "TUPAC_SHAKUR.jpg",
+      "source_width": 4016,
+      "source_height": 5315,
+      "width": 4016,
+      "height": 5315,
+      "overview": "./overview/009.webp",
+      "tiles": "./tiles/009",
+      "tile_size": 512,
+      "levels": [
+        {
+          "id": "L0",
+          "scale": 0.25,
+          "width": 1004,
+          "height": 1329,
+          "cols": 2,
+          "rows": 3
+        },
+        {
+          "id": "L1",
+          "scale": 0.5,
+          "width": 2008,
+          "height": 2658,
+          "cols": 4,
+          "rows": 6
+        },
+        {
+          "id": "L2",
+          "scale": 1.0,
+          "width": 4016,
+          "height": 5315,
+          "cols": 8,
+          "rows": 11
+        }
+      ]
+    }
+  ]
+}

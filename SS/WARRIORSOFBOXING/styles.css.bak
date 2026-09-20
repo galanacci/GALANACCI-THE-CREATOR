@@ -1,0 +1,109 @@
+:root {
+  --chrome: #dcc8ab;
+  --chrome-line: #111;
+  --paper: #f6f3ee;
+  --ink: #111;
+  --hud: rgba(17,17,17,.78);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Times New Roman", Georgia, serif;
+}
+
+button, canvas { touch-action: none; }
+
+.app-shell {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 42px 1fr;
+  background: var(--paper);
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  background: var(--chrome);
+  border-bottom: 1px solid var(--chrome-line);
+  user-select: none;
+}
+
+.app-title {
+  font-size: 18px;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+}
+
+.app-close {
+  border: 0;
+  background: transparent;
+  color: #111;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0 2px;
+}
+
+.app-main {
+  position: relative;
+  min-height: 0;
+  background: var(--paper);
+}
+
+#viewer {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: var(--paper);
+}
+
+.hud {
+  position: absolute;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: 10;
+  background: rgba(246,243,238,.82);
+  border: 1px solid rgba(17,17,17,.15);
+  padding: 10px 14px 8px;
+  backdrop-filter: blur(6px);
+}
+
+.hud--name {
+  left: 18px;
+  max-width: calc(100% - 140px);
+}
+.hud--count {
+  right: 18px;
+}
+
+#fighterName {
+  display: block;
+  font-size: clamp(14px, 1.8vw, 24px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+#fighterCount {
+  display: block;
+  font-size: clamp(12px, 1.3vw, 18px);
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .app-shell { grid-template-rows: 48px 1fr; }
+  .app-title { font-size: 16px; }
+  .hud {
+    padding: 8px 10px 6px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  .hud--name { left: 10px; max-width: calc(100% - 112px); }
+  .hud--count { right: 10px; }
+}

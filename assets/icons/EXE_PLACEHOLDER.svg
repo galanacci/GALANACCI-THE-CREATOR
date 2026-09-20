@@ -1,0 +1,16 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+  <path
+    d="M6.5 3.5h12.8L25.5 9.7v18.8h-19z"
+    fill="none"
+    stroke="#111111"
+    stroke-width="2.4"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M19.3 3.5v6.2h6.2"
+    fill="none"
+    stroke="#111111"
+    stroke-width="2.4"
+    stroke-linejoin="round"
+  />
+</svg>

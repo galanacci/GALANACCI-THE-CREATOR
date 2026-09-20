@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <title>BLACKBOOK.EXE</title>
+  <link rel="stylesheet" href="./flipbook.css?v=10">
+</head>
+<body>
+  <main id="flipbook" class="flipbook" aria-label="GALANACCI drawing archive">
+    <div id="book-stage" class="book-stage">
+      <div class="page page--under" aria-hidden="true">
+        <img id="under-image" alt="">
+      </div>
+
+      <div id="current-page" class="page page--current">
+        <img id="current-image" alt="">
+        <div class="page__spine-shadow" aria-hidden="true"></div>
+      </div>
+
+      <canvas id="page-curl" class="page-curl" aria-hidden="true"></canvas>
+
+      <section id="scrubber" class="scrubber" aria-label="Archive navigation">
+        <input
+          id="page-slider"
+          class="scrubber__range"
+          type="range"
+          min="1"
+          max="1"
+          value="1"
+          step="1"
+          aria-label="Browse drawings"
+        >
+        <div class="scrubber__meta" aria-live="polite">
+          <span id="page-current">001</span>
+          <span class="scrubber__divider">/</span>
+          <span id="page-total">001</span>
+        </div>
+      </section>
+    </div>
+
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+  </main>
+
+  <script type="module" src="./flipbook.js?v=10"></script>
+</body>
+</html>

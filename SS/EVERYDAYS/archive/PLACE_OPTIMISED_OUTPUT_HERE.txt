@@ -1,0 +1,2 @@
+Copy the CONTENTS of EVERYDAYS_IMAGE_OPTIMISER/output/ into this archive folder.
+Expected: everydays.json, grid/, preview/

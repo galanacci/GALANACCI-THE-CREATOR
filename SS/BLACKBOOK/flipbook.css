@@ -1,0 +1,283 @@
+:root {
+  --bg: #ffffff;
+  --paper: #ffffff;
+  --ink: #000000;
+  --line: rgba(0, 0, 0, .22);
+  --turn-complete-ms: 420ms;
+  --turn-return-ms: 300ms;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  overscroll-behavior: none;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+input {
+  font: inherit;
+}
+
+.flipbook,
+.book-stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.book-stage {
+  cursor: grab;
+  touch-action: none;
+}
+
+.book-stage.is-dragging {
+  cursor: grabbing;
+}
+
+.page {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.page img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  background: var(--paper);
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.page--under {
+  z-index: 1;
+}
+
+.page--current {
+  z-index: 2;
+}
+
+.page--current.is-hidden-during-turn {
+  visibility: hidden;
+}
+
+.page__spine-shadow {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: min(5.5vw, 64px);
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, .105) 0%,
+      rgba(0, 0, 0, .052) 26%,
+      rgba(0, 0, 0, .016) 56%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  mix-blend-mode: multiply;
+}
+
+.page-curl {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: none;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.page-curl.is-active {
+  display: block;
+}
+
+.scrubber {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  min-height: 34px;
+  color: var(--ink);
+  opacity: .82;
+  transition: opacity 140ms ease;
+}
+
+.scrubber:hover,
+.scrubber:focus-within,
+.scrubber.is-scrubbing {
+  opacity: 1;
+}
+
+.scrubber__range {
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: ew-resize;
+  touch-action: pan-x;
+}
+
+.scrubber__range::-webkit-slider-runnable-track {
+  height: 1px;
+  background: var(--line);
+}
+
+.scrubber__range::-moz-range-track {
+  height: 1px;
+  background: var(--line);
+}
+
+.scrubber__range::-webkit-slider-thumb {
+  width: 11px;
+  height: 11px;
+  margin-top: -5px;
+  border: 0;
+  border-radius: 50%;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--ink);
+}
+
+.scrubber__range::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.scrubber__meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  min-width: 78px;
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .11em;
+  font-variant-numeric: tabular-nums;
+}
+
+.scrubber__divider {
+  opacity: .42;
+}
+
+.status {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 40;
+  width: min(520px, calc(100vw - 44px));
+  transform: translate(-50%, -50%);
+  color: var(--ink);
+  font-size: 10px;
+  line-height: 1.6;
+  text-align: center;
+  letter-spacing: .08em;
+  pointer-events: none;
+}
+
+@media (max-width: 680px), (hover: none), (pointer: coarse) {
+  /*
+    MOBILE EDGE-GESTURE SAFE ZONE
+
+    iOS / mobile browsers reserve the extreme left and right screen edges for
+    browser navigation gestures. The archive scrubber deliberately sits inward
+    from those edges so dragging the BLACKBOOK timeline does not begin inside
+    the browser's back/forward gesture zone.
+
+    env(safe-area-inset-*) also protects devices with display cutouts.
+  */
+  .scrubber {
+    left: max(36px, calc(env(safe-area-inset-left) + 24px));
+    right: max(36px, calc(env(safe-area-inset-right) + 24px));
+    gap: 12px;
+  }
+
+  .scrubber__range {
+    touch-action: none;
+  }
+
+  .scrubber__meta {
+    min-width: 64px;
+    font-size: 8px;
+  }
+
+  .page__spine-shadow {
+    width: min(9vw, 48px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --turn-complete-ms: 1ms;
+    --turn-return-ms: 1ms;
+  }
+}
+
+
+/* V6 — smooth GPU page-curl layer */
+.page-curl {
+  contain: strict;
+  transform: translateZ(0);
+  will-change: contents;
+  image-rendering: auto;
+}
+
+.book-stage.is-dragging .page-curl {
+  pointer-events: none;
+}
+
+/*
+  During a forward turn the static <img> is replaced by the GPU texture.
+  For a reverse turn the current page stays visible underneath while the
+  previous sheet unfolds back over it.
+*/
+.page--current.is-hidden-during-turn {
+  visibility: hidden;
+}
+
+
+/* V8 — transparent outside the curled page so the next page shows through */
+.page-curl {
+  background: transparent;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+
+/* V9 — the old page leaves through geometry, not a hide/fade transition. */
+.page-curl,
+.page--current {
+  transition: none;
+}
