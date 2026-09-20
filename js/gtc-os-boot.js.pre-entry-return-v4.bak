@@ -1,0 +1,111 @@
+(() => {
+  "use strict";
+
+  const RETURN_KEY = "gtc:pog-return-pending";
+  const boot = document.getElementById("gtc-os-boot");
+  const BOOT_DURATION_MS = 3700;
+
+  function isPogReferrer() {
+    if (!document.referrer) return false;
+
+    try {
+      const host = new URL(document.referrer).hostname.toLowerCase();
+
+      return (
+        host === "pioneersofgreatness.com" ||
+        host.endsWith(".pioneersofgreatness.com")
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  function isReturningFromPog() {
+    if (
+      document.documentElement.classList.contains("gtc-return-from-pog")
+    ) {
+      return true;
+    }
+
+    try {
+      if (sessionStorage.getItem(RETURN_KEY) === "1") {
+        return true;
+      }
+    } catch {}
+
+    try {
+      if (
+        new URLSearchParams(window.location.search).get("return") === "pog"
+      ) {
+        return true;
+      }
+    } catch {}
+
+    return isPogReferrer();
+  }
+
+  function clearReturnMarker() {
+    try {
+      sessionStorage.removeItem(RETURN_KEY);
+    } catch {}
+
+    try {
+      const url = new URL(window.location.href);
+
+      if (url.searchParams.get("return") === "pog") {
+        url.searchParams.delete("return");
+
+        const cleanUrl =
+          url.pathname +
+          (url.searchParams.toString()
+            ? `?${url.searchParams.toString()}`
+            : "") +
+          url.hash;
+
+        history.replaceState(
+          history.state,
+          "",
+          cleanUrl || "/"
+        );
+      }
+    } catch {}
+  }
+
+  function returnDirectlyToDesktop() {
+    /*
+      PoG.EXE is an external GALANACCI application.
+      EXIT means "close app", not "restart operating system".
+    */
+    document.documentElement.classList.add("gtc-return-from-pog");
+    document.body.classList.remove("gtc-os-boot-active");
+
+    boot?.remove();
+
+    /*
+      WELCOME is only for the OS entry sequence.
+      Keep it suppressed for this returned desktop document.
+    */
+    const notice = document.getElementById("portfolio-notice-layer");
+
+    if (notice) {
+      notice.hidden = true;
+      notice.setAttribute("aria-hidden", "true");
+    }
+
+    clearReturnMarker();
+  }
+
+  function completeBoot() {
+    if (!boot) return;
+
+    document.body.classList.remove("gtc-os-boot-active");
+    boot.remove();
+  }
+
+  if (isReturningFromPog()) {
+    returnDirectlyToDesktop();
+    return;
+  }
+
+  window.setTimeout(completeBoot, BOOT_DURATION_MS);
+})();

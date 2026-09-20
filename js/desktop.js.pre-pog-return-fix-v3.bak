@@ -324,16 +324,6 @@ async function launchShortcut(shortcut, app) {
   }
 
   await new Promise((resolve) => window.setTimeout(resolve, LAUNCH_DELAY));
-  /* GTC POG RETURN MARKER V3 START */
-  if (app.id === "pog-exe") {
-    try {
-      sessionStorage.setItem("gtc:pog-return-pending", "1");
-    } catch {
-      /* Boot return also has URL/referrer fallbacks. */
-    }
-  }
-  /* GTC POG RETURN MARKER V3 END */
-
   window.location.href = app.url;
 }
 

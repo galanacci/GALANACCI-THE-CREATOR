@@ -1,28 +1,10 @@
-/* GTC ENTRY RETURN V4.1 START */
-html.gtc-entry-from-pog .gtc-os-boot {
-  display: none !important;
-}
-
-html.gtc-entry-from-pog .portfolio-notice-layer {
-  display: none !important;
-}
-/* GTC ENTRY RETURN V4.1 END */
-/* GTC POG RETURN FIX V3 START */
-html.gtc-return-from-pog .gtc-os-boot {
-  display: none !important;
-}
-
-html.gtc-return-from-pog .portfolio-notice-layer {
-  display: none !important;
-}
-/* GTC POG RETURN FIX V3 END */
 /* ================================================================
-   GALANACCI OS ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â BOOT SCALE RATIO V3.2
+   GALANACCI OS â€” BOOT SCALE RATIO V3.2
 
    Presentation order remains:
    1. Logo
    2. GALANACCI OS
-   3. WORLD BUILDING ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ EXPERIMENTS ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢ ARCHIVES
+   3. WORLD BUILDING â€¢ EXPERIMENTS â€¢ ARCHIVES
    4. Loading bar
 
    Visual hierarchy target:
@@ -76,7 +58,7 @@ body.gtc-os-boot-active .portfolio-notice-layer {
 }
 
 /* ================================================================
-   LOGO ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â 80% VISUAL SCALE
+   LOGO â€” 80% VISUAL SCALE
    Dominates the composition.
    ================================================================ */
 
@@ -94,7 +76,7 @@ body.gtc-os-boot-active .portfolio-notice-layer {
 }
 
 /* ================================================================
-   GALANACCI OS ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â 10% VISUAL SCALE
+   GALANACCI OS â€” 10% VISUAL SCALE
    Supporting system label only.
    ================================================================ */
 
@@ -124,7 +106,7 @@ body.gtc-os-boot-active .portfolio-notice-layer {
 }
 
 /* ================================================================
-   WORLD BUILDING... ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â 25% VISUAL SCALE
+   WORLD BUILDING... â€” 25% VISUAL SCALE
    Clearly stronger than the OS identity, but secondary to logo.
    ================================================================ */
 

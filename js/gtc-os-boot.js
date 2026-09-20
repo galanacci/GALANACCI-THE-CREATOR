@@ -4,19 +4,66 @@
   const boot = document.getElementById("gtc-os-boot");
   const BOOT_DURATION_MS = 3700;
 
-  function completeBoot() {
-    if (!boot) return;
-
-    /* Hard cut. No fade / scaling transition. */
-    document.body.classList.remove("gtc-os-boot-active");
-    boot.remove();
-
-    /*
-      The existing "You are now using GALANACCI OS 26"
-      notification is already initialised underneath and appears
-      immediately after the boot screen is removed.
-    */
+  function enteredFromPog() {
+    try {
+      return (
+        new URLSearchParams(window.location.search).get("entry") === "pog"
+      );
+    } catch {
+      return false;
+    }
   }
 
-  window.setTimeout(completeBoot, BOOT_DURATION_MS);
+  function cleanPogEntryUrl() {
+    try {
+      const url = new URL(window.location.href);
+
+      if (url.searchParams.get("entry") !== "pog") return;
+
+      url.searchParams.delete("entry");
+
+      const cleanUrl =
+        url.pathname +
+        (url.searchParams.toString()
+          ? `?${url.searchParams.toString()}`
+          : "") +
+        url.hash;
+
+      window.history.replaceState(
+        window.history.state,
+        "",
+        cleanUrl || "/"
+      );
+    } catch {}
+  }
+
+  function bypassBootForPogExit() {
+    document.documentElement.classList.add("gtc-entry-from-pog");
+    document.body.classList.remove("gtc-os-boot-active");
+
+    boot?.remove();
+
+    const notice = document.getElementById("portfolio-notice-layer");
+
+    if (notice) {
+      notice.hidden = true;
+      notice.setAttribute("aria-hidden", "true");
+    }
+
+    cleanPogEntryUrl();
+  }
+
+  function completeNormalBoot() {
+    if (!boot) return;
+
+    document.body.classList.remove("gtc-os-boot-active");
+    boot.remove();
+  }
+
+  if (enteredFromPog()) {
+    bypassBootForPogExit();
+    return;
+  }
+
+  window.setTimeout(completeNormalBoot, BOOT_DURATION_MS);
 })();

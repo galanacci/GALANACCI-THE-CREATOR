@@ -1,0 +1,105 @@
+(() => {
+  "use strict";
+
+  const KEY = "gtc:pog-return-pending";
+  const boot = document.getElementById("gtc-os-boot");
+  const BOOT_DURATION_MS = 3700;
+
+  function isPogReferrer() {
+    if (!document.referrer) return false;
+
+    try {
+      const host = new URL(document.referrer).hostname.toLowerCase();
+
+      return (
+        host === "pioneersofgreatness.com" ||
+        host.endsWith(".pioneersofgreatness.com")
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  function hasPendingPogReturn() {
+    if (
+      document.documentElement.classList.contains("gtc-return-from-pog")
+    ) {
+      return true;
+    }
+
+    try {
+      if (
+        new URLSearchParams(window.location.search).get("return") === "pog"
+      ) {
+        return true;
+      }
+    } catch {}
+
+    try {
+      if (sessionStorage.getItem(KEY) === "1") {
+        return true;
+      }
+    } catch {}
+
+    return isPogReferrer();
+  }
+
+  function clearReturnState() {
+    try {
+      sessionStorage.removeItem(KEY);
+    } catch {}
+
+    try {
+      const url = new URL(window.location.href);
+
+      if (url.searchParams.get("return") === "pog") {
+        url.searchParams.delete("return");
+
+        const clean =
+          url.pathname +
+          (url.searchParams.toString()
+            ? `?${url.searchParams.toString()}`
+            : "") +
+          url.hash;
+
+        window.history.replaceState(
+          window.history.state,
+          "",
+          clean || "/"
+        );
+      }
+    } catch {}
+  }
+
+  function skipBoot() {
+    /*
+      Returning from PoG is equivalent to closing an external .EXE.
+      The OS is already running, so do not boot it again.
+    */
+    document.body.classList.remove("gtc-os-boot-active");
+    boot?.remove();
+
+    /*
+      WELCOME is an initial OS-entry dialog, not an app-close dialog.
+      CSS keeps it suppressed even if gtc-ui-enhancements initialises
+      the notice after this script executes.
+    */
+    document.documentElement.classList.add("gtc-return-from-pog");
+
+    clearReturnState();
+  }
+
+  function completeNormalBoot() {
+    if (!boot) return;
+
+    document.body.classList.remove("gtc-os-boot-active");
+    boot.remove();
+  }
+
+  if (hasPendingPogReturn()) {
+    skipBoot();
+    return;
+  }
+
+  window.setTimeout(completeNormalBoot, BOOT_DURATION_MS);
+})();
