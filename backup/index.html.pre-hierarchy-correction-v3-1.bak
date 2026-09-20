@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#000000">
-  <meta name="description" content="GALANACCI THE CREATOR ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â archive, experiments, brands and worlds.">
+  <meta name="description" content="GALANACCI THE CREATOR ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â archive, experiments, brands and worlds.">
   <title>GALANACCI THE CREATOR</title>
 
   <link rel="stylesheet" href="style.css?v=legacy-mobile-v6-6">
@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=ui-favicon-v2">
-  <link rel="stylesheet" href="styles/gtc-os-boot.css?v=production-boot-v3-2">
+  <link rel="stylesheet" href="styles/gtc-os-boot.css?v=production-boot-v3">
 </head>
 
 <body class="gtc-os-boot-active">
@@ -31,13 +31,13 @@
         draggable="false"
       >
 
+      <div class="gtc-os-boot__meta">
+        WORLD BUILDING &bull; EXPERIMENTS &bull; ARCHIVES
+      </div>
+
       <div class="gtc-os-boot__identity">
         <div class="gtc-os-boot__title">GALANACCI</div>
         <div class="gtc-os-boot__os">OS</div>
-      </div>
-
-      <div class="gtc-os-boot__meta">
-        WORLD BUILDING &bull; EXPERIMENTS &bull; ARCHIVES
       </div>
 
     </div>
@@ -236,7 +236,7 @@
       aria-describedby="portfolio-notice-copy"
     >
       <header class="folder-window__chrome portfolio-notice__chrome">
-        <span id="portfolio-notice-title">WELCOME!</span>
+        <span id="portfolio-notice-title">NOTE</span>
 
         <button
           type="button"

@@ -1,0 +1,82 @@
+(() => {
+  "use strict";
+
+  const boot = document.getElementById("gtc-os-boot");
+  const BOOT_DURATION_MS = 3700;
+
+  function buildPixelMark() {
+    if (!boot) return;
+
+    const brand = boot.querySelector(".gtc-os-boot__brand");
+    if (!brand) return;
+
+    const existingWrap = boot.querySelector(".gtc-os-boot__mark-wrap");
+    if (existingWrap) return;
+
+    const existingMark = boot.querySelector(".gtc-os-boot__mark");
+
+    const wrap = document.createElement("div");
+    wrap.className = "gtc-os-boot__mark-wrap";
+    wrap.setAttribute("aria-hidden", "true");
+
+    const canvas = document.createElement("canvas");
+    canvas.className = "gtc-os-boot__mark-canvas";
+    canvas.width = 160;
+    canvas.height = 160;
+
+    const badge = document.createElement("span");
+    badge.className = "gtc-os-boot__mark-os";
+    badge.textContent = "OS";
+
+    wrap.appendChild(canvas);
+    wrap.appendChild(badge);
+
+    if (existingMark) {
+      existingMark.replaceWith(wrap);
+    } else {
+      brand.insertBefore(wrap, brand.firstElementChild || null);
+    }
+
+    const ctx = canvas.getContext("2d", { alpha: true });
+    if (!ctx) return;
+
+    const offscreen = document.createElement("canvas");
+    offscreen.width = 18;
+    offscreen.height = 18;
+    const offCtx = offscreen.getContext("2d", { alpha: true });
+    if (!offCtx) return;
+
+    const img = new Image();
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      offCtx.clearRect(0, 0, offscreen.width, offscreen.height);
+      offCtx.imageSmoothingEnabled = false;
+      ctx.imageSmoothingEnabled = false;
+
+      offCtx.drawImage(img, 0, 0, offscreen.width, offscreen.height);
+
+      ctx.drawImage(
+        offscreen,
+        0,
+        0,
+        offscreen.width,
+        offscreen.height,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+    };
+
+    img.src = "assets/favicon.svg";
+  }
+
+  function completeBoot() {
+    if (!boot) return;
+    document.body.classList.remove("gtc-os-boot-active");
+    boot.remove();
+  }
+
+  buildPixelMark();
+  window.setTimeout(completeBoot, BOOT_DURATION_MS);
+})();

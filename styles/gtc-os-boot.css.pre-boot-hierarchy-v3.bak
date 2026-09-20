@@ -1,0 +1,250 @@
+/* ================================================================
+   GALANACCI OS â€” PRODUCTION BOOT V2
+   Structure based on GALANACCI sketch dated 20.09.26
+   ================================================================ */
+
+@font-face {
+  font-family: "Windows95";
+  src: url("../assets/fonts/w95fa.woff2") format("woff2");
+  font-display: swap;
+}
+
+body.gtc-os-boot-active .portfolio-notice-layer {
+  display: none !important;
+}
+
+.gtc-os-boot {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+
+  display: grid;
+  place-items: center;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(rgba(234, 209, 178, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(234, 209, 178, 0.06) 1px, transparent 1px),
+    #080808;
+  background-size: 16px 16px;
+
+  color: #EAD1B2;
+}
+
+.gtc-os-boot__content {
+  width: min(760px, calc(100vw - 48px));
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  transform: translateY(-3vh);
+}
+
+/* ================================================================
+   1. ENLARGED PIXELATED FAVICON
+   ================================================================ */
+
+.gtc-os-boot__mark-wrap {
+  position: relative;
+
+  width: clamp(190px, 20vw, 280px);
+  height: clamp(190px, 20vw, 280px);
+
+  display: grid;
+  place-items: center;
+
+  margin: 0 auto;
+}
+
+.gtc-os-boot__mark-source {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gtc-os-boot__mark-canvas {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* ================================================================
+   2. PIXELATED GALANACCI / OS
+   ================================================================ */
+
+.gtc-os-boot__identity {
+  margin-top: 18px;
+  text-align: center;
+
+  font-family: "Windows95", "Courier New", monospace;
+  text-transform: uppercase;
+}
+
+.gtc-os-boot__title {
+  font-size: clamp(38px, 4.3vw, 58px);
+  line-height: 0.95;
+  letter-spacing: 0.015em;
+  white-space: nowrap;
+}
+
+.gtc-os-boot__os {
+  margin-top: 8px;
+
+  font-size: clamp(15px, 1.45vw, 20px);
+  line-height: 1;
+  letter-spacing: 0.34em;
+
+  padding-left: 0.34em;
+}
+
+/* ================================================================
+   3. WORLD BUILDING / EXPERIMENTS / ARCHIVES
+   Drawn as the long rectangular information panel from the sketch.
+   ================================================================ */
+
+.gtc-os-boot__meta {
+  width: min(680px, 100%);
+  min-height: 48px;
+
+  margin-top: 42px;
+  padding: 13px 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(234, 209, 178, 0.82);
+
+  font-family: "Windows95", "Courier New", monospace;
+  font-size: clamp(12px, 1.2vw, 16px);
+  line-height: 1.35;
+  letter-spacing: 0.115em;
+
+  text-align: center;
+  white-space: nowrap;
+
+  color: #EAD1B2;
+}
+
+/* ================================================================
+   4. LOADING BAR
+   Keeps the stepped movement already approved, spanning the viewport.
+   ================================================================ */
+
+.gtc-os-boot__loading {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  width: 100%;
+  height: 12px;
+
+  border-top: 1px solid rgba(234, 209, 178, 0.18);
+
+  background: linear-gradient(
+    0.25turn,
+    transparent,
+    #EAD1B2 45% 55%,
+    transparent
+  );
+
+  animation: gtcOsBootLoading steps(16) 2s infinite;
+}
+
+@keyframes gtcOsBootLoading {
+  0%   { background-position-x: -512px; }
+  100% { background-position-x: 512px; }
+}
+
+/* Large desktop presentation */
+@media (min-width: 1500px) and (min-height: 800px) {
+  .gtc-os-boot__content {
+    width: min(820px, calc(100vw - 64px));
+  }
+
+  .gtc-os-boot__mark-wrap {
+    width: 290px;
+    height: 290px;
+  }
+
+  .gtc-os-boot__meta {
+    width: 720px;
+    min-height: 54px;
+    margin-top: 48px;
+    font-size: 16px;
+  }
+}
+
+/* Laptop / short viewport */
+@media (max-height: 720px) and (min-width: 701px) {
+  .gtc-os-boot__content {
+    transform: translateY(-1.5vh);
+  }
+
+  .gtc-os-boot__mark-wrap {
+    width: 180px;
+    height: 180px;
+  }
+
+  .gtc-os-boot__identity {
+    margin-top: 12px;
+  }
+
+  .gtc-os-boot__meta {
+    margin-top: 28px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  .gtc-os-boot__content {
+    width: calc(100vw - 30px);
+    transform: translateY(-2vh);
+  }
+
+  .gtc-os-boot__mark-wrap {
+    width: clamp(148px, 48vw, 205px);
+    height: clamp(148px, 48vw, 205px);
+  }
+
+  .gtc-os-boot__identity {
+    margin-top: 14px;
+  }
+
+  .gtc-os-boot__title {
+    font-size: clamp(30px, 9vw, 42px);
+  }
+
+  .gtc-os-boot__os {
+    margin-top: 6px;
+    font-size: 14px;
+  }
+
+  .gtc-os-boot__meta {
+    width: min(520px, 100%);
+    min-height: 62px;
+
+    margin-top: 32px;
+    padding: 11px 14px;
+
+    font-size: clamp(10px, 3.05vw, 13px);
+    letter-spacing: 0.08em;
+    line-height: 1.45;
+
+    white-space: normal;
+  }
+}
