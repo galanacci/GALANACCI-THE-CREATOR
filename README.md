@@ -1,100 +1,64 @@
-# GALANACCI THE CREATOR — Desktop
+# GALANACCI THE CREATOR
 
-Recommended new GitHub repository name:
+GALANACCI THE CREATOR is a desktop-style home for projects, experiments,
+brands, and preserved work.
 
-`GALANACCI-THE-CREATOR`
+The live desktop currently contains:
 
-This is a clean repository package for the personal GALANACCI THE CREATOR landing page.
-
-It is **not connected to BY-GALANACCI** and contains **no CNAME / old domain binding**.
-
-## Concept
-
-GALANACCI THE CREATOR is the root desktop / operating environment.
-
-Projects, brands, archives and experiments can live as applications on this desktop.
-
-Current application:
-
-- `PoG.EXE` → `https://pioneersofgreatness.com/?launch=pog`
-
-Future examples:
-
-- `XY+T.EXE`
-- `GTHEFIGHTER`
-- `ARCHIVE`
-- `WORK`
-- `NOTES.TXT`
+- `PoG.EXE` - opens the GALANACCI entry point at
+   `https://pioneersofgreatness.com/?entry=galanacci`
+- `APPS` - opens the experiments folder
+- `SS` - opens preserved GALANACCI work
 
 ## Structure
 
 ```text
 /
-├─ index.html
-├─ style.css
-├─ README.md
-├─ .gitignore
-├─ .nojekyll
-├─ assets/
-│  └─ icons/
-│     └─ PoG.EXE.svg
-└─ js/
-   ├─ apps.js
-   └─ desktop.js
+|- index.html
+|- style.css
+|- styles/
+|  `- app-folder-list.css
+|- assets/
+|  `- icons/
+|- js/
+|  |- apps.js
+|  `- desktop.js
+|- experiments/
+|- SS/
+|- CNAME
+`- README.md
 ```
 
-## Open the site
+## Local preview
 
-Use the repository root `index.html` for local browser testing. It is also the
-GitHub Pages entry point. Open the `EXPERIMENTS` folder from that desktop to
-launch experiment apps.
+Open `index.html` in a browser for a simple local preview. The root page is also
+the GitHub Pages entry point. Because the site uses JavaScript modules, a local
+HTTP server is recommended when testing module or asset loading.
 
-## Adding applications
+## Adding an application
 
-Edit `js/apps.js`.
+Edit `js/apps.js` and add an entry to `APPS`:
 
-Each app only needs:
+```js
+{
+   id: "example-exe",
+   label: "EXAMPLE.EXE",
+   icon: new URL("../assets/icons/example.svg", import.meta.url).href,
+   url: "./path/to/index.html",
+   enabled: true
+}
+```
 
-- `id`
-- `label`
-- `icon`
-- `url`
-- `enabled`
+Folder entries use `type: "folder"` and a `folderTarget` value. The desktop
+handles positioning, dragging, selection, keyboard activation, and launching.
 
-The desktop system automatically provides:
+## Preserved work
 
-- random initial grid position
-- drag / reposition
-- 16px grid snapping
-- saved positions in localStorage
-- desktop double-click launch
-- mobile tap launch
-- keyboard Enter / Space launch
-- selection state
-- launch transition
+Older projects belong under `SS/`, with one self-contained folder per project.
+See [SS/README.md](SS/README.md) for the archive convention.
 
-## PoG integration still required
+## Deployment
 
-For the intended journey:
-
-`GALANACCI DESKTOP → PoG.EXE → PoG LOADING SEQUENCE → PoG MAIN MENU`
-
-the PoG site needs one small change:
-
-When the URL contains:
-
-`?launch=pog`
-
-PoG should bypass its own desktop launcher and immediately run the existing PoG boot/loading sequence.
-
-## GitHub Pages
-
-After creating the new repository:
-
-1. Upload these files to the root.
-2. Commit to `main`.
-3. In GitHub: Settings → Pages.
-4. Deploy from `main` / root.
-5. Add a custom domain later only when the new domain is decided.
-
-There is deliberately no `CNAME` file in this starter repo.
+The site is deployed from `main` with GitHub Pages. `CNAME` contains the active
+custom-domain binding. Keep the repository root as the Pages source so
+`index.html` remains the entry point.
