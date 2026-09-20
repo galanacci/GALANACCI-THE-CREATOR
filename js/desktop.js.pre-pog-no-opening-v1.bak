@@ -312,21 +312,18 @@ async function launchShortcut(shortcut, app) {
   launchLocked = true;
   dismissHint();
   clearSelection();
-  const skipLaunchTransition = app.id === "pog-exe";
 
-  if (!skipLaunchTransition) {
-    if (launchLabel) {
-      launchLabel.textContent = `OPENING ${app.label}...`;
-    }
-
-    if (transition) {
-      transition.hidden = false;
-      transition.setAttribute("aria-hidden", "false");
-      requestAnimationFrame(() => transition.classList.add("is-open"));
-    }
-
-    await new Promise((resolve) => window.setTimeout(resolve, LAUNCH_DELAY));
+  if (launchLabel) {
+    launchLabel.textContent = `OPENING ${app.label}...`;
   }
+
+  if (transition) {
+    transition.hidden = false;
+    transition.setAttribute("aria-hidden", "false");
+    requestAnimationFrame(() => transition.classList.add("is-open"));
+  }
+
+  await new Promise((resolve) => window.setTimeout(resolve, LAUNCH_DELAY));
   /* GTC POG RETURN MARKER V3 START */
   if (app.id === "pog-exe") {
     try {
