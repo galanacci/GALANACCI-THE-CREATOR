@@ -138,9 +138,9 @@ body {
 }
 
 .scrubber__range::-webkit-slider-thumb {
-  width: 16.5px;
-  height: 16.5px;
-  margin-top: -7.75px;
+  width: 11px;
+  height: 11px;
+  margin-top: -5px;
   border: 0;
   border-radius: 50%;
   appearance: none;
@@ -149,8 +149,8 @@ body {
 }
 
 .scrubber__range::-moz-range-thumb {
-  width: 16.5px;
-  height: 16.5px;
+  width: 11px;
+  height: 11px;
   border: 0;
   border-radius: 50%;
   background: var(--ink);
@@ -189,54 +189,3 @@ body {
     font-size: 8px;
   }
 }
-
-/* SS SLIDER OS FRAME V2 START */
-/*
-  GALANACCI OS-aligned control strip.
-  Cream comes from root style.css --bg.
-  Sharp rectangle. Black slider. Black counter.
-*/
-.scrubber {
-  min-height: 40px;
-  padding: 0 12px;
-  background: #ead1b2;
-  color: #000000;
-  border: 1px solid #000000;
-  border-radius: 0;
-  box-shadow: none;
-  opacity: 1;
-}
-
-.scrubber__range::-webkit-slider-runnable-track {
-  height: 1px;
-  background: #000000;
-}
-
-.scrubber__range::-moz-range-track {
-  height: 1px;
-  background: #000000;
-}
-
-.scrubber__range::-webkit-slider-thumb {
-  background: #000000;
-}
-
-.scrubber__range::-moz-range-thumb {
-  background: #000000;
-}
-
-.scrubber__meta {
-  color: #000000;
-}
-
-.scrubber__divider {
-  opacity: .55;
-}
-
-@media (max-width: 680px), (hover: none), (pointer: coarse) {
-  .scrubber {
-    min-height: 44px;
-    padding: 0 12px;
-  }
-}
-/* SS SLIDER OS FRAME V2 END */

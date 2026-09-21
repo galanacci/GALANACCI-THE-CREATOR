@@ -246,7 +246,7 @@ input {
 }
 
 
-/* V6 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â smooth GPU page-curl layer */
+/* V6 Ã¢â‚¬â€ smooth GPU page-curl layer */
 .page-curl {
   contain: strict;
   transform: translateZ(0);
@@ -268,7 +268,7 @@ input {
 }
 
 
-/* V8 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â transparent outside the curled page so the next page shows through */
+/* V8 Ã¢â‚¬â€ transparent outside the curled page so the next page shows through */
 .page-curl {
   background: transparent;
   backface-visibility: hidden;
@@ -276,24 +276,23 @@ input {
 }
 
 
-/* V9 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the old page leaves through geometry, not a hide/fade transition. */
+/* V9 Ã¢â‚¬â€ the old page leaves through geometry, not a hide/fade transition. */
 .page-curl,
 .page--current {
   transition: none;
 }
 
-/* SS SLIDER OS FRAME V2 START */
+/* SS SLIDER OS FRAME V1 START */
 /*
-  GALANACCI OS-aligned control strip.
-  Cream comes from root style.css --bg.
-  Sharp rectangle. Black slider. Black counter.
+  Sharp GALANACCI OS-style control strip.
+  Cream rectangle. Black slider. Black counter.
 */
 .scrubber {
   min-height: 40px;
   padding: 0 12px;
-  background: #ead1b2;
-  color: #000000;
-  border: 1px solid #000000;
+  background: #E3D6C3;
+  color: #111111;
+  border: 1px solid #111111;
   border-radius: 0;
   box-shadow: none;
   opacity: 1;
@@ -301,24 +300,24 @@ input {
 
 .scrubber__range::-webkit-slider-runnable-track {
   height: 1px;
-  background: #000000;
+  background: #111111;
 }
 
 .scrubber__range::-moz-range-track {
   height: 1px;
-  background: #000000;
+  background: #111111;
 }
 
 .scrubber__range::-webkit-slider-thumb {
-  background: #000000;
+  background: #111111;
 }
 
 .scrubber__range::-moz-range-thumb {
-  background: #000000;
+  background: #111111;
 }
 
 .scrubber__meta {
-  color: #000000;
+  color: #111111;
 }
 
 .scrubber__divider {
@@ -331,4 +330,4 @@ input {
     padding: 0 12px;
   }
 }
-/* SS SLIDER OS FRAME V2 END */
+/* SS SLIDER OS FRAME V1 END */

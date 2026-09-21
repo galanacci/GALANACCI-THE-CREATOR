@@ -1,11 +1,10 @@
 :root {
-  --paper: #E3D6C3;
-  --ink: #111111;
+  --gap: 1px;
+  --bg: #000;
+  --preview-ms: 110ms;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html,
 body {
@@ -13,81 +12,126 @@ body {
   height: 100%;
   margin: 0;
   overflow: hidden;
-  background: var(--paper);
-  color: var(--ink);
+  overscroll-behavior: none;
+  background: var(--bg);
 }
 
 body {
   position: fixed;
   inset: 0;
-  font-family: "Times New Roman", Georgia, serif;
+  touch-action: none;
   user-select: none;
   -webkit-user-select: none;
-  overscroll-behavior: none;
-  touch-action: none;
 }
 
-.app-main {
+.mosaic {
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background: var(--paper);
-  cursor: ew-resize;
+  background: var(--bg);
   touch-action: none;
 }
 
-.app-main.is-dragging {
-  cursor: grabbing;
-}
-
-#viewer {
+.mosaic__grid {
   position: absolute;
   inset: 0;
+  display: grid;
+  gap: var(--gap);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  contain: strict;
+}
+
+.tile {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: #111;
+  cursor: crosshair;
+}
+
+.tile img {
   display: block;
   width: 100%;
   height: 100%;
-  background: var(--paper);
-  touch-action: none;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  transition: filter 90ms linear, transform 90ms linear;
 }
 
-.hud {
-  position: absolute;
-  z-index: 10;
+.tile.is-active img {
+  filter: brightness(.82);
+  transform: scale(1.035);
+}
+
+.preview {
+  position: fixed;
+  z-index: 50;
+  display: none;
+  overflow: hidden;
+  pointer-events: none;
+  background: #000;
+  outline: 1px solid rgba(255,255,255,.56);
+  transform-origin: center center;
+  will-change: left, top, width, height, transform, opacity;
+}
+
+.preview.is-visible { display: block; }
+
+.preview.is-entering {
+  opacity: 0;
+  transform: scale(var(--preview-from-scale, .35));
+}
+
+.preview.is-active {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    left var(--preview-ms) linear,
+    top var(--preview-ms) linear,
+    width var(--preview-ms) linear,
+    height var(--preview-ms) linear,
+    transform var(--preview-ms) linear,
+    opacity 70ms linear;
+}
+
+.preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.status {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 100;
+  width: min(520px, calc(100vw - 44px));
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font: 600 10px/1.5 Arial, Helvetica, sans-serif;
+  letter-spacing: .12em;
+  text-align: center;
   pointer-events: none;
 }
 
-.hud--name {
-  top: clamp(18px, 3vh, 34px);
-  left: 50%;
-  width: min(78vw, 900px);
-  transform: translateX(-50%);
-  text-align: center;
+@media (hover: none), (pointer: coarse) {
+  :root { --preview-ms: 82ms; }
+  .preview { outline-color: rgba(255,255,255,.7); }
 }
 
-#fighterName {
-  display: inline-block;
-  max-width: 100%;
-  overflow: hidden;
-  color: var(--ink);
-  font-size: clamp(18px, 2.4vw, 34px);
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  line-height: 1.15;
-  text-overflow: ellipsis;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-@media (max-width: 768px) {
-  .hud--name {
-    top: max(18px, env(safe-area-inset-top));
-    width: 88vw;
-  }
-
-  #fighterName {
-    font-size: clamp(14px, 4.7vw, 22px);
-    letter-spacing: 0.12em;
-  }
+@media (prefers-reduced-motion: reduce) {
+  .preview.is-active,
+  .tile img { transition: none; }
 }
 
 /* SS SLIDER NAVIGATION - BLACKBOOK STYLE */
@@ -96,13 +140,13 @@ body {
   left: 18px;
   right: 18px;
   bottom: max(14px, env(safe-area-inset-bottom));
-  z-index: 20;
+  z-index: 90;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 18px;
   min-height: 34px;
-  color: var(--ink);
+  color: #fff;
   opacity: .82;
   transition: opacity 140ms ease;
   font-family: Arial, Helvetica, sans-serif;
@@ -129,12 +173,12 @@ body {
 
 .scrubber__range::-webkit-slider-runnable-track {
   height: 1px;
-  background: rgba(17, 17, 17, .42);
+  background: rgba(255, 255, 255, .55);
 }
 
 .scrubber__range::-moz-range-track {
   height: 1px;
-  background: rgba(17, 17, 17, .42);
+  background: rgba(255, 255, 255, .55);
 }
 
 .scrubber__range::-webkit-slider-thumb {
@@ -145,7 +189,7 @@ body {
   border-radius: 50%;
   appearance: none;
   -webkit-appearance: none;
-  background: var(--ink);
+  background: #fff;
 }
 
 .scrubber__range::-moz-range-thumb {
@@ -153,7 +197,7 @@ body {
   height: 16.5px;
   border: 0;
   border-radius: 50%;
-  background: var(--ink);
+  background: #fff;
 }
 
 .scrubber__meta {
@@ -162,7 +206,7 @@ body {
   justify-content: flex-end;
   gap: 7px;
   min-width: 78px;
-  color: var(--ink);
+  color: #fff;
   font-size: 9px;
   font-weight: 600;
   letter-spacing: .11em;
@@ -190,18 +234,17 @@ body {
   }
 }
 
-/* SS SLIDER OS FRAME V2 START */
+/* SS SLIDER OS FRAME V1 START */
 /*
-  GALANACCI OS-aligned control strip.
-  Cream comes from root style.css --bg.
-  Sharp rectangle. Black slider. Black counter.
+  Sharp GALANACCI OS-style control strip.
+  Cream rectangle. Black slider. Black counter.
 */
 .scrubber {
   min-height: 40px;
   padding: 0 12px;
-  background: #ead1b2;
-  color: #000000;
-  border: 1px solid #000000;
+  background: #E3D6C3;
+  color: #111111;
+  border: 1px solid #111111;
   border-radius: 0;
   box-shadow: none;
   opacity: 1;
@@ -209,24 +252,24 @@ body {
 
 .scrubber__range::-webkit-slider-runnable-track {
   height: 1px;
-  background: #000000;
+  background: #111111;
 }
 
 .scrubber__range::-moz-range-track {
   height: 1px;
-  background: #000000;
+  background: #111111;
 }
 
 .scrubber__range::-webkit-slider-thumb {
-  background: #000000;
+  background: #111111;
 }
 
 .scrubber__range::-moz-range-thumb {
-  background: #000000;
+  background: #111111;
 }
 
 .scrubber__meta {
-  color: #000000;
+  color: #111111;
 }
 
 .scrubber__divider {
@@ -239,4 +282,4 @@ body {
     padding: 0 12px;
   }
 }
-/* SS SLIDER OS FRAME V2 END */
+/* SS SLIDER OS FRAME V1 END */

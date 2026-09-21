@@ -31,67 +31,6 @@ const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const snap = (value) => Math.round(value / GRID) * GRID;
 const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
 
-/*
-  Mobile desktop shortcuts should behave like a launcher, not like a freeform
-  draggable canvas. Deterministic positions prevent saved touch drags from
-  colliding with PoG.EXE, APPS, and SS.
-*/
-function mobileLockedShortcutPosition(shortcut) {
-  const { maxX, maxY } = boundsFor(shortcut);
-  const id = shortcut.dataset.appId;
-
-  const leftColumn = clamp(64, EDGE, maxX);
-  const rightColumn = clamp(
-    window.innerWidth - shortcut.offsetWidth - 52,
-    EDGE,
-    maxX
-  );
-
-  const upperRow = clamp(
-    Math.round(window.innerHeight * .43),
-    EDGE,
-    maxY
-  );
-
-  const lowerRow = clamp(
-    upperRow + shortcut.offsetHeight + 22,
-    EDGE,
-    maxY
-  );
-
-  if (id === "pog-exe") {
-    return {
-      x: rightColumn,
-      y: upperRow
-    };
-  }
-
-  if (id === "ss-folder") {
-    return {
-      x: leftColumn,
-      y: upperRow
-    };
-  }
-
-  if (id === "experiments-folder") {
-    return {
-      x: leftColumn,
-      y: lowerRow
-    };
-  }
-
-  const shortcuts = [
-    ...document.querySelectorAll(".desktop-shortcut")
-  ];
-
-  const index = Math.max(0, shortcuts.indexOf(shortcut));
-
-  return {
-    x: clamp(leftColumn, EDGE, maxX),
-    y: clamp(upperRow + index * (shortcut.offsetHeight + 22), EDGE, maxY)
-  };
-}
-
 let selected = null;
 let dragging = null;
 let folderResizing = null;
@@ -244,18 +183,7 @@ function findAvailablePosition(shortcut, position) {
 }
 
 function renderShortcut(shortcut, position) {
-  /* MOBILE SHORTCUT LOCK V1 */
-  if (isTouch) {
-    const next = mobileLockedShortcutPosition(shortcut);
-
-    shortcut._desktopPosition = next;
-    shortcut.style.transform =
-      `translate3d(${next.x}px, ${next.y}px, 0)`;
-
-    if (selected === shortcut) renderHint(shortcut);
-    return;
-  }
-const { maxX, maxY } = boundsFor(shortcut);
+  const { maxX, maxY } = boundsFor(shortcut);
 
   /*
     Never move a remembered shortcut simply because another shortcut
@@ -484,8 +412,6 @@ function installShortcut(shortcut, app) {
 
   shortcut.addEventListener("pointermove", (event) => {
     if (!dragging || dragging.shortcut !== shortcut) return;
-
-    if (isTouch) return;
 
     const dx = event.clientX - dragging.startX;
     const dy = event.clientY - dragging.startY;

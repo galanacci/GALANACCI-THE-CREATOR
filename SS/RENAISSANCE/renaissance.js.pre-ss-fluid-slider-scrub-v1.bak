@@ -43,10 +43,6 @@ let renderRaf = 0;
 let loadToken = 0;
 
 const tileCache = new Map();
-const overviewCache = new Map();
-
-let artworkScrubRaf = 0;
-let requestedArtworkIndex = null;
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const pad = (value, digits) => String(value).padStart(digits, "0");
@@ -86,51 +82,6 @@ function loadImage(src) {
     image.onload = () => resolve(image);
     image.onerror = reject;
     image.src = src;
-  });
-}
-
-function loadOverview(src) {
-  if (overviewCache.has(src)) return overviewCache.get(src);
-
-  const promise = loadImage(src)
-    .catch((error) => {
-      overviewCache.delete(src);
-      throw error;
-    });
-
-  overviewCache.set(src, promise);
-  return promise;
-}
-
-function warmOverviewAround(index) {
-  if (!artworks.length) return;
-
-  for (let offset = -3; offset <= 3; offset += 1) {
-    const target = index + offset;
-
-    if (target < 0 || target >= artworks.length) continue;
-
-    loadOverview(
-      resolveAsset(artworks[target].overview)
-    ).catch(() => {});
-  }
-}
-
-function scheduleArtworkScrub(index) {
-  requestedArtworkIndex = clamp(index, 0, artworks.length - 1);
-  updateControls(requestedArtworkIndex);
-
-  if (artworkScrubRaf) return;
-
-  artworkScrubRaf = requestAnimationFrame(() => {
-    artworkScrubRaf = 0;
-
-    const nextIndex = requestedArtworkIndex;
-    requestedArtworkIndex = null;
-
-    if (nextIndex == null) return;
-
-    setArtwork(nextIndex);
   });
 }
 
@@ -538,7 +489,7 @@ async function setArtwork(index) {
 
   status.textContent = "LOADING ARTWORK...";
 
-  const overview = await loadOverview(
+  const overview = await loadImage(
     resolveAsset(currentArtwork.overview)
   );
 
@@ -558,7 +509,6 @@ async function setArtwork(index) {
 
   tileCache.clear();
 
-  warmOverviewAround(index);
   scheduleRender();
 }
 
@@ -648,7 +598,7 @@ function bindArtworkNavigator() {
   });
 
   artworkSlider.addEventListener("input", () => {
-    scheduleArtworkScrub(Number(artworkSlider.value) - 1);
+    setArtwork(Number(artworkSlider.value) - 1);
   });
 
   artworkSlider.addEventListener("change", () => {

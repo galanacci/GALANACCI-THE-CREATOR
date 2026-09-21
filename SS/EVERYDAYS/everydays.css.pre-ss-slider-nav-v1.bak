@@ -1,0 +1,135 @@
+:root {
+  --gap: 1px;
+  --bg: #000;
+  --preview-ms: 110ms;
+}
+
+* { box-sizing: border-box; }
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: var(--bg);
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.mosaic {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--bg);
+  touch-action: none;
+}
+
+.mosaic__grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  gap: var(--gap);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  contain: strict;
+}
+
+.tile {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: #111;
+  cursor: crosshair;
+}
+
+.tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  transition: filter 90ms linear, transform 90ms linear;
+}
+
+.tile.is-active img {
+  filter: brightness(.82);
+  transform: scale(1.035);
+}
+
+.preview {
+  position: fixed;
+  z-index: 50;
+  display: none;
+  overflow: hidden;
+  pointer-events: none;
+  background: #000;
+  outline: 1px solid rgba(255,255,255,.56);
+  transform-origin: center center;
+  will-change: left, top, width, height, transform, opacity;
+}
+
+.preview.is-visible { display: block; }
+
+.preview.is-entering {
+  opacity: 0;
+  transform: scale(var(--preview-from-scale, .35));
+}
+
+.preview.is-active {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    left var(--preview-ms) linear,
+    top var(--preview-ms) linear,
+    width var(--preview-ms) linear,
+    height var(--preview-ms) linear,
+    transform var(--preview-ms) linear,
+    opacity 70ms linear;
+}
+
+.preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.status {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 100;
+  width: min(520px, calc(100vw - 44px));
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font: 600 10px/1.5 Arial, Helvetica, sans-serif;
+  letter-spacing: .12em;
+  text-align: center;
+  pointer-events: none;
+}
+
+@media (hover: none), (pointer: coarse) {
+  :root { --preview-ms: 82ms; }
+  .preview { outline-color: rgba(255,255,255,.7); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preview.is-active,
+  .tile img { transition: none; }
+}

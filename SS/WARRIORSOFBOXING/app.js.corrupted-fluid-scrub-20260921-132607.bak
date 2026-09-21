@@ -446,15 +446,24 @@ function currentPortraitIndex() {
   return modulo(Math.round(state.rawPosition), state.entries.length);
 }
 
-function updateScrubber(index = currentPortraitIndex()) {
+function updateScrubber(index = null) {
   if (!portraitSlider || !portraitCurrent || !portraitTotal || !state.entries.length) return;
 
-  const safeIndex = clamp(index, 0, state.entries.length - 1);
+  const raw = index == null
+    ? clamp(state.rawPosition, 0, state.entries.length - 1)
+    : clamp(index, 0, state.entries.length - 1);
+
+  const displayIndex = clamp(
+    Math.round(raw),
+    0,
+    state.entries.length - 1
+  );
+
   const digits = Math.max(3, String(state.entries.length).length);
 
   portraitSlider.max = String(state.entries.length);
-  portraitSlider.value = String(safeIndex + 1);
-  portraitCurrent.textContent = pad(safeIndex + 1, digits);
+  portraitSlider.value = String(raw + 1);
+  portraitCurrent.textContent = pad(displayIndex + 1, digits);
   portraitTotal.textContent = pad(state.entries.length, digits);
 }
 
@@ -471,97 +480,10 @@ function setPortraitFromScrubber(index) {
   setRawPosition(clamp(index, 0, state.entries.length - 1));
 }
 
-function cancelSnap() {
-  if (!state.snapRaf) return;
-  cancelAnimationFrame(state.snapRaf);
-  state.snapRaf = 0;
-}
+function commitPortraitFromScrubber(index) {
+  if (!state.entries.length) return;
 
-function snapToNearestPortrait() {
-  cancelSnap();
-
-  const start = state.rawPosition;
-  const target = Math.round(start);
-  const delta = target - start;
-
-  if (Math.abs(delta) < .0005) {
-    setRawPosition(target);
-    return;
-  }
-
-  const duration = 230;
-  const startedAt = performance.now();
-
-  function frame(now) {
-    const t = clamp(
-      (now - startedAt) / duration,
-      0,
-      1
-    );
-
-    setRawPosition(
-      start + delta * easeOutCubic(t)
-    );
-
-    if (t < 1) {
-      state.snapRaf = requestAnimationFrame(frame);
-    } else {
-      state.snapRaf = 0;
-      setRawPosition(target);
-    }
-  }
-
-  state.snapRaf = requestAnimationFrame(frame);
-}
-
-function beginDrag(event) {
-  if (event.target.closest?.('.scrubber')) return;
-  if (event.pointerType === 'mouse' && event.button !== 0) return;
-
-  event.preventDefault();
-  cancelSnap();
-
-  state.dragging = true;
-  state.pointerId = event.pointerId;
-  state.dragStartX = event.clientX;
-  state.dragStartPosition = state.rawPosition;
-
-  appMain.classList.add('is-dragging');
-  appMain.setPointerCapture?.(event.pointerId);
-}
-
-function moveDrag(event) {
-  if (
-    !state.dragging ||
-    event.pointerId !== state.pointerId
-  ) {
-    return;
-  }
-
-  event.preventDefault();
-
-  const deltaX =
-    state.dragStartX - event.clientX;
-
-  setRawPosition(
-    state.dragStartPosition +
-    deltaX / pixelsPerPortrait()
-  );
-}
-
-function endDrag(event) {
-  if (
-    !state.dragging ||
-    event.pointerId !== state.pointerId
-  ) {
-    return;
-  }
-
-  state.dragging = false;
-  appMain.classList.remove('is-dragging');
-  appMain.releasePointerCapture?.(event.pointerId);
-  state.pointerId = null;
-
+  setPortraitFromScrubber(index);
   snapToNearestPortrait();
 }
 
@@ -594,12 +516,12 @@ function bindPortraitNavigator() {
   });
 
   portraitSlider.addEventListener('change', () => {
-    setPortraitFromScrubber(Number(portraitSlider.value) - 1);
+    commitPortraitFromScrubber(Number(portraitSlider.value) - 1);
     scrubber.classList.remove('is-scrubbing');
   });
 
   portraitSlider.addEventListener('pointerup', () => {
-    setPortraitFromScrubber(Number(portraitSlider.value) - 1);
+    commitPortraitFromScrubber(Number(portraitSlider.value) - 1);
     scrubber.classList.remove('is-scrubbing');
   });
 

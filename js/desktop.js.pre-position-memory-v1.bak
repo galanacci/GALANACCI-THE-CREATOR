@@ -4,16 +4,6 @@ const GRID = 16;
 const EDGE = 20;
 const COLLISION_GAP = 0;
 const POSITION_PREFIX = "gtc:desktop-position:";
-
-/*
-  Stable first-visit desktop positions.
-  Once a user moves a shortcut, localStorage takes priority forever.
-*/
-const DEFAULT_SHORTCUT_POSITIONS = Object.freeze({
-  "pog-exe": Object.freeze({ x: 32, y: 32 }),
-  "experiments-folder": Object.freeze({ x: 32, y: 160 }),
-  "ss-folder": Object.freeze({ x: 32, y: 288 })
-});
 const HINT_KEY = "gtc:desktop-hint:v1";
 const LAUNCH_DELAY = 520;
 
@@ -30,67 +20,6 @@ const launchLabel = document.getElementById("launch-label");
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const snap = (value) => Math.round(value / GRID) * GRID;
 const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
-
-/*
-  Mobile desktop shortcuts should behave like a launcher, not like a freeform
-  draggable canvas. Deterministic positions prevent saved touch drags from
-  colliding with PoG.EXE, APPS, and SS.
-*/
-function mobileLockedShortcutPosition(shortcut) {
-  const { maxX, maxY } = boundsFor(shortcut);
-  const id = shortcut.dataset.appId;
-
-  const leftColumn = clamp(64, EDGE, maxX);
-  const rightColumn = clamp(
-    window.innerWidth - shortcut.offsetWidth - 52,
-    EDGE,
-    maxX
-  );
-
-  const upperRow = clamp(
-    Math.round(window.innerHeight * .43),
-    EDGE,
-    maxY
-  );
-
-  const lowerRow = clamp(
-    upperRow + shortcut.offsetHeight + 22,
-    EDGE,
-    maxY
-  );
-
-  if (id === "pog-exe") {
-    return {
-      x: rightColumn,
-      y: upperRow
-    };
-  }
-
-  if (id === "ss-folder") {
-    return {
-      x: leftColumn,
-      y: upperRow
-    };
-  }
-
-  if (id === "experiments-folder") {
-    return {
-      x: leftColumn,
-      y: lowerRow
-    };
-  }
-
-  const shortcuts = [
-    ...document.querySelectorAll(".desktop-shortcut")
-  ];
-
-  const index = Math.max(0, shortcuts.indexOf(shortcut));
-
-  return {
-    x: clamp(leftColumn, EDGE, maxX),
-    y: clamp(upperRow + index * (shortcut.offsetHeight + 22), EDGE, maxY)
-  };
-}
 
 let selected = null;
 let dragging = null;
@@ -147,25 +76,11 @@ function boundsFor(shortcut) {
   };
 }
 
-function defaultPosition(shortcut) {
-  const savedDefault =
-    DEFAULT_SHORTCUT_POSITIONS[shortcut.dataset.appId];
-
-  if (savedDefault) {
-    return { ...savedDefault };
-  }
-
-  const shortcuts = [
-    ...document.querySelectorAll(".desktop-shortcut")
-  ];
-
-  const index = Math.max(0, shortcuts.indexOf(shortcut));
-  const row = index % 5;
-  const column = Math.floor(index / 5);
-
+function randomPosition(shortcut) {
+  const { maxX, maxY } = boundsFor(shortcut);
   return {
-    x: EDGE + column * 128,
-    y: EDGE + row * 128
+    x: snap(EDGE + Math.random() * Math.max(0, maxX - EDGE)),
+    y: snap(EDGE + Math.random() * Math.max(0, maxY - EDGE))
   };
 }
 
@@ -174,22 +89,11 @@ function readPosition(shortcut) {
 
   try {
     const parsed = JSON.parse(storageGet(key));
-
-    if (
-      Number.isFinite(parsed?.x) &&
-      Number.isFinite(parsed?.y)
-    ) {
-      return {
-        x: parsed.x,
-        y: parsed.y
-      };
-    }
+    if (Number.isFinite(parsed?.x) && Number.isFinite(parsed?.y)) return parsed;
   } catch {}
 
-  const position = defaultPosition(shortcut);
-
+  const position = randomPosition(shortcut);
   storageSet(key, JSON.stringify(position));
-
   return position;
 }
 
@@ -244,31 +148,9 @@ function findAvailablePosition(shortcut, position) {
 }
 
 function renderShortcut(shortcut, position) {
-  /* MOBILE SHORTCUT LOCK V1 */
-  if (isTouch) {
-    const next = mobileLockedShortcutPosition(shortcut);
-
-    shortcut._desktopPosition = next;
-    shortcut.style.transform =
-      `translate3d(${next.x}px, ${next.y}px, 0)`;
-
-    if (selected === shortcut) renderHint(shortcut);
-    return;
-  }
-const { maxX, maxY } = boundsFor(shortcut);
-
-  /*
-    Never move a remembered shortcut simply because another shortcut
-    overlaps it. The user controls desktop placement.
-  */
-  const next = {
-    x: clamp(snap(position.x), EDGE, maxX),
-    y: clamp(snap(position.y), EDGE, maxY)
-  };
-
+  const next = findAvailablePosition(shortcut, position);
   shortcut._desktopPosition = next;
-  shortcut.style.transform =
-    `translate3d(${next.x}px, ${next.y}px, 0)`;
+  shortcut.style.transform = `translate3d(${next.x}px, ${next.y}px, 0)`;
 
   if (selected === shortcut) renderHint(shortcut);
 }
@@ -485,8 +367,6 @@ function installShortcut(shortcut, app) {
   shortcut.addEventListener("pointermove", (event) => {
     if (!dragging || dragging.shortcut !== shortcut) return;
 
-    if (isTouch) return;
-
     const dx = event.clientX - dragging.startX;
     const dy = event.clientY - dragging.startY;
 
@@ -621,11 +501,12 @@ desktop?.addEventListener("pointerdown", (event) => {
 
 window.addEventListener("resize", () => {
   document.querySelectorAll(".desktop-shortcut").forEach((shortcut) => {
-    /*
-      Clamp visually for the current viewport, but always start from
-      the saved coordinate and never overwrite that saved coordinate.
-    */
-    renderShortcut(shortcut, readPosition(shortcut));
+    renderShortcut(
+      shortcut,
+      shortcut._desktopPosition || readPosition(shortcut)
+    );
+
+    writePosition(shortcut, shortcut._desktopPosition);
   });
 });
 

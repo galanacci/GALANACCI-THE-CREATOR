@@ -11,7 +11,7 @@
     <canvas id="viewer" aria-label="Drag horizontally to move through the boxing portraits"></canvas>
 
     <div class="hud hud--name" aria-live="polite">
-      <span id="fighterName">LOADINGÃ¢â‚¬Â¦</span>
+      <span id="fighterName">LOADINGâ€¦</span>
     </div>
     <section id="scrubber" class="scrubber" aria-label="Portrait navigation">
       <input

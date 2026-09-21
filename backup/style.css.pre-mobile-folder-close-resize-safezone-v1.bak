@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --bg: #ead1b2;
   --fg: #000;
   --accent: #000;
@@ -1291,35 +1291,3 @@ button {
 
 /* GTC LEGACY MOBILE WINDOW SYSTEM V6.6 END */
 
-/* MOBILE FOLDER CLOSE RESIZE SAFEZONE V1 START */
-/*
-  On touch devices, the folder close button and the north-east resize
-  corner compete for the same top-right area. Keep the close button as
-  the only active top-right target and move resize affordances away from it.
-*/
-@media (hover: none), (pointer: coarse) {
-  .folder-window__close {
-    position: relative;
-    z-index: 5;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .folder-window__resize-handle--ne {
-    display: none;
-    pointer-events: none;
-  }
-
-  .folder-window__resize-handle--n {
-    right: 52px;
-  }
-
-  .folder-window__resize-handle--e {
-    top: 52px;
-  }
-
-  .folder-window__resize-handle:hover {
-    background: transparent;
-  }
-}
-/* MOBILE FOLDER CLOSE RESIZE SAFEZONE V1 END */
