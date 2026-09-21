@@ -20,6 +20,9 @@ const launchLabel = document.getElementById("launch-label");
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const snap = (value) => Math.round(value / GRID) * GRID;
 const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+const mobileFolderMode = window.matchMedia(
+  "(hover: none), (pointer: coarse), (max-width: 760px)"
+);
 
 let selected = null;
 let dragging = null;
@@ -35,6 +38,28 @@ const storageSet = (key, value) => {
   try { localStorage.setItem(key, value); }
   catch { /* persistence is optional */ }
 };
+
+function viewportSize() {
+  const viewport = window.visualViewport;
+
+  return {
+    width: viewport?.width || window.innerWidth,
+    height: viewport?.height || window.innerHeight
+  };
+}
+
+function folderMinimumSize() {
+  const view = viewportSize();
+
+  if (mobileFolderMode.matches) {
+    return {
+      width: Math.min(300, Math.max(240, view.width - 16)),
+      height: Math.min(220, Math.max(200, view.height - 16))
+    };
+  }
+
+  return { width: 420, height: 220 };
+}
 
 document.addEventListener("contextmenu", (event) => {
   event.preventDefault();
@@ -102,7 +127,7 @@ function writePosition(shortcut, position) {
 }
 
 function overlaps(shortcut, position, other) {
-  const otherPosition = other._desktopPosition;
+  const otherPosition = other._renderedPosition || other._desktopPosition;
   if (!otherPosition) return false;
 
   return position.x < otherPosition.x + other.offsetWidth + COLLISION_GAP
@@ -147,19 +172,24 @@ function findAvailablePosition(shortcut, position) {
   return closest || candidate;
 }
 
-function renderShortcut(shortcut, position) {
+function renderShortcut(shortcut, position, { commit = true } = {}) {
   const next = findAvailablePosition(shortcut, position);
-  shortcut._desktopPosition = next;
+  shortcut._renderedPosition = next;
+
+  if (commit) {
+    shortcut._desktopPosition = next;
+  }
+
   shortcut.style.transform = `translate3d(${next.x}px, ${next.y}px, 0)`;
 
   if (selected === shortcut) renderHint(shortcut);
 }
 
 function renderHint(shortcut) {
-  if (!hint || !shortcut?._desktopPosition) return;
+  const position = shortcut?._renderedPosition || shortcut?._desktopPosition;
+  if (!hint || !position) return;
 
   const width = hint.offsetWidth;
-  const position = shortcut._desktopPosition;
 
   const x = clamp(
     position.x + shortcut.offsetWidth / 2 - width / 2,
@@ -229,24 +259,31 @@ function materializeFolderPosition(folderWindow) {
   }
 }
 
-function closeFolderWindow(folderWindow) {
+function closeFolderWindow(folderWindow, { restoreFocus = true } = {}) {
   if (!folderWindow) return;
 
   folderWindow.classList.remove("is-open");
   folderWindow.hidden = true;
   folderWindow.setAttribute("aria-hidden", "true");
   clearFolderSelection(folderWindow);
+
+  const returnFocus = folderWindow._returnFocus;
+  folderWindow._returnFocus = null;
+
+  if (restoreFocus && returnFocus?.isConnected) {
+    requestAnimationFrame(() => returnFocus.focus({ preventScroll: true }));
+  }
 }
 
 function closeAllFolderWindows(except = null) {
   folderWindows.forEach((folderWindow) => {
     if (folderWindow !== except && !folderWindow.hidden) {
-      closeFolderWindow(folderWindow);
+      closeFolderWindow(folderWindow, { restoreFocus: false });
     }
   });
 }
 
-function openFolderWindow(app) {
+function openFolderWindow(app, opener) {
   if (!app.enabled || !app.folderTarget) return;
 
   const folderWindow = folderWindows.find(
@@ -259,11 +296,15 @@ function openFolderWindow(app) {
   clearSelection();
   closeAllFolderWindows(folderWindow);
 
+  folderWindow._returnFocus = opener || document.activeElement;
   folderWindow.hidden = false;
   folderWindow.setAttribute("aria-hidden", "false");
 
   requestAnimationFrame(() => {
     folderWindow.classList.add("is-open");
+    folderWindow
+      .querySelector("[data-close-folder]")
+      ?.focus({ preventScroll: true });
   });
 }
 
@@ -275,9 +316,16 @@ function closeExperimentWindow() {
   experimentWindow.setAttribute("aria-hidden", "true");
 
   if (experimentFrame) experimentFrame.src = "about:blank";
+
+  const returnFocus = experimentWindow._returnFocus;
+  experimentWindow._returnFocus = null;
+
+  if (returnFocus?.isConnected) {
+    requestAnimationFrame(() => returnFocus.focus({ preventScroll: true }));
+  }
 }
 
-function openExperimentWindow(url, label) {
+function openExperimentWindow(url, label, opener) {
   if (!experimentWindow || !experimentFrame) return;
 
   // Keep the folder that launched the app open underneath the .EXE window.
@@ -285,6 +333,7 @@ function openExperimentWindow(url, label) {
   dismissHint();
   clearSelection();
 
+  experimentWindow._returnFocus = opener || document.activeElement;
   experimentTitle.textContent = label;
   experimentFrame.title = label;
   experimentFrame.src = url;
@@ -294,12 +343,15 @@ function openExperimentWindow(url, label) {
 
   requestAnimationFrame(() => {
     experimentWindow.classList.add("is-open");
+    experimentWindow
+      .querySelector("[data-close-experiment]")
+      ?.focus({ preventScroll: true });
   });
 }
 
 function openShortcut(shortcut, app) {
   if (app.type === "folder") {
-    openFolderWindow(app);
+    openFolderWindow(app, shortcut);
     return;
   }
 
@@ -327,16 +379,6 @@ async function launchShortcut(shortcut, app) {
 
     await new Promise((resolve) => window.setTimeout(resolve, LAUNCH_DELAY));
   }
-  /* GTC POG RETURN MARKER V3 START */
-  if (app.id === "pog-exe") {
-    try {
-      sessionStorage.setItem("gtc:pog-return-pending", "1");
-    } catch {
-      /* Boot return also has URL/referrer fallbacks. */
-    }
-  }
-  /* GTC POG RETURN MARKER V3 END */
-
   window.location.href = app.url;
 }
 
@@ -357,7 +399,9 @@ function installShortcut(shortcut, app) {
       pointerId: event.pointerId,
       startX: event.clientX,
       startY: event.clientY,
-      origin: { ...shortcut._desktopPosition },
+      origin: {
+        ...(shortcut._renderedPosition || shortcut._desktopPosition)
+      },
       moved: false
     };
 
@@ -384,25 +428,30 @@ function installShortcut(shortcut, app) {
     });
   });
 
-  const finishPointer = (event) => {
+  const finishPointer = (event, { cancelled = false } = {}) => {
     if (!dragging || dragging.shortcut !== shortcut) return;
 
-    const moved = dragging.moved;
+    const dragState = dragging;
+    const moved = dragState.moved;
     shortcut.releasePointerCapture?.(event.pointerId);
 
-    if (moved) {
+    if (cancelled && moved) {
+      renderShortcut(shortcut, dragState.origin);
+    } else if (moved) {
       writePosition(shortcut, shortcut._desktopPosition);
     }
 
     dragging = null;
 
-    if (!moved && isTouch) {
+    if (!cancelled && !moved && isTouch) {
       openShortcut(shortcut, app);
     }
   };
 
-  shortcut.addEventListener("pointerup", finishPointer);
-  shortcut.addEventListener("pointercancel", finishPointer);
+  shortcut.addEventListener("pointerup", (event) => finishPointer(event));
+  shortcut.addEventListener("pointercancel", (event) => {
+    finishPointer(event, { cancelled: true });
+  });
 
   shortcut.addEventListener("dblclick", (event) => {
     event.preventDefault();
@@ -467,8 +516,9 @@ function setupFolderWindow(folderWindow) {
     };
 
     const move = (moveEvent) => {
-      const maxLeft = Math.max(0, window.innerWidth - folderWindow.offsetWidth);
-      const maxTop = Math.max(0, window.innerHeight - folderWindow.offsetHeight);
+      const view = viewportSize();
+      const maxLeft = Math.max(0, view.width - folderWindow.offsetWidth);
+      const maxTop = Math.max(0, view.height - folderWindow.offsetHeight);
 
       folderWindow.style.left = `${clamp(
         start.left + moveEvent.clientX - start.x,
@@ -486,10 +536,12 @@ function setupFolderWindow(folderWindow) {
     const stop = () => {
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerup", stop);
+      window.removeEventListener("pointercancel", stop);
     };
 
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", stop, { once: true });
+    window.addEventListener("pointercancel", stop, { once: true });
   });
 }
 
@@ -503,10 +555,9 @@ window.addEventListener("resize", () => {
   document.querySelectorAll(".desktop-shortcut").forEach((shortcut) => {
     renderShortcut(
       shortcut,
-      shortcut._desktopPosition || readPosition(shortcut)
+      shortcut._desktopPosition || readPosition(shortcut),
+      { commit: false }
     );
-
-    writePosition(shortcut, shortcut._desktopPosition);
   });
 });
 
@@ -533,7 +584,8 @@ document.querySelectorAll("[data-app-link]").forEach((link) => {
 
     openExperimentWindow(
       link.href,
-      link.dataset.label || link.textContent.trim()
+      link.dataset.label || link.textContent.trim(),
+      link
     );
   };
 
@@ -581,8 +633,10 @@ window.addEventListener("pointermove", (event) => {
   const dx = event.clientX - start.x;
   const dy = event.clientY - start.y;
 
-  const minWidth = 420;
-  const minHeight = 220;
+  const view = viewportSize();
+  const minimum = folderMinimumSize();
+  const minWidth = minimum.width;
+  const minHeight = minimum.height;
 
   let left = rect.left;
   let top = rect.top;
@@ -590,11 +644,11 @@ window.addEventListener("pointermove", (event) => {
   let height = rect.height;
 
   if (direction.includes("e")) {
-    width = clamp(rect.width + dx, minWidth, window.innerWidth - left);
+    width = clamp(rect.width + dx, minWidth, Math.max(minWidth, view.width - left));
   }
 
   if (direction.includes("s")) {
-    height = clamp(rect.height + dy, minHeight, window.innerHeight - top);
+    height = clamp(rect.height + dy, minHeight, Math.max(minHeight, view.height - top));
   }
 
   if (direction.includes("w")) {

@@ -175,9 +175,10 @@ button {
   z-index: 50;
   width: min(520px, calc(100vw - 32px));
   height: min(360px, calc(100vh - 48px));
-  min-width: 300px;
-  min-height: 220px;
-  max-height: calc(100vh - 48px);
+  min-width: min(300px, calc(100vw - 16px));
+  min-height: min(220px, calc(100vh - 16px));
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 16px);
   overflow: hidden;
   resize: none;
   border: 1px solid rgba(0, 0, 0, .5);
@@ -187,6 +188,14 @@ button {
   pointer-events: none;
   transform: translate(-50%, -50%) scale(1);
   transition: none;
+}
+
+@supports (height: 100dvh) {
+  .folder-window {
+    height: min(360px, calc(100dvh - 48px));
+    min-height: min(220px, calc(100dvh - 16px));
+    max-height: calc(100dvh - 16px);
+  }
 }
 
 .folder-window[hidden] {
@@ -212,10 +221,13 @@ button {
   letter-spacing: .14em;
   cursor: move;
   user-select: none;
+  -webkit-user-select: none;
   touch-action: none;
 }
 
 .folder-window__close {
+  position: relative;
+  z-index: 40;
   width: 40px;
   height: 40px;
   border: 0;
@@ -240,6 +252,7 @@ button {
   min-height: 180px;
   padding: 0;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
   background-color: var(--bg);
   background-image:
     linear-gradient(var(--grid-line) 1px, transparent 1px),
@@ -288,7 +301,7 @@ button {
 
 .folder-window__resize-handle {
   position: absolute;
-  z-index: 3;
+  z-index: 30;
   touch-action: none;
 }
 
@@ -1084,131 +1097,7 @@ button {
 
 /* GTC STABLE ROW HIGHLIGHT V5.2 END */
 
-/* GTC LEGACY MOBILE WINDOW SYSTEM V6.6 START */
-
-/* Old backup window geometry:
-   same floating folder-window model on desktop and mobile. */
-.folder-window {
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-
-  top: 50%;
-  left: 50%;
-
-  width: min(520px, calc(100vw - 32px));
-  height: min(360px, calc(100vh - 48px));
-
-  min-width: min(300px, calc(100vw - 16px));
-  min-height: min(220px, calc(100vh - 16px));
-
-  max-width: calc(100vw - 16px);
-  max-height: calc(100vh - 16px);
-
-  overflow: hidden;
-  resize: none;
-
-  transform: translate(-50%, -50%);
-}
-
-@supports (height: 100dvh) {
-  .folder-window {
-    height: min(360px, calc(100dvh - 48px));
-    min-height: min(220px, calc(100dvh - 16px));
-    max-height: calc(100dvh - 16px);
-  }
-}
-
-.folder-window.is-open {
-  transform: translate(-50%, -50%);
-}
-
-.folder-window__chrome {
-  cursor: move;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: none;
-}
-
-.folder-window__body,
-.app-folder-body {
-  position: relative;
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Restore the exact 8-handle architecture visible in the old backup. */
-.folder-window__resize-handle {
-  position: absolute;
-  z-index: 30;
-  touch-action: none;
-}
-
-.folder-window__resize-handle--n,
-.folder-window__resize-handle--s {
-  left: 12px;
-  right: 12px;
-  height: 8px;
-  cursor: ns-resize;
-}
-
-.folder-window__resize-handle--n {
-  top: 0;
-}
-
-.folder-window__resize-handle--s {
-  bottom: 0;
-}
-
-.folder-window__resize-handle--e,
-.folder-window__resize-handle--w {
-  top: 12px;
-  bottom: 12px;
-  width: 8px;
-  cursor: ew-resize;
-}
-
-.folder-window__resize-handle--e {
-  right: 0;
-}
-
-.folder-window__resize-handle--w {
-  left: 0;
-}
-
-.folder-window__resize-handle--ne,
-.folder-window__resize-handle--se,
-.folder-window__resize-handle--sw,
-.folder-window__resize-handle--nw {
-  width: 16px;
-  height: 16px;
-}
-
-.folder-window__resize-handle--ne {
-  top: 0;
-  right: 0;
-  cursor: nesw-resize;
-}
-
-.folder-window__resize-handle--se {
-  right: 0;
-  bottom: 0;
-  cursor: nwse-resize;
-}
-
-.folder-window__resize-handle--sw {
-  bottom: 0;
-  left: 0;
-  cursor: nesw-resize;
-}
-
-.folder-window__resize-handle--nw {
-  top: 0;
-  left: 0;
-  cursor: nwse-resize;
-}
+/* Unified folder window system */
 
 /* Current table layout remains:
    NAME | DESCRIPTION | DATE CREATED | CREATED BY */
@@ -1289,5 +1178,25 @@ button {
   }
 }
 
-/* GTC LEGACY MOBILE WINDOW SYSTEM V6.6 END */
+/* Unified folder window system end */
+
+/* Unified folder interaction accessibility */
+@media (max-width: 760px), (hover: none), (pointer: coarse) {
+  .folder-window__close,
+  .portfolio-notice__close {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+
+  .portfolio-notice__ok {
+    min-width: 88px;
+    min-height: 44px;
+  }
+
+  .folder-window .app-list__row {
+    min-height: 48px;
+  }
+}
 
