@@ -22,6 +22,7 @@ jobs:
           cache: npm
 
       - run: npm ci
+      - run: npx playwright install chromium ffmpeg
       - run: npm test
 
       - name: Upload failure diagnostics
