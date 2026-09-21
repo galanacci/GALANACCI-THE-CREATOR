@@ -4,17 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>WARRIORSOFBOXING.EXE</title>
-  <link rel="stylesheet" href="./styles.css?v=responsive-v6-6">
+  <link rel="stylesheet" href="./styles.css?v=ss-slider-nav-v1">
 </head>
 <body>
   <main id="appMain" class="app-main" aria-label="WARRIORSOFBOXING portrait viewer">
     <canvas id="viewer" aria-label="Drag horizontally to move through the boxing portraits"></canvas>
 
     <div class="hud hud--name" aria-live="polite">
-      <span id="fighterName">LOADING…</span>
+      <span id="fighterName">LOADINGÃ¢â‚¬Â¦</span>
     </div>
+    <section id="scrubber" class="scrubber" aria-label="Portrait navigation">
+      <input
+        id="portrait-slider"
+        class="scrubber__range"
+        type="range"
+        min="1"
+        max="1"
+        value="1"
+        step="1"
+        aria-label="Browse boxing portraits"
+      >
+      <div class="scrubber__meta" aria-live="polite">
+        <span id="portrait-current">001</span>
+        <span class="scrubber__divider">/</span>
+        <span id="portrait-total">001</span>
+      </div>
+    </section>
   </main>
 
-  <script src="./app.js?v=responsive-v6-6"></script>
+  <script src="./app.js?v=ss-slider-nav-v1"></script>
 </body>
 </html>

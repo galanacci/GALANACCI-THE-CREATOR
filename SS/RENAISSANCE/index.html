@@ -15,16 +15,27 @@
       <img id="navigator-image" alt="">
       <div id="navigator-window" class="navigator__window" aria-hidden="true"></div>
     </aside>
-
-    <nav class="controls" aria-label="Artwork navigation">
-      <button id="previous" type="button">← PREVIOUS</button>
-      <span id="counter" class="controls__counter">001 / 001</span>
-      <button id="next" type="button">NEXT →</button>
-    </nav>
+    <section id="scrubber" class="scrubber" aria-label="Artwork navigation">
+      <input
+        id="artwork-slider"
+        class="scrubber__range"
+        type="range"
+        min="1"
+        max="1"
+        value="1"
+        step="1"
+        aria-label="Browse artworks"
+      >
+      <div class="scrubber__meta" aria-live="polite">
+        <span id="artwork-current">001</span>
+        <span class="scrubber__divider">/</span>
+        <span id="artwork-total">001</span>
+      </div>
+    </section>
 
     <div id="status" class="status" role="status" aria-live="polite"></div>
   </main>
 
-  <script type="module" src="./renaissance.js?v=4.0"></script>
+  <script type="module" src="./renaissance.js?v=fluid-slider-scrub-v1"></script>
 </body>
 </html>

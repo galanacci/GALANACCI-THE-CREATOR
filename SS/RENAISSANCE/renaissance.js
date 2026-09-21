@@ -8,9 +8,10 @@ const navigator = document.getElementById("navigator");
 const navigatorImage = document.getElementById("navigator-image");
 const navigatorWindow = document.getElementById("navigator-window");
 
-const previousButton = document.getElementById("previous");
-const nextButton = document.getElementById("next");
-const counter = document.getElementById("counter");
+const artworkSlider = document.getElementById("artwork-slider");
+const scrubber = document.getElementById("scrubber");
+const artworkCurrent = document.getElementById("artwork-current");
+const artworkTotal = document.getElementById("artwork-total");
 const status = document.getElementById("status");
 const viewer = document.getElementById("viewer");
 
@@ -42,6 +43,10 @@ let renderRaf = 0;
 let loadToken = 0;
 
 const tileCache = new Map();
+const overviewCache = new Map();
+
+let artworkScrubRaf = 0;
+let requestedArtworkIndex = null;
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const pad = (value, digits) => String(value).padStart(digits, "0");
@@ -81,6 +86,51 @@ function loadImage(src) {
     image.onload = () => resolve(image);
     image.onerror = reject;
     image.src = src;
+  });
+}
+
+function loadOverview(src) {
+  if (overviewCache.has(src)) return overviewCache.get(src);
+
+  const promise = loadImage(src)
+    .catch((error) => {
+      overviewCache.delete(src);
+      throw error;
+    });
+
+  overviewCache.set(src, promise);
+  return promise;
+}
+
+function warmOverviewAround(index) {
+  if (!artworks.length) return;
+
+  for (let offset = -3; offset <= 3; offset += 1) {
+    const target = index + offset;
+
+    if (target < 0 || target >= artworks.length) continue;
+
+    loadOverview(
+      resolveAsset(artworks[target].overview)
+    ).catch(() => {});
+  }
+}
+
+function scheduleArtworkScrub(index) {
+  requestedArtworkIndex = clamp(index, 0, artworks.length - 1);
+  updateControls(requestedArtworkIndex);
+
+  if (artworkScrubRaf) return;
+
+  artworkScrubRaf = requestAnimationFrame(() => {
+    artworkScrubRaf = 0;
+
+    const nextIndex = requestedArtworkIndex;
+    requestedArtworkIndex = null;
+
+    if (nextIndex == null) return;
+
+    setArtwork(nextIndex);
   });
 }
 
@@ -460,6 +510,18 @@ function setFocusFromPointer(event) {
   scheduleRender();
 }
 
+function updateControls(index = currentIndex) {
+  if (!artworkSlider || !artworkCurrent || !artworkTotal || !artworks.length) return;
+
+  const safeIndex = clamp(index, 0, artworks.length - 1);
+  const digits = Math.max(3, String(artworks.length).length);
+
+  artworkSlider.max = String(artworks.length);
+  artworkSlider.value = String(safeIndex + 1);
+  artworkCurrent.textContent = pad(safeIndex + 1, digits);
+  artworkTotal.textContent = pad(artworks.length, digits);
+}
+
 async function setArtwork(index) {
   index = clamp(index, 0, artworks.length - 1);
 
@@ -476,7 +538,7 @@ async function setArtwork(index) {
 
   status.textContent = "LOADING ARTWORK...";
 
-  const overview = await loadImage(
+  const overview = await loadOverview(
     resolveAsset(currentArtwork.overview)
   );
 
@@ -490,26 +552,20 @@ async function setArtwork(index) {
     "--nav-aspect",
     `${currentArtwork.width} / ${currentArtwork.height}`
   );
-
-  const digits = Math.max(3, String(artworks.length).length);
-
-  counter.textContent =
-    `${pad(index + 1, digits)} / ${pad(artworks.length, digits)}`;
-
-  previousButton.disabled = index === 0;
-  nextButton.disabled = index === artworks.length - 1;
+  updateControls(index);
 
   status.textContent = "";
 
   tileCache.clear();
 
+  warmOverviewAround(index);
   scheduleRender();
 }
 
 viewer.addEventListener("pointerenter", (event) => {
   if (event.pointerType !== "mouse") return;
 
-  if (event.target.closest(".controls")) return;
+  if (event.target.closest(".scrubber")) return;
 
   pointerInside = true;
   targetZoom = DETAIL_ZOOM;
@@ -518,7 +574,7 @@ viewer.addEventListener("pointerenter", (event) => {
 
 viewer.addEventListener("pointermove", (event) => {
   if (event.pointerType === "mouse") {
-    if (event.target.closest(".controls")) return;
+    if (event.target.closest(".scrubber")) return;
 
     pointerInside = true;
     targetZoom = DETAIL_ZOOM;
@@ -545,7 +601,7 @@ viewer.addEventListener("pointerleave", (event) => {
 
 viewer.addEventListener("pointerdown", (event) => {
   if (event.pointerType === "mouse") return;
-  if (event.target.closest(".controls")) return;
+  if (event.target.closest(".scrubber")) return;
 
   event.preventDefault();
 
@@ -572,22 +628,45 @@ function endTouch(event) {
 
 viewer.addEventListener("pointerup", endTouch);
 viewer.addEventListener("pointercancel", endTouch);
+function bindArtworkNavigator() {
+  if (!artworkSlider || !scrubber) return;
 
-previousButton.addEventListener("click", (event) => {
-  event.stopPropagation();
+  const stopScrubberEvent = (event) => {
+    event.stopPropagation();
+  };
 
-  if (currentIndex > 0) {
-    setArtwork(currentIndex - 1);
-  }
-});
+  [scrubber, artworkSlider].forEach((element) => {
+    element.addEventListener("pointerdown", stopScrubberEvent);
+    element.addEventListener("pointermove", stopScrubberEvent);
+    element.addEventListener("pointerup", stopScrubberEvent);
+    element.addEventListener("pointercancel", stopScrubberEvent);
+    element.addEventListener("click", stopScrubberEvent);
+  });
 
-nextButton.addEventListener("click", (event) => {
-  event.stopPropagation();
+  artworkSlider.addEventListener("pointerdown", () => {
+    scrubber.classList.add("is-scrubbing");
+  });
 
-  if (currentIndex < artworks.length - 1) {
-    setArtwork(currentIndex + 1);
-  }
-});
+  artworkSlider.addEventListener("input", () => {
+    scheduleArtworkScrub(Number(artworkSlider.value) - 1);
+  });
+
+  artworkSlider.addEventListener("change", () => {
+    setArtwork(Number(artworkSlider.value) - 1);
+    scrubber.classList.remove("is-scrubbing");
+  });
+
+  artworkSlider.addEventListener("pointerup", () => {
+    setArtwork(Number(artworkSlider.value) - 1);
+    scrubber.classList.remove("is-scrubbing");
+  });
+
+  artworkSlider.addEventListener("pointercancel", () => {
+    scrubber.classList.remove("is-scrubbing");
+  });
+}
+
+bindArtworkNavigator();
 
 window.addEventListener("keydown", (event) => {
   if (event.key === "ArrowLeft" && currentIndex > 0) {

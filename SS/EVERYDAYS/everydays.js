@@ -7,6 +7,11 @@ const preview = document.getElementById("preview");
 const previewImage = document.getElementById("preview-image");
 const status = document.getElementById("status");
 
+const imageSlider = document.getElementById("image-slider");
+const scrubber = document.getElementById("scrubber");
+const imageCurrent = document.getElementById("image-current");
+const imageTotal = document.getElementById("image-total");
+
 const coarsePointer = window.matchMedia("(hover: none), (pointer: coarse)").matches;
 
 let manifestUrl = null;
@@ -18,6 +23,7 @@ let resizeRaf = 0;
 
 const previewCache = new Map();
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+const pad = (value, digits) => String(value).padStart(digits, "0");
 
 function resolveAsset(path) {
   return new URL(path, manifestUrl).href;
@@ -131,6 +137,68 @@ function renderGrid() {
   applyGridGeometry();
 }
 
+function updateNavigatorControl(index = activeIndex >= 0 ? activeIndex : 0) {
+  if (!imageSlider || !imageCurrent || !imageTotal || !items.length) return;
+
+  const safeIndex = clamp(index, 0, items.length - 1);
+  const digits = Math.max(3, String(items.length).length);
+
+  imageSlider.max = String(items.length);
+  imageSlider.value = String(safeIndex + 1);
+  imageCurrent.textContent = pad(safeIndex + 1, digits);
+  imageTotal.textContent = pad(items.length, digits);
+}
+
+function activateBySliderIndex(index) {
+  if (!items.length) return;
+
+  const safeIndex = clamp(index, 0, items.length - 1);
+  updateNavigatorControl(safeIndex);
+
+  const tile = grid.querySelector(`[data-index="${safeIndex}"]`);
+  if (tile) {
+    activateTile(tile, safeIndex);
+  }
+}
+
+function bindImageNavigator() {
+  if (!imageSlider || !scrubber) return;
+
+  const stopScrubberEvent = (event) => {
+    event.stopPropagation();
+  };
+
+  [scrubber, imageSlider].forEach((element) => {
+    element.addEventListener("pointerdown", stopScrubberEvent);
+    element.addEventListener("pointermove", stopScrubberEvent);
+    element.addEventListener("pointerup", stopScrubberEvent);
+    element.addEventListener("pointercancel", stopScrubberEvent);
+    element.addEventListener("click", stopScrubberEvent);
+  });
+
+  imageSlider.addEventListener("pointerdown", () => {
+    scrubber.classList.add("is-scrubbing");
+  });
+
+  imageSlider.addEventListener("input", () => {
+    activateBySliderIndex(Number(imageSlider.value) - 1);
+  });
+
+  imageSlider.addEventListener("change", () => {
+    activateBySliderIndex(Number(imageSlider.value) - 1);
+    scrubber.classList.remove("is-scrubbing");
+  });
+
+  imageSlider.addEventListener("pointerup", () => {
+    activateBySliderIndex(Number(imageSlider.value) - 1);
+    scrubber.classList.remove("is-scrubbing");
+  });
+
+  imageSlider.addEventListener("pointercancel", () => {
+    scrubber.classList.remove("is-scrubbing");
+  });
+}
+
 function calculatePreviewRect(tile, item) {
   const rect = tile.getBoundingClientRect();
   const viewportW = window.innerWidth;
@@ -187,6 +255,7 @@ async function activateTile(tile, index) {
   activeTile = tile;
   activeIndex = index;
   tile.classList.add("is-active");
+  updateNavigatorControl(index);
 
   const item = items[index];
   const rect = calculatePreviewRect(tile, item);
@@ -288,6 +357,8 @@ async function init() {
   try {
     items = await loadManifest();
     renderGrid();
+    updateNavigatorControl(0);
+    bindImageNavigator();
 
     const warm = () => {
       const limit = Math.min(items.length, 10);

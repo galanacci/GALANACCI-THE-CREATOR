@@ -4,6 +4,11 @@ const GRID = 16;
 const EDGE = 20;
 const COLLISION_GAP = 0;
 const POSITION_PREFIX = "gtc:desktop-position:";
+const DEFAULT_SHORTCUT_POSITIONS = Object.freeze({
+  "pog-exe": Object.freeze({ x: 32, y: 32 }),
+  "experiments-folder": Object.freeze({ x: 32, y: 160 }),
+  "ss-folder": Object.freeze({ x: 32, y: 288 })
+});
 const HINT_KEY = "gtc:desktop-hint:v1";
 const LAUNCH_DELAY = 520;
 
@@ -23,6 +28,35 @@ const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
 const mobileFolderMode = window.matchMedia(
   "(hover: none), (pointer: coarse), (max-width: 760px)"
 );
+
+function mobileLockedShortcutPosition(shortcut) {
+  const { maxX, maxY } = boundsFor(shortcut);
+  const id = shortcut.dataset.appId;
+  const leftColumn = clamp(64, EDGE, maxX);
+  const rightColumn = clamp(
+    window.innerWidth - shortcut.offsetWidth - 52,
+    EDGE,
+    maxX
+  );
+  const upperRow = clamp(Math.round(window.innerHeight * .43), EDGE, maxY);
+  const lowerRow = clamp(
+    upperRow + shortcut.offsetHeight + 22,
+    EDGE,
+    maxY
+  );
+
+  if (id === "pog-exe") return { x: rightColumn, y: upperRow };
+  if (id === "ss-folder") return { x: leftColumn, y: upperRow };
+  if (id === "experiments-folder") return { x: leftColumn, y: lowerRow };
+
+  const shortcuts = [...document.querySelectorAll(".desktop-shortcut")];
+  const index = Math.max(0, shortcuts.indexOf(shortcut));
+
+  return {
+    x: leftColumn,
+    y: clamp(upperRow + index * (shortcut.offsetHeight + 22), EDGE, maxY)
+  };
+}
 
 let selected = null;
 let dragging = null;
@@ -101,11 +135,16 @@ function boundsFor(shortcut) {
   };
 }
 
-function randomPosition(shortcut) {
-  const { maxX, maxY } = boundsFor(shortcut);
+function defaultPosition(shortcut) {
+  const configured = DEFAULT_SHORTCUT_POSITIONS[shortcut.dataset.appId];
+  if (configured) return { ...configured };
+
+  const shortcuts = [...document.querySelectorAll(".desktop-shortcut")];
+  const index = Math.max(0, shortcuts.indexOf(shortcut));
+
   return {
-    x: snap(EDGE + Math.random() * Math.max(0, maxX - EDGE)),
-    y: snap(EDGE + Math.random() * Math.max(0, maxY - EDGE))
+    x: EDGE + Math.floor(index / 5) * 128,
+    y: EDGE + (index % 5) * 128
   };
 }
 
@@ -117,7 +156,7 @@ function readPosition(shortcut) {
     if (Number.isFinite(parsed?.x) && Number.isFinite(parsed?.y)) return parsed;
   } catch {}
 
-  const position = randomPosition(shortcut);
+  const position = defaultPosition(shortcut);
   storageSet(key, JSON.stringify(position));
   return position;
 }
@@ -173,11 +212,16 @@ function findAvailablePosition(shortcut, position) {
 }
 
 function renderShortcut(shortcut, position, { commit = true } = {}) {
-  const next = findAvailablePosition(shortcut, position);
+  const next = isTouch
+    ? mobileLockedShortcutPosition(shortcut)
+    : findAvailablePosition(shortcut, position);
+
   shortcut._renderedPosition = next;
 
   if (commit) {
-    shortcut._desktopPosition = next;
+    // Keep the user's canonical desktop coordinates separate from the
+    // deterministic mobile launcher layout.
+    shortcut._desktopPosition = isTouch ? position : next;
   }
 
   shortcut.style.transform = `translate3d(${next.x}px, ${next.y}px, 0)`;
@@ -410,6 +454,7 @@ function installShortcut(shortcut, app) {
 
   shortcut.addEventListener("pointermove", (event) => {
     if (!dragging || dragging.shortcut !== shortcut) return;
+    if (isTouch) return;
 
     const dx = event.clientX - dragging.startX;
     const dy = event.clientY - dragging.startY;

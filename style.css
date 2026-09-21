@@ -1200,3 +1200,29 @@ button {
   }
 }
 
+/* Keep the mobile close control clear of competing resize gestures. */
+@media (hover: none), (pointer: coarse) {
+  .folder-window__close {
+    position: relative;
+    z-index: 40;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .folder-window__resize-handle--ne {
+    display: none;
+    pointer-events: none;
+  }
+
+  .folder-window__resize-handle--n {
+    right: 52px;
+  }
+
+  .folder-window__resize-handle--e {
+    top: 52px;
+  }
+
+  .folder-window__resize-handle:hover {
+    background: transparent;
+  }
+}

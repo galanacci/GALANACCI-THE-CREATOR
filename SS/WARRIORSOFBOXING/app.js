@@ -8,6 +8,11 @@ const ctx = canvas.getContext('2d', { alpha: false });
 const appMain = document.getElementById('appMain');
 const nameEl = document.getElementById('fighterName');
 
+const portraitSlider = document.getElementById('portrait-slider');
+const scrubber = document.getElementById('scrubber');
+const portraitCurrent = document.getElementById('portrait-current');
+const portraitTotal = document.getElementById('portrait-total');
+
 const PAPER = '#E3D6C3';
 const DPR_CAP = 2;
 
@@ -34,6 +39,7 @@ const state = {
 };
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+const pad = (value, digits) => String(value).padStart(digits, '0');
 
 function modulo(value, length) {
   return ((value % length) + length) % length;
@@ -435,9 +441,34 @@ function render() {
   drawMorph(pair.t);
 }
 
+function currentPortraitIndex() {
+  if (!state.entries.length) return 0;
+  return modulo(Math.round(state.rawPosition), state.entries.length);
+}
+
+function updateScrubber(index = currentPortraitIndex()) {
+  if (!portraitSlider || !portraitCurrent || !portraitTotal || !state.entries.length) return;
+
+  const safeIndex = clamp(index, 0, state.entries.length - 1);
+  const digits = Math.max(3, String(state.entries.length).length);
+
+  portraitSlider.max = String(state.entries.length);
+  portraitSlider.value = String(safeIndex + 1);
+  portraitCurrent.textContent = pad(safeIndex + 1, digits);
+  portraitTotal.textContent = pad(state.entries.length, digits);
+}
+
 function setRawPosition(value) {
   state.rawPosition = value;
+  updateScrubber();
   render();
+}
+
+function setPortraitFromScrubber(index) {
+  if (!state.entries.length) return;
+
+  cancelSnap();
+  setRawPosition(clamp(index, 0, state.entries.length - 1));
 }
 
 function cancelSnap() {
@@ -484,6 +515,7 @@ function snapToNearestPortrait() {
 }
 
 function beginDrag(event) {
+  if (event.target.closest?.('.scrubber')) return;
   if (event.pointerType === 'mouse' && event.button !== 0) return;
 
   event.preventDefault();
@@ -538,19 +570,57 @@ appMain.addEventListener('pointermove', moveDrag);
 appMain.addEventListener('pointerup', endDrag);
 appMain.addEventListener('pointercancel', endDrag);
 
+function bindPortraitNavigator() {
+  if (!portraitSlider || !scrubber) return;
+
+  const stopScrubberEvent = (event) => {
+    event.stopPropagation();
+  };
+
+  [scrubber, portraitSlider].forEach((element) => {
+    element.addEventListener('pointerdown', stopScrubberEvent);
+    element.addEventListener('pointermove', stopScrubberEvent);
+    element.addEventListener('pointerup', stopScrubberEvent);
+    element.addEventListener('pointercancel', stopScrubberEvent);
+    element.addEventListener('click', stopScrubberEvent);
+  });
+
+  portraitSlider.addEventListener('pointerdown', () => {
+    scrubber.classList.add('is-scrubbing');
+  });
+
+  portraitSlider.addEventListener('input', () => {
+    setPortraitFromScrubber(Number(portraitSlider.value) - 1);
+  });
+
+  portraitSlider.addEventListener('change', () => {
+    setPortraitFromScrubber(Number(portraitSlider.value) - 1);
+    scrubber.classList.remove('is-scrubbing');
+  });
+
+  portraitSlider.addEventListener('pointerup', () => {
+    setPortraitFromScrubber(Number(portraitSlider.value) - 1);
+    scrubber.classList.remove('is-scrubbing');
+  });
+
+  portraitSlider.addEventListener('pointercancel', () => {
+    scrubber.classList.remove('is-scrubbing');
+  });
+}
+
 window.addEventListener('keydown', (event) => {
   if (event.key === 'ArrowLeft') {
     cancelSnap();
-    state.rawPosition =
-      Math.round(state.rawPosition) - 1;
-    render();
+    setRawPosition(
+      Math.round(state.rawPosition) - 1
+    );
   }
 
   if (event.key === 'ArrowRight') {
     cancelSnap();
-    state.rawPosition =
-      Math.round(state.rawPosition) + 1;
-    render();
+    setRawPosition(
+      Math.round(state.rawPosition) + 1
+    );
   }
 });
 
@@ -573,6 +643,9 @@ window.addEventListener('resize', resizeCanvas);
       state.manifestBaseUrl
     ).href,
   }));
+
+  updateScrubber(0);
+  bindPortraitNavigator();
 
   resizeCanvas();
   await ensurePair(0);
