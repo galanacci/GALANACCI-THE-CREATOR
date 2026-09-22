@@ -20,6 +20,8 @@
   }
 
   const DESCRIPTIONS = Object.freeze({
+    "FIGHTPOSTERS": "Fight posters for major 2024 boxing events and the Olympics.",
+    "FIGHTPOSTERS.EXE": "Fight posters for major 2024 boxing events and the Olympics.",
     "PUGILISM": "Digital drawings of boxing legends of different eras.",
     "PUGILISM.EXE": "Digital drawings of boxing legends of different eras.",
     "365LOOKS": "365 days, 365 looks. Daily fashion sketches.",

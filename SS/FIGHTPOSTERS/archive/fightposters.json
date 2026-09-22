@@ -1,0 +1,201 @@
+{
+    "version":  1,
+    "count":  5,
+    "artworks":  [
+                     {
+                         "id":  "001",
+                         "title":  "2401_AJ_VS_NGANNOU",
+                         "year":  2024,
+                         "source":  "2401_AJ_VS_NGANNOU.png",
+                         "source_width":  3600,
+                         "source_height":  4800,
+                         "width":  3600,
+                         "height":  4800,
+                         "overview":  "./overview/001.jpg",
+                         "tiles":  "./tiles/001",
+                         "tile_size":  512,
+                         "levels":  [
+                                        {
+                                            "id":  "L0",
+                                            "scale":  0.25,
+                                            "width":  900,
+                                            "height":  1200,
+                                            "cols":  2,
+                                            "rows":  3
+                                        },
+                                        {
+                                            "id":  "L1",
+                                            "scale":  0.5,
+                                            "width":  1800,
+                                            "height":  2400,
+                                            "cols":  4,
+                                            "rows":  5
+                                        },
+                                        {
+                                            "id":  "L2",
+                                            "scale":  1,
+                                            "width":  3600,
+                                            "height":  4800,
+                                            "cols":  8,
+                                            "rows":  10
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "002",
+                         "title":  "2401_FURY_V_USYK_",
+                         "year":  2024,
+                         "source":  "2401_FURY_V_USYK_.png",
+                         "source_width":  3600,
+                         "source_height":  4800,
+                         "width":  3600,
+                         "height":  4800,
+                         "overview":  "./overview/002.jpg",
+                         "tiles":  "./tiles/002",
+                         "tile_size":  512,
+                         "levels":  [
+                                        {
+                                            "id":  "L0",
+                                            "scale":  0.25,
+                                            "width":  900,
+                                            "height":  1200,
+                                            "cols":  2,
+                                            "rows":  3
+                                        },
+                                        {
+                                            "id":  "L1",
+                                            "scale":  0.5,
+                                            "width":  1800,
+                                            "height":  2400,
+                                            "cols":  4,
+                                            "rows":  5
+                                        },
+                                        {
+                                            "id":  "L2",
+                                            "scale":  1,
+                                            "width":  3600,
+                                            "height":  4800,
+                                            "cols":  8,
+                                            "rows":  10
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "003",
+                         "title":  "2402_HANEY_V_GARCIA",
+                         "year":  2024,
+                         "source":  "2402_HANEY_V_GARCIA.png",
+                         "source_width":  3600,
+                         "source_height":  4800,
+                         "width":  3600,
+                         "height":  4800,
+                         "overview":  "./overview/003.jpg",
+                         "tiles":  "./tiles/003",
+                         "tile_size":  512,
+                         "levels":  [
+                                        {
+                                            "id":  "L0",
+                                            "scale":  0.25,
+                                            "width":  900,
+                                            "height":  1200,
+                                            "cols":  2,
+                                            "rows":  3
+                                        },
+                                        {
+                                            "id":  "L1",
+                                            "scale":  0.5,
+                                            "width":  1800,
+                                            "height":  2400,
+                                            "cols":  4,
+                                            "rows":  5
+                                        },
+                                        {
+                                            "id":  "L2",
+                                            "scale":  1,
+                                            "width":  3600,
+                                            "height":  4800,
+                                            "cols":  8,
+                                            "rows":  10
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "004",
+                         "title":  "BETERBIEV_VS_BIVOL",
+                         "year":  2024,
+                         "source":  "BETERBIEV_VS_BIVOL.png",
+                         "source_width":  3600,
+                         "source_height":  4800,
+                         "width":  3600,
+                         "height":  4800,
+                         "overview":  "./overview/004.jpg",
+                         "tiles":  "./tiles/004",
+                         "tile_size":  512,
+                         "levels":  [
+                                        {
+                                            "id":  "L0",
+                                            "scale":  0.25,
+                                            "width":  900,
+                                            "height":  1200,
+                                            "cols":  2,
+                                            "rows":  3
+                                        },
+                                        {
+                                            "id":  "L1",
+                                            "scale":  0.5,
+                                            "width":  1800,
+                                            "height":  2400,
+                                            "cols":  4,
+                                            "rows":  5
+                                        },
+                                        {
+                                            "id":  "L2",
+                                            "scale":  1,
+                                            "width":  3600,
+                                            "height":  4800,
+                                            "cols":  8,
+                                            "rows":  10
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "005",
+                         "title":  "PHILIPPINES_BOXING_OLYMPIC_MEDALISTS",
+                         "year":  2024,
+                         "source":  "PHILIPPINES_BOXING_OLYMPIC_MEDALISTS.png",
+                         "source_width":  3600,
+                         "source_height":  4800,
+                         "width":  3600,
+                         "height":  4800,
+                         "overview":  "./overview/005.jpg",
+                         "tiles":  "./tiles/005",
+                         "tile_size":  512,
+                         "levels":  [
+                                        {
+                                            "id":  "L0",
+                                            "scale":  0.25,
+                                            "width":  900,
+                                            "height":  1200,
+                                            "cols":  2,
+                                            "rows":  3
+                                        },
+                                        {
+                                            "id":  "L1",
+                                            "scale":  0.5,
+                                            "width":  1800,
+                                            "height":  2400,
+                                            "cols":  4,
+                                            "rows":  5
+                                        },
+                                        {
+                                            "id":  "L2",
+                                            "scale":  1,
+                                            "width":  3600,
+                                            "height":  4800,
+                                            "cols":  8,
+                                            "rows":  10
+                                        }
+                                    ]
+                     }
+                 ]
+}
