@@ -100,6 +100,37 @@ test("internal .EXE opens in iframe and closing it preserves the folder", async 
   await expect(row).toBeFocused();
 });
 
+test("GTHEFIGHTER.EXE is listed in SS and opens as an internal 3D app", async ({ page }, testInfo) => {
+  const isMobile = testInfo.project.name === "mobile-chromium";
+  const folder = await openFolder(page, "SS", isMobile);
+  const row = folder.locator('[data-label="GTHEFIGHTER.EXE"]');
+
+  await expect(row).toBeVisible();
+  await expect(row).toContainText("2021");
+  await expect(row).toContainText("GALANACCI");
+
+  if (isMobile) await row.dispatchEvent("click");
+  else await row.dblclick();
+
+  const appWindow = page.locator("#experiment-window");
+  await expect(appWindow).toBeVisible();
+  await expect(page.locator("#experiment-window-title")).toHaveText("GTHEFIGHTER.EXE");
+  await expect(page.locator("#experiment-frame")).toHaveAttribute(
+    "src",
+    /SS\/GTHEFIGHTER\/index\.html$/
+  );
+  await expect(folder).toBeVisible();
+
+  const appFrame = page.frameLocator("#experiment-frame");
+  await expect(appFrame.locator("#frame-viewer")).toBeVisible();
+  await expect(appFrame.locator(".experience")).toHaveClass(/is-ready/, {
+    timeout: 15_000
+  });
+  await expect(appFrame.locator(".collection-info")).toContainText(
+    "A DIGITAL ART COLLECTION EXPLORING BOXING'S GREATS."
+  );
+});
+
 test("keyboard opens and closes folders with focus restoration", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Desktop keyboard contract");
 

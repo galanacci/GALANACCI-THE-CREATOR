@@ -8,6 +8,8 @@
     "2(XY+T).EXE": "An iteration of Bradley Tangonan's XY - T project.",
     "WARRIORSOFBOXING": "Ink drawings of boxing's hall of famers.",
     "WARRIORSOFBOXING.EXE": "Ink drawings of boxing's hall of famers.",
+    "GTHEFIGHTER": "A digital art collection exploring boxing's greats.",
+    "GTHEFIGHTER.EXE": "A digital art collection exploring boxing's greats.",
     "EVERYDAYS": "Mixed media digital art inspired by Beeple.",
     "EVERYDAYS.EXE": "Mixed media digital art inspired by Beeple.",
     "RENAISSANCE": "Digital paintings inspired by Caravaggio.",
