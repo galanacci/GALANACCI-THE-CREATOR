@@ -1,23 +1,5 @@
-(() => {
+﻿(() => {
   "use strict";
-
-  const OS_SESSION_KEY = "gtc:os-session-active";
-
-  function hasActiveOsSession() {
-    try {
-      return sessionStorage.getItem(OS_SESSION_KEY) === "1";
-    } catch {
-      return false;
-    }
-  }
-
-  function activateOsSession() {
-    try {
-      sessionStorage.setItem(OS_SESSION_KEY, "1");
-    } catch {
-      /* Session persistence is progressive enhancement only. */
-    }
-  }
 
   const DESCRIPTIONS = Object.freeze({
     "2(XY-T)": "An iteration of Bradley Tangonan's XY - T project.",
@@ -228,12 +210,6 @@
     const layer = document.getElementById("portfolio-notice-layer");
     if (!layer) return;
 
-    if (hasActiveOsSession()) {
-      layer.hidden = true;
-      layer.setAttribute("aria-hidden", "true");
-      return;
-    }
-
     if (layer.dataset.gtcInitialised === "1") {
       layer.hidden = false;
       layer.setAttribute("aria-hidden", "false");
@@ -243,7 +219,6 @@
     layer.dataset.gtcInitialised = "1";
 
     const closeNotice = () => {
-      activateOsSession();
       layer.hidden = true;
       layer.setAttribute("aria-hidden", "true");
     };

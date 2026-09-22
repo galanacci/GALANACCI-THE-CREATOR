@@ -3,28 +3,6 @@
 
   const boot = document.getElementById("gtc-os-boot");
   const BOOT_DURATION_MS = 3700;
-  const OS_SESSION_KEY = "gtc:os-session-active";
-
-  function hasActiveOsSession() {
-    try {
-      return sessionStorage.getItem(OS_SESSION_KEY) === "1";
-    } catch {
-      return false;
-    }
-  }
-
-  function activateOsSession() {
-    try {
-      sessionStorage.setItem(OS_SESSION_KEY, "1");
-    } catch {
-      /* Session persistence is progressive enhancement only. */
-    }
-  }
-
-  function skipBootForActiveSession() {
-    document.body.classList.remove("gtc-os-boot-active");
-    boot?.remove();
-  }
 
   function enteredFromPog() {
     try {
@@ -60,7 +38,6 @@
   }
 
   function bypassBootForPogExit() {
-    activateOsSession();
     document.documentElement.classList.add("gtc-entry-from-pog");
     document.body.classList.remove("gtc-os-boot-active");
 
@@ -118,11 +95,6 @@
 
   if (enteredFromPog()) {
     bypassBootForPogExit();
-    return;
-  }
-
-  if (hasActiveOsSession()) {
-    skipBootForActiveSession();
     return;
   }
 

@@ -3,28 +3,6 @@
 
   const boot = document.getElementById("gtc-os-boot");
   const BOOT_DURATION_MS = 3700;
-  const OS_SESSION_KEY = "gtc:os-session-active";
-
-  function hasActiveOsSession() {
-    try {
-      return sessionStorage.getItem(OS_SESSION_KEY) === "1";
-    } catch {
-      return false;
-    }
-  }
-
-  function activateOsSession() {
-    try {
-      sessionStorage.setItem(OS_SESSION_KEY, "1");
-    } catch {
-      /* Session persistence is progressive enhancement only. */
-    }
-  }
-
-  function skipBootForActiveSession() {
-    document.body.classList.remove("gtc-os-boot-active");
-    boot?.remove();
-  }
 
   function enteredFromPog() {
     try {
@@ -60,7 +38,6 @@
   }
 
   function bypassBootForPogExit() {
-    activateOsSession();
     document.documentElement.classList.add("gtc-entry-from-pog");
     document.body.classList.remove("gtc-os-boot-active");
 
@@ -76,39 +53,6 @@
     cleanPogEntryUrl();
   }
 
-  function startBootWordSequence() {
-    if (!boot) return;
-
-    const words = [...boot.querySelectorAll(".gtc-os-boot__word")];
-
-    if (!words.length) return;
-
-    const phaseDuration = BOOT_DURATION_MS / words.length;
-    let activeIndex = -1;
-
-    const activate = (index) => {
-      const safeIndex = Math.min(
-        Math.max(index, 0),
-        words.length - 1
-      );
-
-      if (safeIndex === activeIndex) return;
-
-      activeIndex = safeIndex;
-
-      words.forEach((word, wordIndex) => {
-        word.classList.toggle("is-active", wordIndex === safeIndex);
-      });
-    };
-
-    activate(0);
-
-    words.slice(1).forEach((word, index) => {
-      window.setTimeout(() => {
-        activate(index + 1);
-      }, Math.round(phaseDuration * (index + 1)));
-    });
-  }
   function completeNormalBoot() {
     if (!boot) return;
 
@@ -121,11 +65,5 @@
     return;
   }
 
-  if (hasActiveOsSession()) {
-    skipBootForActiveSession();
-    return;
-  }
-
-  startBootWordSequence();
   window.setTimeout(completeNormalBoot, BOOT_DURATION_MS);
 })();

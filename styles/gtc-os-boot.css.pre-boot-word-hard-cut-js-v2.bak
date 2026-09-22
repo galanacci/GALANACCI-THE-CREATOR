@@ -8,12 +8,12 @@ html.gtc-entry-from-pog .portfolio-notice-layer {
 }
 /* GTC ENTRY RETURN V4.1 END */
 /* ================================================================
-   GALANACCI OS Ã¢â‚¬â€ BOOT SCALE RATIO V3.2
+   GALANACCI OS â€” BOOT SCALE RATIO V3.2
 
    Presentation order remains:
    1. Logo
    2. GALANACCI OS
-   3. WORLD BUILDING Ã¢â‚¬Â¢ EXPERIMENTS Ã¢â‚¬Â¢ ARCHIVES
+   3. WORLD BUILDING â€¢ EXPERIMENTS â€¢ ARCHIVES
    4. Loading bar
 
    Visual hierarchy target:
@@ -67,7 +67,7 @@ body.gtc-os-boot-active .portfolio-notice-layer {
 }
 
 /* ================================================================
-   LOGO Ã¢â‚¬â€ 80% VISUAL SCALE
+   LOGO â€” 80% VISUAL SCALE
    Dominates the composition.
    ================================================================ */
 
@@ -85,7 +85,7 @@ body.gtc-os-boot-active .portfolio-notice-layer {
 }
 
 /* ================================================================
-   GALANACCI OS Ã¢â‚¬â€ 10% VISUAL SCALE
+   GALANACCI OS â€” 10% VISUAL SCALE
    Supporting system label only.
    ================================================================ */
 
@@ -115,7 +115,7 @@ body.gtc-os-boot-active .portfolio-notice-layer {
 }
 
 /* ================================================================
-   WORLD BUILDING... Ã¢â‚¬â€ 25% VISUAL SCALE
+   WORLD BUILDING... â€” 25% VISUAL SCALE
    Clearly stronger than the OS identity, but secondary to logo.
    ================================================================ */
 
@@ -407,19 +407,3 @@ body.gtc-os-boot-active .portfolio-notice-layer {
   }
 }
 /* GTC BOOT SEQUENCE VERSION COUNTER V1 END */
-
-/* GTC BOOT WORD HARD CUT JS V2 START */
-/*
-  JS controls the boot word sequence through .is-active.
-  This prevents CSS keyframes/reduced-motion rules from leaving WORLD BUILDING
-  visible for the entire boot duration.
-*/
-.gtc-os-boot__word {
-  opacity: 0 !important;
-  animation: none !important;
-}
-
-.gtc-os-boot__word.is-active {
-  opacity: 1 !important;
-}
-/* GTC BOOT WORD HARD CUT JS V2 END */

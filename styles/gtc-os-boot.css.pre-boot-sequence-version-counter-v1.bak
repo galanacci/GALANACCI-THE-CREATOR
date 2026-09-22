@@ -8,12 +8,12 @@ html.gtc-entry-from-pog .portfolio-notice-layer {
 }
 /* GTC ENTRY RETURN V4.1 END */
 /* ================================================================
-   GALANACCI OS Ã¢â‚¬â€ BOOT SCALE RATIO V3.2
+   GALANACCI OS — BOOT SCALE RATIO V3.2
 
    Presentation order remains:
    1. Logo
    2. GALANACCI OS
-   3. WORLD BUILDING Ã¢â‚¬Â¢ EXPERIMENTS Ã¢â‚¬Â¢ ARCHIVES
+   3. WORLD BUILDING • EXPERIMENTS • ARCHIVES
    4. Loading bar
 
    Visual hierarchy target:
@@ -67,7 +67,7 @@ body.gtc-os-boot-active .portfolio-notice-layer {
 }
 
 /* ================================================================
-   LOGO Ã¢â‚¬â€ 80% VISUAL SCALE
+   LOGO — 80% VISUAL SCALE
    Dominates the composition.
    ================================================================ */
 
@@ -85,7 +85,7 @@ body.gtc-os-boot-active .portfolio-notice-layer {
 }
 
 /* ================================================================
-   GALANACCI OS Ã¢â‚¬â€ 10% VISUAL SCALE
+   GALANACCI OS — 10% VISUAL SCALE
    Supporting system label only.
    ================================================================ */
 
@@ -115,7 +115,7 @@ body.gtc-os-boot-active .portfolio-notice-layer {
 }
 
 /* ================================================================
-   WORLD BUILDING... Ã¢â‚¬â€ 25% VISUAL SCALE
+   WORLD BUILDING... — 25% VISUAL SCALE
    Clearly stronger than the OS identity, but secondary to logo.
    ================================================================ */
 
@@ -243,183 +243,3 @@ body.gtc-os-boot-active .portfolio-notice-layer {
     white-space: normal;
   }
 }
-
-/* GTC BOOT SEQUENCE VERSION COUNTER V1 START */
-/*
-  Boot sketch update:
-  - keep logo sizing from existing rules
-  - GALANACCI OS beneath logo
-  - VERSION_XXX beneath GALANACCI OS
-  - hard-cut WORLD BUILDING / EXPERIMENTS / ARCHIVES sequence
-  - loading bar remains unchanged
-*/
-
-.gtc-os-boot__identity {
-  width: min(80vw, 620px);
-  max-width: 80%;
-  margin-top: 12px;
-  text-align: center;
-  font-family: "Windows95", "Courier New", monospace;
-  text-transform: uppercase;
-}
-
-.gtc-os-boot__title {
-  width: 100%;
-  font-size: clamp(15px, 1.55vw, 23px);
-  line-height: 1;
-  letter-spacing: .055em;
-  white-space: nowrap;
-}
-
-.gtc-os-boot__version {
-  margin-top: 7px;
-  font-size: clamp(8px, .75vw, 11px);
-  line-height: 1;
-  letter-spacing: .24em;
-  white-space: nowrap;
-  opacity: .86;
-}
-
-.gtc-os-boot__os {
-  display: none !important;
-}
-
-.gtc-os-boot__meta {
-  position: relative;
-  width: min(900px, calc(100vw - 48px));
-  min-height: 1.35em;
-  margin-top: 44px;
-  padding: 0 18px;
-  font-family: "Windows95", "Courier New", monospace;
-  font-size: clamp(30px, 5.1vw, 68px);
-  line-height: 1;
-  letter-spacing: .065em;
-  text-align: center;
-  white-space: nowrap;
-  color: #EAD1B2;
-}
-
-.gtc-os-boot__word {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  opacity: 0;
-  animation-duration: 3700ms;
-  animation-timing-function: steps(1, end);
-  animation-fill-mode: both;
-  animation-iteration-count: 1;
-}
-
-.gtc-os-boot__word--world {
-  animation-name: gtcBootWordWorld;
-}
-
-.gtc-os-boot__word--experiments {
-  animation-name: gtcBootWordExperiments;
-}
-
-.gtc-os-boot__word--archives {
-  animation-name: gtcBootWordArchives;
-}
-
-@keyframes gtcBootWordWorld {
-  0%, 33.332% { opacity: 1; }
-  33.333%, 100% { opacity: 0; }
-}
-
-@keyframes gtcBootWordExperiments {
-  0%, 33.332% { opacity: 0; }
-  33.333%, 66.665% { opacity: 1; }
-  66.666%, 100% { opacity: 0; }
-}
-
-@keyframes gtcBootWordArchives {
-  0%, 66.665% { opacity: 0; }
-  66.666%, 100% { opacity: 1; }
-}
-
-@media (min-width: 1500px) and (min-height: 850px) {
-  .gtc-os-boot__identity {
-    width: min(80vw, 680px);
-  }
-
-  .gtc-os-boot__title {
-    font-size: 24px;
-  }
-
-  .gtc-os-boot__version {
-    font-size: 11px;
-  }
-
-  .gtc-os-boot__meta {
-    margin-top: 48px;
-    font-size: clamp(42px, 5vw, 76px);
-  }
-}
-
-@media (max-height: 760px) and (min-width: 701px) {
-  .gtc-os-boot__identity {
-    width: min(65vw, 390px);
-  }
-
-  .gtc-os-boot__meta {
-    margin-top: 30px;
-    font-size: clamp(24px, 4.2vw, 46px);
-  }
-}
-
-@media (max-width: 700px) {
-  .gtc-os-boot__identity {
-    width: 80vw;
-    max-width: 330px;
-    margin-top: 10px;
-  }
-
-  .gtc-os-boot__title {
-    font-size: clamp(13px, 4.2vw, 18px);
-    letter-spacing: .05em;
-  }
-
-  .gtc-os-boot__version {
-    margin-top: 6px;
-    font-size: 8px;
-    letter-spacing: .18em;
-  }
-
-  .gtc-os-boot__meta {
-    width: calc(100vw - 24px);
-    margin-top: 34px;
-    padding: 0 4px;
-    font-size: clamp(25px, 9.4vw, 44px);
-    letter-spacing: .04em;
-    white-space: nowrap;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gtc-os-boot__word {
-    animation: none;
-  }
-
-  .gtc-os-boot__word--world {
-    opacity: 1;
-  }
-}
-/* GTC BOOT SEQUENCE VERSION COUNTER V1 END */
-
-/* GTC BOOT WORD HARD CUT JS V2 START */
-/*
-  JS controls the boot word sequence through .is-active.
-  This prevents CSS keyframes/reduced-motion rules from leaving WORLD BUILDING
-  visible for the entire boot duration.
-*/
-.gtc-os-boot__word {
-  opacity: 0 !important;
-  animation: none !important;
-}
-
-.gtc-os-boot__word.is-active {
-  opacity: 1 !important;
-}
-/* GTC BOOT WORD HARD CUT JS V2 END */

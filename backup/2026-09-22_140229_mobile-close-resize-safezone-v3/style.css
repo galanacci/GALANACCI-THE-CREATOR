@@ -842,7 +842,7 @@ button {
 /* GTC DESCRIPTION + OS NOTICE V4 START */
 
 /* ----------------------------------------------------------
-   FOLDER LIST ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â add DESCRIPTION as fourth column.
+   FOLDER LIST Ã¢â‚¬â€ add DESCRIPTION as fourth column.
    ---------------------------------------------------------- */
 
 .folder-window .app-list__header,
@@ -1409,60 +1409,3 @@ button {
   }
 }
 /* GTC DESKTOP POSTER V3 END */
-
-/* GTC MOBILE FOLDER CLOSE RESIZE SAFEZONE V3 START */
-@media screen and (max-width: 760px), (hover: none) and (pointer: coarse) {
-  .folder-window__chrome {
-    position: relative !important;
-    z-index: 20 !important;
-  }
-
-  .folder-window__close {
-    position: relative !important;
-    z-index: 50 !important;
-
-    pointer-events: auto !important;
-    touch-action: manipulation !important;
-
-    isolation: isolate;
-  }
-
-  /*
-    Remove the resize target directly beneath the close button.
-  */
-  .folder-window__resize-handle--ne {
-    display: none !important;
-    pointer-events: none !important;
-  }
-
-  /*
-    Reserve the top-right corner for the close button.
-    The top resize edge ends before the X.
-  */
-  .folder-window__resize-handle--n {
-    right: 56px !important;
-    z-index: 10 !important;
-  }
-
-  /*
-    The right resize edge begins below the close-button zone.
-  */
-  .folder-window__resize-handle--e {
-    top: 56px !important;
-    z-index: 10 !important;
-  }
-
-  /*
-    Resize handles must never win over the close button.
-  */
-  .folder-window__resize-handle {
-    z-index: 10 !important;
-  }
-
-  .folder-window__close:hover,
-  .folder-window__close:focus-visible,
-  .folder-window__close:active {
-    z-index: 60 !important;
-  }
-}
-/* GTC MOBILE FOLDER CLOSE RESIZE SAFEZONE V3 END */
