@@ -11,3 +11,6 @@ Thumbs.db
 node_modules/
 playwright-report/
 test-results/
+
+# Local patch / recovery backups - never commit to Git
+/backup/

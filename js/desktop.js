@@ -216,6 +216,27 @@ function overlaps(shortcut, position, other, otherPosition = other._desktopPosit
     && position.y + shortcut.offsetHeight + COLLISION_GAP > otherPosition.y;
 }
 
+function overlapsDesktopPoster(shortcut, position) {
+  const poster = document.querySelector("[data-desktop-poster]");
+
+  if (
+    !poster ||
+    poster.offsetWidth <= 0 ||
+    poster.offsetHeight <= 0
+  ) {
+    return false;
+  }
+
+  const rect = poster.getBoundingClientRect();
+  const gap = 10;
+
+  return (
+    position.x < rect.right + gap &&
+    position.x + shortcut.offsetWidth + gap > rect.left &&
+    position.y < rect.bottom + gap &&
+    position.y + shortcut.offsetHeight + gap > rect.top
+  );
+}
 function findAvailablePosition(shortcut, position) {
   const { maxX, maxY } = boundsFor(shortcut);
   const candidate = {
@@ -227,7 +248,8 @@ function findAvailablePosition(shortcut, position) {
     .filter((other) => other !== shortcut);
 
   const isAvailable = (next) =>
-    otherShortcuts.every((other) => !overlaps(shortcut, next, other));
+    otherShortcuts.every((other) => !overlaps(shortcut, next, other)) &&
+    !overlapsDesktopPoster(shortcut, next);
 
   if (isAvailable(candidate)) return candidate;
 
@@ -255,19 +277,12 @@ function findAvailablePosition(shortcut, position) {
   return closest || candidate;
 }
 
+/* GTC MOBILE SHORTCUT DRAG RESTORE V1
+   Touch shortcuts intentionally use the same freeform drag/collision system
+   as desktop. A tap still opens through the pointerup logic below.
+*/
 function renderShortcut(shortcut, position) {
-  /* MOBILE SHORTCUT LOCK V1 */
-  if (isTouch) {
-    const next = mobileLockedShortcutPosition(shortcut);
-
-    shortcut._desktopPosition = next;
-    shortcut.style.transform =
-      `translate3d(${next.x}px, ${next.y}px, 0)`;
-
-    if (selected === shortcut) renderHint(shortcut);
-    return;
-  }
-const { maxX, maxY } = boundsFor(shortcut);
+  const { maxX, maxY } = boundsFor(shortcut);
 
   /*
     Rendering only clamps to the current viewport. Collision repair happens
@@ -522,8 +537,6 @@ function installShortcut(shortcut, app) {
 
   shortcut.addEventListener("pointermove", (event) => {
     if (!dragging || dragging.shortcut !== shortcut) return;
-
-    if (isTouch) return;
 
     const dx = event.clientX - dragging.startX;
     const dy = event.clientY - dragging.startY;
