@@ -6,3 +6,8 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Browser regression tests
+node_modules/
+playwright-report/
+test-results/

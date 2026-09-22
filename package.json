@@ -1,0 +1,13 @@
+{
+  "name": "galanacci-os-regression-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:update-screenshots": "playwright test tests/visual-regression.spec.mjs --update-snapshots"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}
