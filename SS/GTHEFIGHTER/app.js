@@ -2,6 +2,293 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
+
+/* GTC GTHEFIGHTER UI FIX V1 START */
+const __gtcGthefighterUiFix = (() => {
+  const HIDE_PATTERNS = [
+    /^GALANACCI PRESENTS$/i,
+    /^G THE FIGHTER$/i,
+    /^CREATED$/i,
+    /^CREATOR$/i,
+    /^GALANACCI$/i,
+    /^\d{4}$/,
+    /A DIGITAL ART COLLECTION EXPLORING BOXING'?S GREATS\.?/i
+  ];
+
+  const KEEP_PATTERNS = [
+    /RESET VIEW/i,
+    /DRAG/i,
+    /ROTATE/i,
+    /SCROLL/i,
+    /PINCH/i,
+    /ZOOM/i,
+    /TAP/i,
+    /INSTRUCTION/i
+  ];
+
+  function applyAcrylicToMaterial(material) {
+    if (!material) return;
+
+    const mats = Array.isArray(material) ? material : [material];
+
+    mats.forEach((mat) => {
+      if (!mat || typeof mat !== 'object') return;
+
+      if ('metalness' in mat) mat.metalness = 0.06;
+      if ('roughness' in mat) mat.roughness = 0.2;
+      if ('clearcoat' in mat) mat.clearcoat = 1;
+      if ('clearcoatRoughness' in mat) mat.clearcoatRoughness = 0.1;
+      if ('reflectivity' in mat) mat.reflectivity = 1;
+      if ('ior' in mat) mat.ior = 1.49;
+      if ('thickness' in mat) mat.thickness = 0.45;
+      if ('transmission' in mat) mat.transmission = 0.04;
+      if ('sheen' in mat) mat.sheen = 1;
+      if ('sheenRoughness' in mat) mat.sheenRoughness = 0.48;
+      if ('envMapIntensity' in mat) mat.envMapIntensity = Math.max(mat.envMapIntensity || 0, 1.15);
+
+      if ('transparent' in mat) mat.transparent = true;
+      if ('opacity' in mat) mat.opacity = Math.min(typeof mat.opacity === 'number' ? Math.max(mat.opacity, 0.18) : 0.22, 0.42);
+
+      mat.needsUpdate = true;
+    });
+  }
+
+  function meshName(node) {
+    const material = Array.isArray(node?.material) ? node.material[0] : node?.material;
+    const nameBits = [
+      node?.name || '',
+      material?.name || '',
+      node?.userData?.name || '',
+      node?.userData?.label || ''
+    ];
+
+    return nameBits.join(' ').toLowerCase();
+  }
+
+  function isDark(material) {
+    const mat = Array.isArray(material) ? material[0] : material;
+    if (!mat || !mat.color) return false;
+    return mat.color.r < 0.1 && mat.color.g < 0.1 && mat.color.b < 0.1;
+  }
+
+  function isLikelyBackgroundMesh(node, THREE) {
+    if (!node || !node.isMesh || !node.geometry || !node.material) return false;
+
+    if (!isDark(node.material)) return false;
+
+    const name = meshName(node);
+    if (/(background|backdrop|wall|plane)/.test(name)) return true;
+
+    try {
+      if (!node.geometry.boundingBox) {
+        node.geometry.computeBoundingBox();
+      }
+
+      const size = new THREE.Vector3();
+      node.geometry.boundingBox.getSize(size);
+
+      return size.x > 8 || size.y > 8 || size.z > 8;
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  function convertToUnlitBackground(node, THREE) {
+    if (!node || !node.isMesh) return;
+
+    const originalMaterial = Array.isArray(node.material) ? node.material[0] : node.material;
+    const color = originalMaterial?.color ? originalMaterial.color.clone() : new THREE.Color(0x000000);
+
+    node.material = new THREE.MeshBasicMaterial({
+      color,
+      transparent: false,
+      toneMapped: false,
+      fog: false
+    });
+
+    node.renderOrder = -1000;
+  }
+
+  function shouldReceiveAcrylic(node) {
+    if (!node || !node.isMesh || !node.material) return false;
+
+    const name = meshName(node);
+
+    if (/(background|backdrop|wall|plane)/.test(name)) return false;
+    if (/(frame|back|backing|plate|panel|glass|acrylic|screen|cover)/.test(name)) return true;
+
+    const mat = Array.isArray(node.material) ? node.material[0] : node.material;
+
+    if (!mat) return false;
+
+    if (mat.isMeshPhysicalMaterial) return true;
+    if (mat.transparent) return true;
+    if (isDark(mat)) return true;
+
+    return false;
+  }
+
+  function addFrameLights(scene, THREE) {
+    if (!scene || scene.userData.__gtcFrameLightsAdded) return;
+    scene.userData.__gtcFrameLightsAdded = true;
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.15);
+    keyLight.position.set(2.3, 1.8, 3.2);
+    keyLight.name = 'gtcUiFixKeyLight';
+
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.75);
+    rimLight.position.set(-2.4, 0.9, 2.5);
+    rimLight.name = 'gtcUiFixRimLight';
+
+    scene.add(keyLight);
+    scene.add(rimLight);
+  }
+
+  function restyleScene(scene, THREE) {
+    if (!scene || scene.userData.__gtcUiFixStyled) return;
+    scene.userData.__gtcUiFixStyled = true;
+
+    try {
+      if ('background' in scene) {
+        scene.background = new THREE.Color(0x000000);
+      }
+    } catch (_error) {}
+
+    scene.traverse((node) => {
+      if (!node || !node.isMesh) return;
+
+      if (isLikelyBackgroundMesh(node, THREE)) {
+        convertToUnlitBackground(node, THREE);
+        return;
+      }
+
+      if (shouldReceiveAcrylic(node)) {
+        applyAcrylicToMaterial(node.material);
+      }
+    });
+
+    addFrameLights(scene, THREE);
+  }
+
+  function installThreeHooks(THREE) {
+    if (!THREE || THREE.__gtcGthefighterUiFixInstalled) return;
+
+    THREE.__gtcGthefighterUiFixInstalled = true;
+
+    const originalAdd = THREE.Object3D.prototype.add;
+
+    THREE.Object3D.prototype.add = function (...objects) {
+      const result = originalAdd.apply(this, objects);
+
+      try {
+        if (this && this.isScene) {
+          queueMicrotask(() => restyleScene(this, THREE));
+        }
+
+        objects.forEach((object) => {
+          if (object && object.isScene) {
+            queueMicrotask(() => restyleScene(object, THREE));
+          }
+        });
+      } catch (_error) {}
+
+      return result;
+    };
+  }
+
+  function elementHasKeepText(text) {
+    return KEEP_PATTERNS.some((pattern) => pattern.test(text));
+  }
+
+  function elementHasHideText(text) {
+    return HIDE_PATTERNS.some((pattern) => pattern.test(text));
+  }
+
+  function chooseHideTarget(element) {
+    let current = element;
+
+    while (current && current !== document.body) {
+      const text = (current.textContent || '').replace(/\s+/g, ' ').trim();
+
+      if (elementHasKeepText(text)) {
+        break;
+      }
+
+      if (
+        current.matches &&
+        current.matches('p, span, h1, h2, h3, h4, h5, h6, small, strong, em, li, div, section, article, header, footer')
+      ) {
+        return current;
+      }
+
+      current = current.parentElement;
+    }
+
+    return element;
+  }
+
+  function pruneUi() {
+    if (!document.body) return;
+
+    const all = Array.from(document.body.querySelectorAll('*'));
+
+    all.forEach((element) => {
+      if (!element || element.classList.contains('gtc-ui-fix-hidden')) return;
+      if (element.closest('canvas')) return;
+      if (element.querySelector('canvas')) return;
+      if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE' || element.tagName === 'LINK') return;
+
+      const text = (element.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!text) return;
+      if (elementHasKeepText(text)) return;
+
+      if (elementHasHideText(text)) {
+        const target = chooseHideTarget(element);
+        target.classList.add('gtc-ui-fix-hidden');
+      }
+    });
+  }
+
+  function bootDomFix() {
+    pruneUi();
+    window.setTimeout(pruneUi, 120);
+    window.setTimeout(pruneUi, 500);
+    window.setTimeout(pruneUi, 1200);
+  }
+
+  return {
+    installThreeHooks,
+    bootDomFix
+  };
+})();
+
+try {
+  if (typeof THREE !== 'undefined') {
+    __gtcGthefighterUiFix.installThreeHooks(THREE);
+  } else if (typeof window !== 'undefined' && window.THREE) {
+    __gtcGthefighterUiFix.installThreeHooks(window.THREE);
+  }
+} catch (_error) {}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('DOMContentLoaded', () => {
+    try { __gtcGthefighterUiFix.bootDomFix(); } catch (_error) {}
+  });
+
+  window.addEventListener('load', () => {
+    try {
+      if (typeof THREE !== 'undefined') {
+        __gtcGthefighterUiFix.installThreeHooks(THREE);
+      } else if (window.THREE) {
+        __gtcGthefighterUiFix.installThreeHooks(window.THREE);
+      }
+    } catch (_error) {}
+
+    try { __gtcGthefighterUiFix.bootDomFix(); } catch (_error) {}
+  });
+}
+/* GTC GTHEFIGHTER UI FIX V1 END */
+
 const experience = document.querySelector(".experience");
 const canvas = document.querySelector("#frame-viewer");
 const video = document.querySelector("#fighter-video");
@@ -160,45 +447,62 @@ function createGlassReflectionTexture() {
 }
 
 function createMaterials(videoTexture) {
-  const frontGlass = new THREE.MeshPhysicalMaterial({
-    color: 0xf2f2ee,
+  const frontAcrylic = new THREE.MeshPhysicalMaterial({
+    color: 0xf6f4ef,
     metalness: 0,
-    roughness: .17,
-    transmission: .38,
-    thickness: .08,
+    roughness: .14,
     transparent: true,
-    opacity: .46,
+    opacity: .12,
+    transmission: 0,
     depthWrite: false,
-    clearcoat: .9,
-    clearcoatRoughness: .1,
-    ior: 1.46,
-    envMapIntensity: 2.2,
+    clearcoat: 1,
+    clearcoatRoughness: .035,
+    ior: 1.49,
+    envMapIntensity: 3.8,
+    specularIntensity: 1,
+    specularColor: 0xffffff,
     side: THREE.DoubleSide
   });
 
-  const backGlass = frontGlass.clone();
-  backGlass.color.setHex(0xead1b2);
-  backGlass.roughness = .34;
-  backGlass.transmission = .2;
-  backGlass.opacity = .42;
-  backGlass.thickness = .12;
-  backGlass.envMapIntensity = 2;
-  backGlass.emissive.setHex(0xead1b2);
-  backGlass.emissiveIntensity = .16;
-
-  const chrome = new THREE.MeshStandardMaterial({
-    color: 0xe1e1de,
-    metalness: .72,
-    roughness: .16,
-    envMapIntensity: 2.35,
+  const backAcrylic = new THREE.MeshPhysicalMaterial({
+    color: coarsePointer ? 0x202024 : 0x4a4a52,
+    metalness: 0,
+    roughness: coarsePointer ? .11 : .16,
+    transparent: false,
+    opacity: 1,
+    transmission: 0,
+    clearcoat: 1,
+    clearcoatRoughness: coarsePointer ? .025 : .055,
+    ior: 1.49,
+    envMapIntensity: coarsePointer ? 5.2 : 6.4,
+    specularIntensity: 1,
+    specularColor: 0xffffff,
+    emissive: coarsePointer ? 0x000000 : 0x101014,
+    emissiveIntensity: coarsePointer ? 0 : .32,
     side: THREE.DoubleSide
   });
 
-  const frame = new THREE.MeshStandardMaterial({
-    color: 0x27272a,
-    metalness: .64,
-    roughness: .26,
-    envMapIntensity: 1.15,
+  const chrome = new THREE.MeshPhysicalMaterial({
+    color: 0xe6e6e3,
+    metalness: .82,
+    roughness: .12,
+    clearcoat: .72,
+    clearcoatRoughness: .08,
+    envMapIntensity: 3.2,
+    side: THREE.DoubleSide
+  });
+
+  const frame = new THREE.MeshPhysicalMaterial({
+    color: coarsePointer ? 0x34343a : 0x565660,
+    metalness: coarsePointer ? .34 : .22,
+    roughness: coarsePointer ? .18 : .2,
+    clearcoat: coarsePointer ? .92 : 1,
+    clearcoatRoughness: coarsePointer ? .07 : .055,
+    envMapIntensity: coarsePointer ? 3.4 : 5.2,
+    specularIntensity: 1,
+    specularColor: 0xffffff,
+    emissive: coarsePointer ? 0x000000 : 0x111116,
+    emissiveIntensity: coarsePointer ? 0 : .28,
     side: THREE.DoubleSide
   });
 
@@ -216,16 +520,22 @@ function createMaterials(videoTexture) {
     side: THREE.DoubleSide
   });
 
-  return { frontGlass, backGlass, chrome, frame, screen, screenBacking };
+  return {
+    frontGlass: frontAcrylic,
+    backGlass: backAcrylic,
+    chrome,
+    frame,
+    screen,
+    screenBacking
+  };
 }
-
 function configureModel(gltf, videoTexture) {
   frameRoot = gltf.scene;
   const meshes = [];
   frameRoot.traverse((object) => {
     if (!object.isMesh) return;
     meshes.push(object);
-    object.castShadow = !lowMemory;
+object.castShadow = !lowMemory;
     object.receiveShadow = true;
   });
 
@@ -301,51 +611,6 @@ function configureModel(gltf, videoTexture) {
   videoSurface.receiveShadow = false;
   frameRoot.add(videoSurface);
 
-  frontGlassMesh.geometry.computeBoundingBox();
-  const glassBounds = frontGlassMesh.geometry.boundingBox;
-  const glassSize = glassBounds.getSize(new THREE.Vector3());
-  const glassCentre = glassBounds.getCenter(new THREE.Vector3());
-  const reflectedSoftbox = new THREE.Mesh(
-    new THREE.PlaneGeometry(glassSize.x * .97, glassSize.y * .97),
-    new THREE.MeshBasicMaterial({
-      map: createGlassReflectionTexture(),
-      transparent: true,
-      opacity: .72,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-      side: THREE.DoubleSide,
-      toneMapped: false
-    })
-  );
-  reflectedSoftbox.position.set(glassCentre.x, glassCentre.y, glassBounds.min.z - .00055);
-  reflectedSoftbox.rotation.y = Math.PI;
-  reflectedSoftbox.renderOrder = 5;
-  frameRoot.add(reflectedSoftbox);
-
-  backGlassMesh.geometry.computeBoundingBox();
-  const backingBounds = backGlassMesh.geometry.boundingBox;
-  const backingSize = backingBounds.getSize(new THREE.Vector3());
-  const backingCentre = backingBounds.getCenter(new THREE.Vector3());
-  const backingReflection = new THREE.Mesh(
-    new THREE.PlaneGeometry(backingSize.x * .95, backingSize.y * .95),
-    new THREE.MeshBasicMaterial({
-      map: createGlassReflectionTexture(),
-      transparent: true,
-      opacity: .34,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-      side: THREE.DoubleSide,
-      toneMapped: false
-    })
-  );
-  backingReflection.position.set(
-    backingCentre.x,
-    backingCentre.y,
-    backingBounds.min.z - .0003
-  );
-  backingReflection.rotation.y = Math.PI;
-  backingReflection.renderOrder = 2;
-  frameRoot.add(backingReflection);
   scene.add(frameRoot);
 }
 
@@ -400,41 +665,49 @@ function addEnvironment() {
   scene.environment = environmentRenderTarget.texture;
   environmentSource.dispose();
   pmremGenerator.dispose();
-  scene.add(new THREE.AmbientLight(0xffffff, .38));
-  scene.add(new THREE.HemisphereLight(0xf4f1ea, 0x17131d, 1.25));
 
-  const key = new THREE.DirectionalLight(0xffffff, 3.15);
-  key.position.set(-3.8, 5.2, 5.5);
+  scene.add(new THREE.AmbientLight(0xffffff, .42));
+
+  const hemisphere = new THREE.HemisphereLight(0xffffff, 0x080808, .72);
+  scene.add(hemisphere);
+
+  const key = new THREE.DirectionalLight(0xffffff, coarsePointer ? 4.8 : 7.2);
+  key.position.set(-4.6, 5.6, 5.8);
   key.castShadow = !lowMemory;
   key.shadow.mapSize.set(lowMemory ? 512 : 1024, lowMemory ? 512 : 1024);
   scene.add(key);
 
-  const rim = new THREE.DirectionalLight(0xead1b2, 1.8);
-  rim.position.set(4.5, 1.8, 2.8);
+  const rim = new THREE.DirectionalLight(0xead1b2, coarsePointer ? 3.2 : 5.4);
+  rim.position.set(4.5, 2.4, 3.6);
   scene.add(rim);
 
-  const glassKey = new THREE.PointLight(0xffffff, 18, 10, 2);
-  glassKey.position.set(-2.2, 2.4, 4.6);
-  scene.add(glassKey);
+  const acrylicKey = new THREE.PointLight(0xffffff, coarsePointer ? 42 : 62, 11, 2);
+  acrylicKey.position.set(-2.7, 3.0, 4.6);
+  scene.add(acrylicKey);
 
-  const glassRim = new THREE.PointLight(0xead1b2, 13, 9, 2);
-  glassRim.position.set(2.9, .4, 3.4);
-  scene.add(glassRim);
+  const acrylicRim = new THREE.PointLight(0xead1b2, coarsePointer ? 30 : 46, 10, 2);
+  acrylicRim.position.set(3.4, .8, 3.6);
+  scene.add(acrylicRim);
 
-  const fill = new THREE.PointLight(0xc8d6ff, 8.5, 12, 2);
-  fill.position.set(2.6, -1.2, 3.8);
-  scene.add(fill);
+  const lowerKick = new THREE.PointLight(0xcbd7ff, coarsePointer ? 18 : 26, 10, 2);
+  lowerKick.position.set(2.0, -2.2, 3.5);
+  scene.add(lowerKick);
 
-  const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(20, 20),
-    new THREE.MeshStandardMaterial({ color: 0x080808, roughness: .82, metalness: .12 })
-  );
-  floor.rotation.x = Math.PI / 2;
-  floor.position.y = -2.05;
-  floor.receiveShadow = true;
-  scene.add(floor);
+  if (!coarsePointer) {
+    const desktopFrontFill = new THREE.PointLight(0xffffff, 34, 12, 2);
+    desktopFrontFill.position.set(.2, .8, 5.7);
+    scene.add(desktopFrontFill);
+
+    const desktopEdgeLift = new THREE.DirectionalLight(0xd9d9e5, 3.4);
+    desktopEdgeLift.position.set(-5.2, -.6, 2.4);
+    scene.add(desktopEdgeLift);
+  }
+
+  /*
+    No floor and no background geometry.
+    The renderer clear colour remains pure black.
+  */
 }
-
 function resize() {
   if (!renderer || !camera) return;
   const width = Math.max(1, canvas.clientWidth);
@@ -467,17 +740,14 @@ async function initialise() {
   renderer.setClearColor(0x050505, 1);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.15;
+  renderer.toneMappingExposure = coarsePointer ? 1.15 : 1.55;
   renderer.shadowMap.enabled = !lowMemory;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x050505, .035);
-
-  camera = new THREE.PerspectiveCamera(33, 1, .05, 100);
+camera = new THREE.PerspectiveCamera(33, 1, .05, 100);
   camera.position.set(0, .12, 5.8);
-
-  controls = new OrbitControls(camera, canvas);
+controls = new OrbitControls(camera, canvas);
   controls.enableDamping = !prefersReducedMotion;
   controls.dampingFactor = .075;
   controls.enablePan = false;

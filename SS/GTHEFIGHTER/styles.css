@@ -308,3 +308,82 @@ canvas {
     transition-duration: 1ms;
   }
 }
+
+/* GTHEFIGHTER UI ACRYLIC LIGHTING V1 START */
+
+/*
+  Only two pieces of interface copy remain visible:
+    - interaction instructions
+    - RESET VIEW
+
+  Identity / metadata / description text remain in the document only as
+  legacy structure and are visually removed.
+*/
+.identity,
+.collection-info {
+  display: none !important;
+}
+
+/* Keep the instruction permanently visible after interaction. */
+.interaction-hint,
+.has-interacted .interaction-hint {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Loading remains visual only: progress bar, no loading copy. */
+.loading-state p {
+  display: none !important;
+}
+
+/* Fallback image may remain, but no extra explanatory text is shown. */
+.webgl-fallback p {
+  display: none !important;
+}
+
+/* Pure unlit black environment behind the renderer. */
+html,
+body,
+.experience {
+  background: #000 !important;
+}
+
+.experience {
+  background-image: none !important;
+}
+
+/* GTHEFIGHTER UI ACRYLIC LIGHTING V1 END */
+
+/* GTHEFIGHTER FRAME VISIBILITY TEXT FIX V2 START */
+
+.identity,
+.collection-info {
+  display: none !important;
+}
+
+.interaction-hint,
+.has-interacted .interaction-hint {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.interaction-hint {
+  color: rgba(243, 243, 240, .72) !important;
+}
+
+.loading-state p,
+.webgl-fallback p {
+  display: none !important;
+}
+
+html,
+body,
+.experience {
+  background: #000 !important;
+}
+
+.experience {
+  background-image: none !important;
+}
+
+/* GTHEFIGHTER FRAME VISIBILITY TEXT FIX V2 END */

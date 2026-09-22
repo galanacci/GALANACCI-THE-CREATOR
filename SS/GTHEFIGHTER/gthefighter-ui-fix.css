@@ -1,0 +1,34 @@
+/* GTHEFIGHTER UI FIX V1
+   Keeps the scene clean and removes non-essential text blocks. */
+
+html, body {
+  background: #000 !important;
+}
+
+.gtc-ui-fix-hidden {
+  display: none !important;
+}
+
+canvas {
+  background: #000 !important;
+}
+
+button,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+button,
+[role="button"],
+a,
+.gthefighter-reset,
+.reset-view {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Preserve legibility of the remaining UI */
+button,
+[role="button"],
+a {
+  letter-spacing: .06em;
+}
