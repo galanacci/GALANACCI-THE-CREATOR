@@ -19,16 +19,16 @@ jobs:
         shell: bash
         run: |
           file="index.html"
-          current=$(grep -oE 'DESKTOP_[0-9]+' "$file" | head -1 | sed 's/[^0-9]//g')
+          current=$(grep -oE 'VERSION_[0-9]+' "$file" | head -1 | sed 's/[^0-9]//g')
 
           if [[ -z "$current" ]]; then
-            echo "Could not find a DESKTOP number in $file" >&2
+            echo "Could not find a VERSION number in $file" >&2
             exit 1
           fi
 
           next=$((10#$current + 1))
           printf -v padded "%03d" "$next"
-          sed -i -E "0,/DESKTOP_[0-9]+/s//DESKTOP_${padded}/" "$file"
+          sed -i -E "s/VERSION_[0-9]+/VERSION_${padded}/g" "$file"
 
       - name: Commit updated desktop number
         shell: bash
