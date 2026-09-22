@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <title>365LOOKS.EXE</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./365looks.css?v=instruction-spacing-v3">
+</head>
+<body>
+  <main id="viewer" class="viewer" aria-label="365 LOOKS interactive archive viewer">
+    <canvas
+      id="look-canvas"
+      class="look-canvas"
+      tabindex="0"
+      aria-label="365 fashion sketches from 2023. Drag to explore. Scroll or pinch to zoom."
+    ></canvas>
+
+    <aside id="navigator" class="navigator" aria-label="Grid navigator">
+      <img id="navigator-image" alt="" draggable="false">
+      <div id="navigator-window" class="navigator__window" aria-hidden="true"></div>
+    </aside>
+
+        <p class="interaction-hint" aria-hidden="true">
+      <span class="interaction-hint__desktop">DRAG TO EXPLORE / SCROLL TO ZOOM</span>
+      <span class="interaction-hint__touch">DRAG TO EXPLORE / PINCH TO ZOOM</span>
+    </p>
+
+    <section id="scrubber" class="scrubber" aria-label="Look navigation">
+      <input
+        id="look-slider"
+        class="scrubber__range"
+        type="range"
+        min="1"
+        max="365"
+        value="1"
+        step="1"
+        aria-label="Browse the 365 looks"
+      >
+      <div class="scrubber__meta" aria-live="polite">
+        <span id="look-current">001</span>
+        <span class="scrubber__divider">/</span>
+        <span id="look-total">365</span>
+      </div>
+    </section>
+
+    <div id="status" class="status" role="status" aria-live="polite">LOADING ARCHIVE...</div>
+  </main>
+
+  <script type="module" src="./365looks.js?v=white-bg-text-fix-v7"></script>
+</body>
+</html>

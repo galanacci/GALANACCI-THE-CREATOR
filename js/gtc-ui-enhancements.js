@@ -20,6 +20,10 @@
   }
 
   const DESCRIPTIONS = Object.freeze({
+    "PUGILISM": "Digital drawings of boxing legends of different eras.",
+    "PUGILISM.EXE": "Digital drawings of boxing legends of different eras.",
+    "365LOOKS": "365 days, 365 looks. Daily fashion sketches.",
+    "365LOOKS.EXE": "365 days, 365 looks. Daily fashion sketches.",
     "2(XY-T)": "An iteration of Bradley Tangonan's XY - T project.",
     "2(XY-T).EXE": "An iteration of Bradley Tangonan's XY - T project.",
     "2(XY+T)": "An iteration of Bradley Tangonan's XY - T project.",

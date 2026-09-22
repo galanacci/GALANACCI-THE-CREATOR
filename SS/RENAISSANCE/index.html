@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#000000">
   <title>RENAISSANCE.EXE</title>
   <link rel="stylesheet" href="./renaissance.css?v=3.1">
+  <link rel="stylesheet" href="../viewer-hint.css?v=1">
 </head>
 <body>
   <main id="viewer" class="viewer" aria-label="RENAISSANCE artwork viewer">
@@ -15,6 +16,10 @@
       <img id="navigator-image" alt="">
       <div id="navigator-window" class="navigator__window" aria-hidden="true"></div>
     </aside>
+    <p class="viewer-hint viewer-hint--light" aria-label="Move the cursor to explore artwork details. On touch devices, touch and drag to explore details.">
+      <span class="viewer-hint__desktop" aria-hidden="true">MOVE CURSOR TO EXPLORE DETAILS</span>
+      <span class="viewer-hint__touch" aria-hidden="true">TOUCH AND DRAG TO EXPLORE DETAILS</span>
+    </p>
     <section id="scrubber" class="scrubber" aria-label="Artwork navigation">
       <input
         id="artwork-slider"

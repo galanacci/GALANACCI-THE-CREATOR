@@ -1,0 +1,279 @@
+{
+    "version":  1,
+    "count":  7,
+    "artworks":  [
+                     {
+                         "id":  "001",
+                         "title":  "ALI",
+                         "year":  2022,
+                         "source":  "ALI.png",
+                         "source_width":  3072,
+                         "source_height":  4096,
+                         "width":  3072,
+                         "height":  4096,
+                         "overview":  "./overview/001.jpg",
+                         "tiles":  "./tiles/001",
+                         "tile_size":  512,
+                         "levels":  [
+                                        {
+                                            "id":  "L0",
+                                            "scale":  0.25,
+                                            "width":  768,
+                                            "height":  1024,
+                                            "cols":  2,
+                                            "rows":  2
+                                        },
+                                        {
+                                            "id":  "L1",
+                                            "scale":  0.5,
+                                            "width":  1536,
+                                            "height":  2048,
+                                            "cols":  3,
+                                            "rows":  4
+                                        },
+                                        {
+                                            "id":  "L2",
+                                            "scale":  1,
+                                            "width":  3072,
+                                            "height":  4096,
+                                            "cols":  6,
+                                            "rows":  8
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "002",
+                         "title":  "DEMPSEY",
+                         "year":  2022,
+                         "source":  "DEMPSEY.png",
+                         "source_width":  3072,
+                         "source_height":  4096,
+                         "width":  3072,
+                         "height":  4096,
+                         "overview":  "./overview/002.jpg",
+                         "tiles":  "./tiles/002",
+                         "tile_size":  512,
+                         "levels":  [
+                                        {
+                                            "id":  "L0",
+                                            "scale":  0.25,
+                                            "width":  768,
+                                            "height":  1024,
+                                            "cols":  2,
+                                            "rows":  2
+                                        },
+                                        {
+                                            "id":  "L1",
+                                            "scale":  0.5,
+                                            "width":  1536,
+                                            "height":  2048,
+                                            "cols":  3,
+                                            "rows":  4
+                                        },
+                                        {
+                                            "id":  "L2",
+                                            "scale":  1,
+                                            "width":  3072,
+                                            "height":  4096,
+                                            "cols":  6,
+                                            "rows":  8
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "003",
+                         "title":  "JOHNSON",
+                         "year":  2022,
+                         "source":  "JOHNSON.png",
+                         "source_width":  3072,
+                         "source_height":  4096,
+                         "width":  3072,
+                         "height":  4096,
+                         "overview":  "./overview/003.jpg",
+                         "tiles":  "./tiles/003",
+                         "tile_size":  512,
+                         "levels":  [
+                                        {
+                                            "id":  "L0",
+                                            "scale":  0.25,
+                                            "width":  768,
+                                            "height":  1024,
+                                            "cols":  2,
+                                            "rows":  2
+                                        },
+                                        {
+                                            "id":  "L1",
+                                            "scale":  0.5,
+                                            "width":  1536,
+                                            "height":  2048,
+                                            "cols":  3,
+                                            "rows":  4
+                                        },
+                                        {
+                                            "id":  "L2",
+                                            "scale":  1,
+                                            "width":  3072,
+                                            "height":  4096,
+                                            "cols":  6,
+                                            "rows":  8
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "004",
+                         "title":  "LOUIS",
+                         "year":  2022,
+                         "source":  "LOUIS.png",
+                         "source_width":  3072,
+                         "source_height":  4096,
+                         "width":  3072,
+                         "height":  4096,
+                         "overview":  "./overview/004.jpg",
+                         "tiles":  "./tiles/004",
+                         "tile_size":  512,
+                         "levels":  [
+                                        {
+                                            "id":  "L0",
+                                            "scale":  0.25,
+                                            "width":  768,
+                                            "height":  1024,
+                                            "cols":  2,
+                                            "rows":  2
+                                        },
+                                        {
+                                            "id":  "L1",
+                                            "scale":  0.5,
+                                            "width":  1536,
+                                            "height":  2048,
+                                            "cols":  3,
+                                            "rows":  4
+                                        },
+                                        {
+                                            "id":  "L2",
+                                            "scale":  1,
+                                            "width":  3072,
+                                            "height":  4096,
+                                            "cols":  6,
+                                            "rows":  8
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "005",
+                         "title":  "MAYWEATHER",
+                         "year":  2022,
+                         "source":  "MAYWEATHER.png",
+                         "source_width":  3072,
+                         "source_height":  4096,
+                         "width":  3072,
+                         "height":  4096,
+                         "overview":  "./overview/005.jpg",
+                         "tiles":  "./tiles/005",
+                         "tile_size":  512,
+                         "levels":  [
+                                        {
+                                            "id":  "L0",
+                                            "scale":  0.25,
+                                            "width":  768,
+                                            "height":  1024,
+                                            "cols":  2,
+                                            "rows":  2
+                                        },
+                                        {
+                                            "id":  "L1",
+                                            "scale":  0.5,
+                                            "width":  1536,
+                                            "height":  2048,
+                                            "cols":  3,
+                                            "rows":  4
+                                        },
+                                        {
+                                            "id":  "L2",
+                                            "scale":  1,
+                                            "width":  3072,
+                                            "height":  4096,
+                                            "cols":  6,
+                                            "rows":  8
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "006",
+                         "title":  "MIKE TYSON",
+                         "year":  2022,
+                         "source":  "MIKE TYSON.png",
+                         "source_width":  3072,
+                         "source_height":  4096,
+                         "width":  3072,
+                         "height":  4096,
+                         "overview":  "./overview/006.jpg",
+                         "tiles":  "./tiles/006",
+                         "tile_size":  512,
+                         "levels":  [
+                                        {
+                                            "id":  "L0",
+                                            "scale":  0.25,
+                                            "width":  768,
+                                            "height":  1024,
+                                            "cols":  2,
+                                            "rows":  2
+                                        },
+                                        {
+                                            "id":  "L1",
+                                            "scale":  0.5,
+                                            "width":  1536,
+                                            "height":  2048,
+                                            "cols":  3,
+                                            "rows":  4
+                                        },
+                                        {
+                                            "id":  "L2",
+                                            "scale":  1,
+                                            "width":  3072,
+                                            "height":  4096,
+                                            "cols":  6,
+                                            "rows":  8
+                                        }
+                                    ]
+                     },
+                     {
+                         "id":  "007",
+                         "title":  "PACQUIAO",
+                         "year":  2022,
+                         "source":  "PACQUIAO.png",
+                         "source_width":  3072,
+                         "source_height":  4096,
+                         "width":  3072,
+                         "height":  4096,
+                         "overview":  "./overview/007.jpg",
+                         "tiles":  "./tiles/007",
+                         "tile_size":  512,
+                         "levels":  [
+                                        {
+                                            "id":  "L0",
+                                            "scale":  0.25,
+                                            "width":  768,
+                                            "height":  1024,
+                                            "cols":  2,
+                                            "rows":  2
+                                        },
+                                        {
+                                            "id":  "L1",
+                                            "scale":  0.5,
+                                            "width":  1536,
+                                            "height":  2048,
+                                            "cols":  3,
+                                            "rows":  4
+                                        },
+                                        {
+                                            "id":  "L2",
+                                            "scale":  1,
+                                            "width":  3072,
+                                            "height":  4096,
+                                            "cols":  6,
+                                            "rows":  8
+                                        }
+                                    ]
+                     }
+                 ]
+}

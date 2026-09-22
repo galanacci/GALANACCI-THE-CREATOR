@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <title>PUGILISM.EXE</title>
+  <link rel="stylesheet" href="./pugilism.css?v=3">
+  <link rel="stylesheet" href="../viewer-hint.css?v=1">
+</head>
+<body>
+  <main id="viewer" class="viewer" aria-label="PUGILISM artwork viewer">
+    <canvas id="art-canvas" class="art-canvas" aria-hidden="true"></canvas>
+
+    <aside id="navigator" class="navigator" aria-label="Artwork navigator">
+      <img id="navigator-image" alt="">
+      <div id="navigator-window" class="navigator__window" aria-hidden="true"></div>
+    </aside>
+    <p class="viewer-hint viewer-hint--light" aria-label="Move the cursor to explore artwork details. On touch devices, touch and drag to explore details.">
+      <span class="viewer-hint__desktop" aria-hidden="true">MOVE CURSOR TO EXPLORE DETAILS</span>
+      <span class="viewer-hint__touch" aria-hidden="true">TOUCH AND DRAG TO EXPLORE DETAILS</span>
+    </p>
+    <section id="scrubber" class="scrubber" aria-label="Artwork navigation">
+      <input
+        id="artwork-slider"
+        class="scrubber__range"
+        type="range"
+        min="1"
+        max="1"
+        value="1"
+        step="1"
+        aria-label="Browse artworks"
+      >
+      <div class="scrubber__meta" aria-live="polite">
+        <span id="artwork-current">001</span>
+        <span class="scrubber__divider">/</span>
+        <span id="artwork-total">001</span>
+      </div>
+    </section>
+
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+  </main>
+
+  <script type="module" src="./pugilism.js?v=3"></script>
+</body>
+</html>

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>WARRIORSOFBOXING.EXE</title>
   <link rel="stylesheet" href="./styles.css?v=ss-slider-nav-v1">
+  <link rel="stylesheet" href="../viewer-hint.css?v=1">
 </head>
 <body>
   <main id="appMain" class="app-main" aria-label="WARRIORSOFBOXING portrait viewer">
@@ -13,6 +14,10 @@
     <div class="hud hud--name" aria-live="polite">
       <span id="fighterName">LOADINGÃ¢â‚¬Â¦</span>
     </div>
+    <p class="viewer-hint viewer-hint--backed" aria-label="Drag to browse portraits. On touch devices, swipe to browse portraits.">
+      <span class="viewer-hint__desktop" aria-hidden="true">DRAG TO BROWSE PORTRAITS</span>
+      <span class="viewer-hint__touch" aria-hidden="true">SWIPE TO BROWSE PORTRAITS</span>
+    </p>
     <section id="scrubber" class="scrubber" aria-label="Portrait navigation">
       <input
         id="portrait-slider"

@@ -1,0 +1,11 @@
+{
+    "width":  11811,
+    "height":  11811,
+    "tile_size":  1024,
+    "cols":  12,
+    "rows":  12,
+    "overview":  "../assets/overview.jpg",
+    "tiles":  "../assets/tiles",
+    "looks":  365,
+    "year":  2023
+}

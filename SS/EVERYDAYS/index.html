@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#000000">
   <title>EVERYDAYS.EXE</title>
   <link rel="stylesheet" href="./everydays.css?v=1">
+  <link rel="stylesheet" href="../viewer-hint.css?v=1">
 </head>
 <body>
   <main id="mosaic" class="mosaic" aria-label="EVERYDAYS image archive">
@@ -13,6 +14,10 @@
     <div id="preview" class="preview" aria-hidden="true">
       <img id="preview-image" alt="">
     </div>
+    <p class="viewer-hint viewer-hint--light viewer-hint--backed" aria-label="Hover over images to explore. On touch devices, touch and drag to explore images.">
+      <span class="viewer-hint__desktop" aria-hidden="true">HOVER TO EXPLORE IMAGES</span>
+      <span class="viewer-hint__touch" aria-hidden="true">TOUCH AND DRAG TO EXPLORE IMAGES</span>
+    </p>
     <section id="scrubber" class="scrubber" aria-label="Image navigation">
       <input
         id="image-slider"

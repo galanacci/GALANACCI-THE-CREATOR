@@ -1,0 +1,58 @@
+.viewer-hint {
+  position: absolute;
+  z-index: 19;
+  left: 50%;
+  bottom: max(70px, calc(env(safe-area-inset-bottom) + 66px));
+  width: calc(100% - 36px);
+  margin: 0;
+  transform: translateX(-50%);
+  color: rgba(0, 0, 0, .64);
+  font: 600 9px/1.4 Arial, Helvetica, sans-serif;
+  letter-spacing: .16em;
+  text-align: center;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viewer-hint--light {
+  color: rgba(243, 243, 240, .72);
+}
+
+.viewer-hint--backed {
+  width: max-content;
+  max-width: calc(100% - 36px);
+  padding: 4px 8px;
+  background: rgba(234, 209, 178, .9);
+  color: #000;
+}
+
+.viewer-hint--backed.viewer-hint--light {
+  background: rgba(0, 0, 0, .82);
+  color: #f3f3f0;
+}
+
+.viewer-hint__touch {
+  display: none;
+}
+
+@media (max-width: 680px), (hover: none), (pointer: coarse) {
+  .viewer-hint {
+    bottom: max(72px, calc(env(safe-area-inset-bottom) + 68px));
+    width: calc(100% - 48px);
+    font-size: 10px;
+  }
+
+  .viewer-hint--backed {
+    width: max-content;
+    max-width: calc(100% - 48px);
+  }
+
+  .viewer-hint__desktop {
+    display: none;
+  }
+
+  .viewer-hint__touch {
+    display: inline;
+  }
+}

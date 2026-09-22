@@ -1,0 +1,331 @@
+:root {
+  --bg: #ffffff;
+  --fg: #000000;
+  --cream: #ead1b2;
+  font-family: inherit;
+}
+
+* { box-sizing: border-box; }
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #ffffff;
+  color: #000000;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.viewer,
+.look-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.viewer {
+  overflow: hidden;
+  background: #ffffff;
+  touch-action: none;
+}
+
+.look-canvas {
+  display: block;
+  background: #ffffff;
+  cursor: grab;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.look-canvas:active { cursor: grabbing; }
+
+.look-canvas:focus-visible,
+.scrubber__range:focus-visible {
+  outline: 1px solid var(--cream);
+  outline-offset: -2px;
+}
+
+.navigator {
+  position: absolute;
+  z-index: 20;
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+  width: min(152px, 20vw);
+  aspect-ratio: var(--nav-aspect, 1 / 1);
+  overflow: hidden;
+  border: 1px solid #000000;
+  background: #ffffff;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.navigator img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+
+.navigator__window {
+  position: absolute;
+  border: 1px solid #000000;
+  background: rgba(234,209,178,.22);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.9);
+  pointer-events: none;
+}
+
+.interaction-hint {
+  position: absolute;
+  z-index: 30;
+  left: max(18px, env(safe-area-inset-left));
+  bottom: max(68px, calc(env(safe-area-inset-bottom) + 68px));
+  margin: 0;
+  color: rgba(0,0,0,.76);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: .14em;
+  pointer-events: none;
+}
+
+.interaction-hint__touch { display: none; }
+
+.scrubber {
+  position: absolute;
+  z-index: 40;
+  left: max(18px, env(safe-area-inset-left));
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #000000;
+  border-radius: 0;
+  background: var(--cream);
+  color: #000000;
+  box-shadow: none;
+  pointer-events: auto;
+}
+
+.scrubber__range {
+  width: 100%;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+.scrubber__range::-webkit-slider-runnable-track {
+  height: 1px;
+  background: #000000;
+}
+
+.scrubber__range::-moz-range-track {
+  height: 1px;
+  background: #000000;
+}
+
+.scrubber__range::-webkit-slider-thumb {
+  width: 17px;
+  height: 17px;
+  margin-top: -8px;
+  border: 0;
+  border-radius: 50%;
+  appearance: none;
+  -webkit-appearance: none;
+  background: #000000;
+}
+
+.scrubber__range::-moz-range-thumb {
+  width: 17px;
+  height: 17px;
+  border: 0;
+  border-radius: 50%;
+  background: #000000;
+}
+
+.scrubber__meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  min-width: 86px;
+  color: #000000;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .11em;
+  font-variant-numeric: tabular-nums;
+}
+
+.scrubber__divider { opacity: .48; }
+
+.status {
+  position: absolute;
+  z-index: 50;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(0,0,0,.72);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  pointer-events: none;
+}
+
+.viewer.is-ready .status { display: none; }
+
+@media (max-width: 680px), (hover: none), (pointer: coarse) {
+  .navigator {
+    top: max(12px, env(safe-area-inset-top));
+    right: max(12px, env(safe-area-inset-right));
+    width: min(112px, 28vw);
+  }
+
+  .interaction-hint {
+    left: 18px;
+    right: 18px;
+    bottom: max(72px, calc(env(safe-area-inset-bottom) + 72px));
+    width: auto;
+    transform: none;
+    font-size: 8px;
+    text-align: left;
+  }
+
+  .interaction-hint__desktop { display: none; }
+  .interaction-hint__touch { display: inline; }
+
+  .scrubber {
+    left: 12px;
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    gap: 12px;
+    min-height: 38px;
+    padding: 0 10px;
+  }
+
+  .scrubber__meta {
+    min-width: 78px;
+    font-size: 9px;
+  }
+}
+
+/* GTC 365LOOKS WHITE BG TEXT FIX V7 START */
+
+html,
+body,
+.viewer,
+.look-canvas {
+  background: #fff !important;
+}
+
+.viewer {
+  color: #000;
+}
+
+.interaction-hint {
+  color: rgba(0, 0, 0, .72) !important;
+}
+
+.status {
+  color: rgba(0, 0, 0, .72) !important;
+}
+
+.navigator {
+  border-color: rgba(0, 0, 0, .72) !important;
+  background: #fff !important;
+}
+
+.navigator__window {
+  border-color: #000 !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .92) !important;
+}
+
+/* GTC 365LOOKS WHITE BG TEXT FIX V7 END */
+
+/* GTC 365LOOKS INSTRUCTION SPACING V3 START */
+
+/*
+  Shared SS control geometry.
+
+  Desktop scrubber:
+    bottom edge = max(14px, safe area)
+    height      = 40px
+
+  Mobile scrubber:
+    bottom edge = max(14px, safe area)
+    height      = 44px
+
+  Instruction always sits exactly 14px above the scrubber.
+*/
+:root {
+  --ss-scrubber-bottom: max(14px, env(safe-area-inset-bottom));
+  --ss-scrubber-height: 40px;
+  --ss-instruction-gap: 14px;
+}
+
+/*
+  Lock the 365LOOKS scrubber to the same geometry as the shared SS controls.
+*/
+.scrubber {
+  bottom: var(--ss-scrubber-bottom) !important;
+  min-height: var(--ss-scrubber-height) !important;
+}
+
+/*
+  Derive instruction position from the slider itself instead of using
+  an unrelated hard-coded viewport offset.
+*/
+.interaction-hint {
+  position: absolute !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: calc(
+    var(--ss-scrubber-bottom) +
+    var(--ss-scrubber-height) +
+    var(--ss-instruction-gap)
+  ) !important;
+  width: max-content !important;
+  max-width: calc(100% - 32px) !important;
+  margin: 0 !important;
+  transform: translateX(-50%) !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  pointer-events: none !important;
+  z-index: 30 !important;
+}
+
+@media (max-width: 680px), (hover: none), (pointer: coarse) {
+  :root {
+    --ss-scrubber-height: 44px;
+  }
+
+  .interaction-hint {
+    left: 50% !important;
+    right: auto !important;
+    width: max-content !important;
+    max-width: calc(100% - 24px) !important;
+    transform: translateX(-50%) !important;
+    text-align: center !important;
+  }
+}
+
+/* GTC 365LOOKS INSTRUCTION SPACING V3 END */

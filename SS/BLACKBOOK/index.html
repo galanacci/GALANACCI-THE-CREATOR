@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#ffffff">
   <title>BLACKBOOK.EXE</title>
   <link rel="stylesheet" href="./flipbook.css?v=10">
+  <link rel="stylesheet" href="../viewer-hint.css?v=1">
 </head>
 <body>
   <main id="flipbook" class="flipbook" aria-label="GALANACCI drawing archive">
@@ -20,6 +21,11 @@
       </div>
 
       <canvas id="page-curl" class="page-curl" aria-hidden="true"></canvas>
+
+      <p class="viewer-hint" aria-label="Drag or click to turn pages. On touch devices, swipe or tap to turn pages.">
+        <span class="viewer-hint__desktop" aria-hidden="true">DRAG OR CLICK TO TURN</span>
+        <span class="viewer-hint__touch" aria-hidden="true">SWIPE OR TAP TO TURN</span>
+      </p>
 
       <section id="scrubber" class="scrubber" aria-label="Archive navigation">
         <input
