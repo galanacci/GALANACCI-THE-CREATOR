@@ -62,3 +62,17 @@ See [SS/README.md](SS/README.md) for the archive convention.
 The site is deployed from `main` with GitHub Pages. `CNAME` contains the active
 custom-domain binding. Keep the repository root as the Pages source so
 `index.html` remains the entry point.
+
+### Syncing local changes
+
+Double-click `SYNC-TO-MAIN.bat` from the repository root. It will:
+
+1. Show every local change and ask for confirmation.
+2. Create a commit using the message you enter.
+3. Fetch and rebase onto the latest `origin/main` without force-pushing.
+4. Push the updated `main` branch.
+5. Wait for GitHub's automatic post-push commit and sync it back locally.
+6. Confirm that the local and GitHub versions of `main` are identical.
+
+If a conflict or unexpected divergence is detected, the script stops without
+overwriting either version.

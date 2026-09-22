@@ -29,6 +29,16 @@ const launchLabel = document.getElementById("launch-label");
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const snap = (value) => Math.round(value / GRID) * GRID;
+const snapWithinBounds = (value, min, max) => {
+  const gridMin = Math.ceil(min / GRID) * GRID;
+  const gridMax = Math.floor(max / GRID) * GRID;
+
+  if (gridMax < gridMin) {
+    return clamp(value, min, max);
+  }
+
+  return clamp(snap(value), gridMin, gridMax);
+};
 const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
 
 /*
@@ -197,8 +207,7 @@ function writePosition(shortcut, position) {
   storageSet(POSITION_PREFIX + shortcut.dataset.appId, JSON.stringify(position));
 }
 
-function overlaps(shortcut, position, other) {
-  const otherPosition = other._desktopPosition;
+function overlaps(shortcut, position, other, otherPosition = other._desktopPosition) {
   if (!otherPosition) return false;
 
   return position.x < otherPosition.x + other.offsetWidth + COLLISION_GAP
@@ -210,8 +219,8 @@ function overlaps(shortcut, position, other) {
 function findAvailablePosition(shortcut, position) {
   const { maxX, maxY } = boundsFor(shortcut);
   const candidate = {
-    x: clamp(snap(position.x), EDGE, maxX),
-    y: clamp(snap(position.y), EDGE, maxY)
+    x: snapWithinBounds(position.x, EDGE, maxX),
+    y: snapWithinBounds(position.y, EDGE, maxY)
   };
 
   const otherShortcuts = [...document.querySelectorAll(".desktop-shortcut")]
@@ -225,8 +234,11 @@ function findAvailablePosition(shortcut, position) {
   let closest = null;
   let closestDistance = Number.POSITIVE_INFINITY;
 
-  for (let y = EDGE; y <= maxY; y += GRID) {
-    for (let x = EDGE; x <= maxX; x += GRID) {
+  const firstGridX = Math.ceil(EDGE / GRID) * GRID;
+  const firstGridY = Math.ceil(EDGE / GRID) * GRID;
+
+  for (let y = firstGridY; y <= maxY; y += GRID) {
+    for (let x = firstGridX; x <= maxX; x += GRID) {
       const next = { x, y };
       if (!isAvailable(next)) continue;
 
@@ -258,12 +270,13 @@ function renderShortcut(shortcut, position) {
 const { maxX, maxY } = boundsFor(shortcut);
 
   /*
-    Never move a remembered shortcut simply because another shortcut
-    overlaps it. The user controls desktop placement.
+    Rendering only clamps to the current viewport. Collision repair happens
+    explicitly during initial recovery and after a completed desktop drop, so
+    passive browser resizing never overwrites a remembered position.
   */
   const next = {
-    x: clamp(snap(position.x), EDGE, maxX),
-    y: clamp(snap(position.y), EDGE, maxY)
+    x: snapWithinBounds(position.x, EDGE, maxX),
+    y: snapWithinBounds(position.y, EDGE, maxY)
   };
 
   shortcut._desktopPosition = next;
@@ -459,7 +472,32 @@ async function launchShortcut(shortcut, app) {
 }
 
 function installShortcut(shortcut, app) {
-  renderShortcut(shortcut, readPosition(shortcut));
+  const rememberedPosition = readPosition(shortcut);
+  shortcut._savedDesktopPosition = { ...rememberedPosition };
+  renderShortcut(shortcut, rememberedPosition);
+
+  if (!isTouch) {
+    const existingShortcuts = [...document.querySelectorAll(".desktop-shortcut")]
+      .filter((other) => other !== shortcut && other._savedDesktopPosition);
+    const savedPositionOverlaps = existingShortcuts.some((other) =>
+      overlaps(
+        shortcut,
+        rememberedPosition,
+        other,
+        other._savedDesktopPosition
+      )
+    );
+
+    if (savedPositionOverlaps) {
+      const recoveredPosition = findAvailablePosition(
+        shortcut,
+        shortcut._desktopPosition
+      );
+      renderShortcut(shortcut, recoveredPosition);
+      shortcut._savedDesktopPosition = { ...recoveredPosition };
+      writePosition(shortcut, recoveredPosition);
+    }
+  }
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => shortcut.classList.add("is-ready"));
@@ -498,10 +536,15 @@ function installShortcut(shortcut, app) {
 
     const { maxX, maxY } = boundsFor(shortcut);
 
-    renderShortcut(shortcut, {
+    const requestedPosition = {
       x: clamp(dragging.origin.x + dx, EDGE, maxX),
       y: clamp(dragging.origin.y + dy, EDGE, maxY)
-    });
+    };
+
+    renderShortcut(
+      shortcut,
+      findAvailablePosition(shortcut, requestedPosition)
+    );
   });
 
   const finishPointer = (event) => {
@@ -509,9 +552,19 @@ function installShortcut(shortcut, app) {
 
     const moved = dragging.moved;
     shortcut.releasePointerCapture?.(event.pointerId);
+    const cancelled = event.type === "pointercancel";
 
-    if (moved) {
-      writePosition(shortcut, shortcut._desktopPosition);
+    if (moved && cancelled) {
+      renderShortcut(shortcut, dragging.origin);
+    } else if (moved) {
+      const settledPosition = findAvailablePosition(
+        shortcut,
+        shortcut._desktopPosition
+      );
+
+      renderShortcut(shortcut, settledPosition);
+      shortcut._savedDesktopPosition = { ...settledPosition };
+      writePosition(shortcut, settledPosition);
     }
 
     dragging = null;
