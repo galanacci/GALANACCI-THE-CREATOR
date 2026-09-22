@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#000000">
-  <meta name="description" content="GALANACCI THE CREATOR â€” world building, experiments and archives.">
+  <meta name="description" content="GALANACCI THE CREATOR — world building, experiments and archives.">
   <title>GALANACCI THE CREATOR</title>
 
   <!-- GTC ENTRY RETURN V4.1 START -->
@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=ui-favicon-v2">
-  <link rel="stylesheet" href="styles/gtc-os-boot.css?v=boot-title-os2026-v1">
+  <link rel="stylesheet" href="styles/gtc-os-boot.css?v=entry-return-v4-1">
 </head>
 
 <body class="gtc-os-boot-active">
@@ -46,8 +46,9 @@
       >
 
       <div class="gtc-os-boot__identity">
-        <div class="gtc-os-boot__title">OPERATING SYSTEM 2026</div>
-</div>
+        <div class="gtc-os-boot__title">GALANACCI</div>
+        <div class="gtc-os-boot__os">OS</div>
+      </div>
 
       <div class="gtc-os-boot__meta">
         WORLD BUILDING &bull; EXPERIMENTS &bull; ARCHIVES
@@ -295,6 +296,6 @@
   <script type="module" src="js/desktop.js?v=grid-collision-v3"></script>
 
   <script src="js/gtc-ui-enhancements.js?v=gthefighter-mobile-repair-v6-2"></script>
-  <script src="js/gtc-os-boot.js?v=boot-title-os2026-v1"></script>
+  <script src="js/gtc-os-boot.js?v=entry-return-v4-1"></script>
 </body>
 </html>
