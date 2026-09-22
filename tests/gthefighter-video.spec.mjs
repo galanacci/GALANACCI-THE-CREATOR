@@ -43,6 +43,40 @@ test("artwork video advances and visibly updates the 3D screen", async ({ page }
   expect(Buffer.compare(firstFrame, secondFrame)).not.toBe(0);
 });
 
+test("artwork slider projects stills and returns to the motion artwork", async ({ page }) => {
+  await openFighter(page);
+
+  const canvas = page.locator("#frame-viewer");
+  const clip = await canvas.boundingBox();
+  const motionFrame = await page.screenshot({ clip });
+  const slider = page.locator("#artwork-slider");
+
+  await slider.evaluate((element) => {
+    element.value = "30";
+    element.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  await expect(page.locator("#artwork-current")).toHaveText("030");
+  await expect.poll(async () => (await videoState(page)).paused).toBe(true);
+  await page.waitForTimeout(700);
+
+  const stillFrame = await page.screenshot({ clip });
+  expect(Buffer.compare(motionFrame, stillFrame)).not.toBe(0);
+
+  await slider.evaluate((element) => {
+    element.value = "60";
+    element.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  await expect(page.locator("#artwork-current")).toHaveText("060");
+  await expect(page.locator("#artwork-total")).toHaveText("060");
+
+  await slider.evaluate((element) => {
+    element.value = "1";
+    element.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  await expect(page.locator("#artwork-current")).toHaveText("001");
+  await expect.poll(async () => (await videoState(page)).paused).toBe(false);
+});
+
 test("first pointer gesture resumes inline artwork playback", async ({ page }, testInfo) => {
   await openFighter(page);
 

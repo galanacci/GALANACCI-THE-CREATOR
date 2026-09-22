@@ -297,6 +297,72 @@ const progressBar = document.querySelector("#loading-progress");
 const progressLabel = document.querySelector("#loading-percentage");
 const loadingState = document.querySelector("#loading-state");
 const fallback = document.querySelector("#webgl-fallback");
+const artworkSlider = document.querySelector("#artwork-slider");
+const artworkCurrent = document.querySelector("#artwork-current");
+const artworkTotal = document.querySelector("#artwork-total");
+
+const ARTWORK_STILLS = [
+  "./assets/stills/2022-08-220831-oleksandr-usyk.png",
+  "./assets/stills/2022-09-jaron-ennis.png",
+  "./assets/stills/2022-09-mikey-garcia-2.png",
+  "./assets/stills/2022-09-mikey-garcia.png",
+  "./assets/stills/2022-10-claressa-shields.png",
+  "./assets/stills/2022-10-devin-haney-4.png",
+  "./assets/stills/2022-10-george-foreman.png",
+  "./assets/stills/2022-10-joe-frazier-5.png",
+  "./assets/stills/2022-10-nonito-donaire.png",
+  "./assets/stills/2022-10-sugar-ray-robinson.png",
+  "./assets/stills/2022-11-evander-holyfield.png",
+  "./assets/stills/2022-11-jack-catterall.png",
+  "./assets/stills/2022-12-julio-ceaar-chavez.png",
+  "./assets/stills/2022-12-lennox-lewis.png",
+  "./assets/stills/2023-01-archie-moore.png",
+  "./assets/stills/2023-01-jimmy-wilde.png",
+  "./assets/stills/2023-01-pernell-whitaker.png",
+  "./assets/stills/2023-02-canelo-alvarez.png",
+  "./assets/stills/2023-02-errol-spence-jr.png",
+  "./assets/stills/2023-02-larry-holmes.png",
+  "./assets/stills/2023-02-mike-tyson.png",
+  "./assets/stills/2023-02-muhammad-ali.png",
+  "./assets/stills/2023-03-dmitry-bivol.png",
+  "./assets/stills/2023-03-george-kambosos-jr.png",
+  "./assets/stills/2023-03-jessica-mccaskill.png",
+  "./assets/stills/2023-03-stephen-fulton.png",
+  "./assets/stills/2023-03-terence-crawford.png",
+  "./assets/stills/2023-03-vasiliy-lomachenko.png",
+  "./assets/stills/2023-04-anthony-joshua.png",
+  "./assets/stills/2023-04-katie-taylor.png",
+  "./assets/stills/2023-04-manny-pacquiao.png",
+  "./assets/stills/2023-05-deontay-wilder.png",
+  "./assets/stills/2023-05-devin-haney.png",
+  "./assets/stills/2023-05-floyd-mayweather.png",
+  "./assets/stills/2023-05-gervonta-davis.png",
+  "./assets/stills/2023-05-tyson-fury.png",
+  "./assets/stills/2023-05-vergil-ortiz-jr.png",
+  "./assets/stills/2023-07-gennady-golovkin.png",
+  "./assets/stills/2023-07-seb-fundora.png",
+  "./assets/stills/2023-10-chantelle-cameron.png",
+  "./assets/stills/2023-10-hugo-micallef.png",
+  "./assets/stills/2023-10-larry-holmes.png",
+  "./assets/stills/2023-10-mark-magsayo.png",
+  "./assets/stills/2023-11-ezzard-charles.png",
+  "./assets/stills/2023-11-florian-marku.png",
+  "./assets/stills/2023-11-francis-ngannou.png",
+  "./assets/stills/2023-12-eumir-marcial.png",
+  "./assets/stills/2023-12-jesse-rodriguez.png",
+  "./assets/stills/2024-05-joe-smith-jr.png",
+  "./assets/stills/2024-08-marcial.png",
+  "./assets/stills/2024-08-pacquiao-repost.png",
+  "./assets/stills/2024-09-ezzard-charles.png",
+  "./assets/stills/2024-09-florian-marku.png",
+  "./assets/stills/2024-09-mike-tyson.png",
+  "./assets/stills/2024-09-muhammad-ali.png",
+  "./assets/stills/2024-09-willie-pep.png",
+  "./assets/stills/2024-10-floyd-mayweather.png",
+  "./assets/stills/2024-10-francis-ngannou.png",
+  "./assets/stills/2025-06-gabriela-fundora.png"
+];
+const ARTWORK_COUNT = ARTWORK_STILLS.length + 1;
 
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const coarsePointer = window.matchMedia("(hover: none), (pointer: coarse)").matches;
@@ -314,6 +380,72 @@ let modelProgress = 0;
 let videoReady = false;
 let modelReady = false;
 let artworkTexture;
+let screenMaterial;
+let activeStillTexture;
+let artworkRequestToken = 0;
+let currentArtworkIndex = 0;
+const artworkTextureLoader = new THREE.TextureLoader();
+
+function padCounter(value) {
+  return String(value).padStart(3, "0");
+}
+
+function updateArtworkControls(index) {
+  artworkSlider.value = String(index + 1);
+  artworkCurrent.textContent = padCounter(index + 1);
+  artworkTotal.textContent = padCounter(ARTWORK_COUNT);
+  artworkSlider.setAttribute(
+    "aria-valuetext",
+    `${index === 0 ? "Motion artwork" : "Still artwork"} ${index + 1} of ${ARTWORK_COUNT}`
+  );
+}
+
+async function selectArtwork(index) {
+  const boundedIndex = Math.max(0, Math.min(ARTWORK_COUNT - 1, index));
+  const requestToken = ++artworkRequestToken;
+  currentArtworkIndex = boundedIndex;
+  updateArtworkControls(boundedIndex);
+
+  if (boundedIndex === 0) {
+    if (screenMaterial) {
+      screenMaterial.map = artworkTexture;
+      screenMaterial.needsUpdate = true;
+    }
+    activeStillTexture?.dispose();
+    activeStillTexture = undefined;
+    attemptArtworkVideoPlayback();
+    return;
+  }
+
+  video.pause();
+
+  try {
+    const texture = await artworkTextureLoader.loadAsync(ARTWORK_STILLS[boundedIndex - 1]);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.generateMipmaps = false;
+    texture.flipY = true;
+
+    if (requestToken !== artworkRequestToken) {
+      texture.dispose();
+      return;
+    }
+
+    const previousTexture = activeStillTexture;
+    activeStillTexture = texture;
+
+    if (screenMaterial) {
+      screenMaterial.map = texture;
+      screenMaterial.needsUpdate = true;
+    }
+
+    previousTexture?.dispose();
+  } catch (error) {
+    if (requestToken !== artworkRequestToken) return;
+    console.error("GTHEFIGHTER still artwork failed to load", error);
+  }
+}
 
 function prepareArtworkVideo() {
   video.muted = true;
@@ -329,6 +461,7 @@ function prepareArtworkVideo() {
 }
 
 function attemptArtworkVideoPlayback() {
+  if (currentArtworkIndex !== 0) return;
   video.muted = true;
   video.defaultMuted = true;
   video.playsInline = true;
@@ -461,26 +594,14 @@ function createMaterials(videoTexture) {
     envMapIntensity: 3.8,
     specularIntensity: 1,
     specularColor: 0xffffff,
-    side: THREE.DoubleSide
+    side: THREE.FrontSide
   });
 
-  const backAcrylic = new THREE.MeshPhysicalMaterial({
-    color: coarsePointer ? 0x202024 : 0x4a4a52,
-    metalness: 0,
-    roughness: coarsePointer ? .11 : .16,
-    transparent: false,
-    opacity: 1,
-    transmission: 0,
-    clearcoat: 1,
-    clearcoatRoughness: coarsePointer ? .025 : .055,
-    ior: 1.49,
-    envMapIntensity: coarsePointer ? 5.2 : 6.4,
-    specularIntensity: 1,
-    specularColor: 0xffffff,
-    emissive: coarsePointer ? 0x000000 : 0x101014,
-    emissiveIntensity: coarsePointer ? 0 : .32,
-    side: THREE.DoubleSide
-  });
+  const backAcrylic = frontAcrylic.clone();
+  backAcrylic.color.setHex(0xf2eee6);
+  backAcrylic.roughness = .18;
+  backAcrylic.opacity = .14;
+  backAcrylic.envMapIntensity = 4.2;
 
   const chrome = new THREE.MeshPhysicalMaterial({
     color: 0xe6e6e3,
@@ -511,13 +632,9 @@ function createMaterials(videoTexture) {
     alphaMap: createScreenMask(),
     transparent: true,
     alphaTest: .5,
+    depthWrite: false,
     side: THREE.DoubleSide,
     toneMapped: false
-  });
-
-  const screenBacking = new THREE.MeshBasicMaterial({
-    color: 0x050505,
-    side: THREE.DoubleSide
   });
 
   return {
@@ -525,8 +642,7 @@ function createMaterials(videoTexture) {
     backGlass: backAcrylic,
     chrome,
     frame,
-    screen,
-    screenBacking
+    screen
   };
 }
 function configureModel(gltf, videoTexture) {
@@ -534,8 +650,12 @@ function configureModel(gltf, videoTexture) {
   const meshes = [];
   frameRoot.traverse((object) => {
     if (!object.isMesh) return;
+    if (!object.geometry.getAttribute("normal")) {
+      object.geometry.computeVertexNormals();
+      object.geometry.normalizeNormals();
+    }
     meshes.push(object);
-object.castShadow = !lowMemory;
+    object.castShadow = !lowMemory;
     object.receiveShadow = true;
   });
 
@@ -544,6 +664,7 @@ object.castShadow = !lowMemory;
   }
 
   const materials = createMaterials(videoTexture);
+  screenMaterial = materials.screen;
   let screenMesh;
   let frontGlassMesh;
   let backGlassMesh;
@@ -556,7 +677,9 @@ object.castShadow = !lowMemory;
       mesh.material = materials.backGlass;
       backGlassMesh = mesh;
     } else if (label === "SCREEN") {
-      mesh.material = materials.screenBacking;
+      // The authored SCREEN is a thick opaque solid. The fitted video plane
+      // replaces it so the artwork can occupy the clear cavity between panels.
+      mesh.visible = false;
       screenMesh = mesh;
     } else if (label === "METAL_SCREWS") {
       mesh.material = materials.chrome;
@@ -585,7 +708,7 @@ object.castShadow = !lowMemory;
   frameRoot.scale.setScalar(scale);
   // Keep the front glass facing the viewer while exposing enough depth to
   // distinguish the separate rear glass panel at rest.
-  const frontRotation = Math.PI + .12;
+  const frontRotation = Math.PI;
   frameRoot.rotation.y = frontRotation;
   const transformedCentre = centre
     .clone()
@@ -598,25 +721,99 @@ object.castShadow = !lowMemory;
   // original screen UVs were authored for a static image, so a fitted plane is
   // more reliable than replacing the Rhino material directly.
   screenMesh.geometry.computeBoundingBox();
+  frontGlassMesh.geometry.computeBoundingBox();
   const screenBounds = screenMesh.geometry.boundingBox;
+  const frontGlassBounds = frontGlassMesh.geometry.boundingBox;
   const screenSize = screenBounds.getSize(new THREE.Vector3());
   const screenCentre = screenBounds.getCenter(new THREE.Vector3());
   const videoSurface = new THREE.Mesh(
     new THREE.PlaneGeometry(screenSize.x * .996, screenSize.y * .996),
     materials.screen
   );
-  videoSurface.position.set(screenCentre.x, screenCentre.y, screenBounds.min.z - .00035);
+  // The front glass occupies a real volume. Keep the artwork behind its inner
+  // face instead of placing it inside the glass where the surfaces can clash.
+  videoSurface.position.set(
+    screenCentre.x,
+    screenCentre.y,
+    frontGlassBounds.max.z + .0003
+  );
   videoSurface.rotation.y = Math.PI;
   videoSurface.castShadow = false;
   videoSurface.receiveShadow = false;
+  backGlassMesh.renderOrder = 1;
+  videoSurface.renderOrder = 3;
+  frontGlassMesh.renderOrder = 4;
   frameRoot.add(videoSurface);
 
+  const backGlassEdgeReflection = backGlassMesh.clone();
+  backGlassEdgeReflection.material = new THREE.ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    side: THREE.DoubleSide,
+    toneMapped: false,
+    vertexShader: `
+      varying vec3 vViewNormal;
+      varying vec3 vViewDirection;
+
+      void main() {
+        vec4 viewPosition = modelViewMatrix * vec4(position, 1.0);
+        vViewNormal = normalize(normalMatrix * normal);
+        vViewDirection = normalize(-viewPosition.xyz);
+        gl_Position = projectionMatrix * viewPosition;
+      }
+    `,
+    fragmentShader: `
+      varying vec3 vViewNormal;
+      varying vec3 vViewDirection;
+
+      void main() {
+        float facing = abs(dot(normalize(vViewNormal), normalize(vViewDirection)));
+        float rim = pow(1.0 - facing, 1.35);
+        vec3 cream = vec3(0.918, 0.820, 0.698);
+        gl_FragColor = vec4(cream, rim * 0.92);
+      }
+    `
+  });
+  backGlassEdgeReflection.castShadow = false;
+  backGlassEdgeReflection.receiveShadow = false;
+  backGlassEdgeReflection.renderOrder = 2;
+  frameRoot.add(backGlassEdgeReflection);
+
+  const glassSize = frontGlassBounds.getSize(new THREE.Vector3());
+  const glassCentre = frontGlassBounds.getCenter(new THREE.Vector3());
+  const glassReflection = new THREE.Mesh(
+    new THREE.PlaneGeometry(glassSize.x * .97, glassSize.y * .97),
+    new THREE.MeshBasicMaterial({
+      map: createGlassReflectionTexture(),
+      transparent: true,
+      opacity: .58,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+      toneMapped: false
+    })
+  );
+  // Keep the reflection clear of the glass surface so it cannot z-fight while
+  // still reading as a highlight carried by the rotating front panel.
+  glassReflection.position.set(
+    glassCentre.x,
+    glassCentre.y,
+    frontGlassBounds.min.z - .00025
+  );
+  glassReflection.rotation.y = Math.PI;
+  glassReflection.castShadow = false;
+  glassReflection.receiveShadow = false;
+  glassReflection.renderOrder = 5;
+  frameRoot.add(glassReflection);
+
   scene.add(frameRoot);
+  selectArtwork(currentArtworkIndex);
 }
 
 function resetView() {
   if (!controls || !camera) return;
-  camera.position.set(0, .12, 5.8);
+  camera.position.set(0, 0, 5.8);
   controls.target.set(0, 0, 0);
   controls.update();
   markInteraction();
@@ -746,7 +943,7 @@ async function initialise() {
 
   scene = new THREE.Scene();
 camera = new THREE.PerspectiveCamera(33, 1, .05, 100);
-  camera.position.set(0, .12, 5.8);
+  camera.position.set(0, 0, 5.8);
 controls = new OrbitControls(camera, canvas);
   controls.enableDamping = !prefersReducedMotion;
   controls.dampingFactor = .075;
@@ -755,6 +952,8 @@ controls = new OrbitControls(camera, canvas);
   controls.maxDistance = 8;
   controls.minPolarAngle = Math.PI * .2;
   controls.maxPolarAngle = Math.PI * .8;
+  controls.minAzimuthAngle = -Math.PI * .28;
+  controls.maxAzimuthAngle = Math.PI * .28;
   controls.rotateSpeed = coarsePointer ? .52 : .35;
   controls.zoomSpeed = .72;
   controls.listenToKeyEvents(window);
@@ -814,6 +1013,11 @@ if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
 document.addEventListener("pointerdown", attemptArtworkVideoPlayback, {
   passive: true
 });
+artworkSlider.max = String(ARTWORK_COUNT);
+updateArtworkControls(0);
+artworkSlider.addEventListener("input", () => {
+  selectArtwork(Number(artworkSlider.value) - 1);
+});
 resetButton.addEventListener("click", resetView);
 canvas.addEventListener("pointerdown", markInteraction, { once: true });
 window.addEventListener("resize", resize, { passive: true });
@@ -833,6 +1037,8 @@ window.addEventListener("pagehide", (event) => {
   animationFrame = undefined;
   video.pause();
   if (!event.persisted) {
+    activeStillTexture?.dispose();
+    artworkTexture?.dispose();
     renderer?.dispose();
     environmentRenderTarget?.dispose();
   }
