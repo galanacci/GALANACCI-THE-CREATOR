@@ -1,50 +1,3 @@
-/* GTC OS SITEWIDE PIXEL FONT V1 START */
-@font-face {
-  font-family: "Windows95";
-  src: url("assets/fonts/w95fa.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-}
-
-/*
-  GALANACCI OS shell typography.
-  Individual apps are loaded in iframes and keep their own visual language.
-*/
-html,
-body,
-button,
-input,
-select,
-textarea,
-.desktop,
-.desktop-shortcut,
-.desktop-hint,
-.desktop-meta,
-.folder-window,
-.folder-window__chrome,
-.folder-window__close,
-.folder-window__body,
-.folder-item,
-.app-folder-window,
-.app-folder-body,
-.app-list,
-.app-list__header,
-.app-list__row,
-.app-list__name,
-.app-list__meta,
-.app-list__description,
-.app-list__empty,
-.experiment-window__chrome,
-.launch-transition,
-.portfolio-notice,
-.portfolio-notice__chrome,
-.portfolio-notice__body,
-.portfolio-notice__ok {
-  font-family: var(--font-brand) !important;
-}
-/* GTC OS SITEWIDE PIXEL FONT V1 END */
-
 :root {
   --bg: #ead1b2;
   --fg: #000;
@@ -63,7 +16,7 @@ textarea,
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
-  --font-brand: "Windows95", "Courier New", monospace;
+  --font-brand: "Lora", serif;
 }
 
 * {
@@ -889,7 +842,7 @@ button {
 /* GTC DESCRIPTION + OS NOTICE V4 START */
 
 /* ----------------------------------------------------------
-   FOLDER LIST ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â add DESCRIPTION as fourth column.
+   FOLDER LIST ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â add DESCRIPTION as fourth column.
    ---------------------------------------------------------- */
 
 .folder-window .app-list__header,
