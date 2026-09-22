@@ -26,39 +26,7 @@ let environmentRenderTarget;
 let modelProgress = 0;
 let videoReady = false;
 let modelReady = false;
-let artworkTexture;
 
-function prepareArtworkVideo() {
-  video.muted = true;
-  video.defaultMuted = true;
-  video.autoplay = true;
-  video.loop = true;
-  video.playsInline = true;
-
-  video.setAttribute("autoplay", "");
-  video.setAttribute("muted", "");
-  video.setAttribute("playsinline", "");
-  video.setAttribute("webkit-playsinline", "");
-}
-
-function attemptArtworkVideoPlayback() {
-  video.muted = true;
-  video.defaultMuted = true;
-  video.playsInline = true;
-
-  const playAttempt = video.play();
-  if (playAttempt && typeof playAttempt.catch === "function") playAttempt.catch(() => {});
-}
-
-function createArtworkTexture() {
-  artworkTexture = new THREE.VideoTexture(video);
-  artworkTexture.colorSpace = THREE.SRGBColorSpace;
-  artworkTexture.minFilter = THREE.LinearFilter;
-  artworkTexture.magFilter = THREE.LinearFilter;
-  artworkTexture.generateMipmaps = false;
-  artworkTexture.flipY = true;
-  return artworkTexture;
-}
 function setProgress(value) {
   const bounded = Math.max(0, Math.min(100, Math.round(value)));
   progressBar.style.width = `${bounded}%`;
@@ -77,7 +45,7 @@ function updateCombinedProgress() {
 
 function markInteraction() {
   experience.classList.add("has-interacted");
-  attemptArtworkVideoPlayback();
+  video.play().catch(() => {});
 }
 
 function showFallback(message) {
@@ -492,7 +460,13 @@ async function initialise() {
 
   addEnvironment();
   resize();
-  const videoTexture = createArtworkTexture();
+
+  const videoTexture = new THREE.VideoTexture(video);
+  videoTexture.colorSpace = THREE.SRGBColorSpace;
+  videoTexture.minFilter = THREE.LinearFilter;
+  videoTexture.magFilter = THREE.LinearFilter;
+  videoTexture.generateMipmaps = false;
+  videoTexture.flipY = true;
 
   const loader = new GLTFLoader();
   loader.load(
@@ -525,8 +499,8 @@ async function initialise() {
 function markVideoReady() {
   if (videoReady) return;
   videoReady = true;
+  video.play().catch(() => {});
   updateCombinedProgress();
-  attemptArtworkVideoPlayback();
 }
 
 video.addEventListener("loadeddata", markVideoReady, { once: true });
@@ -541,9 +515,6 @@ if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
   markVideoReady();
 }
 
-document.addEventListener("pointerdown", attemptArtworkVideoPlayback, {
-  passive: true
-});
 resetButton.addEventListener("click", resetView);
 canvas.addEventListener("pointerdown", markInteraction, { once: true });
 window.addEventListener("resize", resize, { passive: true });
@@ -551,22 +522,14 @@ document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     video.pause();
   } else {
-    attemptArtworkVideoPlayback();
+    video.play().catch(() => {});
   }
 });
-window.addEventListener("pageshow", () => {
-  attemptArtworkVideoPlayback();
-  if (renderer && !animationFrame) render();
-});
-window.addEventListener("pagehide", (event) => {
+window.addEventListener("pagehide", () => {
   cancelAnimationFrame(animationFrame);
-  animationFrame = undefined;
   video.pause();
-  if (!event.persisted) {
-    renderer?.dispose();
-    environmentRenderTarget?.dispose();
-  }
-});
+  renderer?.dispose();
+  environmentRenderTarget?.dispose();
+}, { once: true });
 
-prepareArtworkVideo();
 initialise();

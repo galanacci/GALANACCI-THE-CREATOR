@@ -26,8 +26,9 @@ let environmentRenderTarget;
 let modelProgress = 0;
 let videoReady = false;
 let modelReady = false;
-let artworkTexture;
 
+
+/* GTC GTHEFIGHTER MOBILE VIDEO V1 START */
 function prepareArtworkVideo() {
   video.muted = true;
   video.defaultMuted = true;
@@ -35,30 +36,49 @@ function prepareArtworkVideo() {
   video.loop = true;
   video.playsInline = true;
 
-  video.setAttribute("autoplay", "");
   video.setAttribute("muted", "");
+  video.setAttribute("autoplay", "");
   video.setAttribute("playsinline", "");
   video.setAttribute("webkit-playsinline", "");
+
+  /*
+    iOS may ignore preload="auto", but calling load() after the media
+    properties are established gives Safari the correct inline/autoplay state
+    before Three.js creates its VideoTexture.
+  */
+  try {
+    video.load();
+  } catch {}
 }
 
 function attemptArtworkVideoPlayback() {
+  if (!video) return;
+
   video.muted = true;
   video.defaultMuted = true;
   video.playsInline = true;
 
   const playAttempt = video.play();
-  if (playAttempt && typeof playAttempt.catch === "function") playAttempt.catch(() => {});
+
+  if (playAttempt && typeof playAttempt.catch === "function") {
+    playAttempt.catch(() => {
+      /*
+        Mobile browsers can still require the first user gesture.
+        pointerdown/touchstart listeners below retry from a trusted gesture.
+      */
+    });
+  }
 }
 
-function createArtworkTexture() {
-  artworkTexture = new THREE.VideoTexture(video);
-  artworkTexture.colorSpace = THREE.SRGBColorSpace;
-  artworkTexture.minFilter = THREE.LinearFilter;
-  artworkTexture.magFilter = THREE.LinearFilter;
-  artworkTexture.generateMipmaps = false;
-  artworkTexture.flipY = true;
-  return artworkTexture;
+function markVideoUsable() {
+  if (!videoReady) {
+    videoReady = true;
+    updateCombinedProgress();
+  }
+
+  attemptArtworkVideoPlayback();
 }
+/* GTC GTHEFIGHTER MOBILE VIDEO V1 END */
 function setProgress(value) {
   const bounded = Math.max(0, Math.min(100, Math.round(value)));
   progressBar.style.width = `${bounded}%`;
@@ -77,7 +97,7 @@ function updateCombinedProgress() {
 
 function markInteraction() {
   experience.classList.add("has-interacted");
-  attemptArtworkVideoPlayback();
+  video.play().catch(() => {});
 }
 
 function showFallback(message) {
@@ -492,7 +512,13 @@ async function initialise() {
 
   addEnvironment();
   resize();
-  const videoTexture = createArtworkTexture();
+
+  const videoTexture = new THREE.VideoTexture(video);
+  videoTexture.colorSpace = THREE.SRGBColorSpace;
+  videoTexture.minFilter = THREE.LinearFilter;
+  videoTexture.magFilter = THREE.LinearFilter;
+  videoTexture.generateMipmaps = false;
+  videoTexture.flipY = true;
 
   const loader = new GLTFLoader();
   loader.load(
@@ -523,12 +549,10 @@ async function initialise() {
 }
 
 function markVideoReady() {
-  if (videoReady) return;
-  videoReady = true;
-  updateCombinedProgress();
-  attemptArtworkVideoPlayback();
+  markVideoUsable();
 }
 
+video.addEventListener("loadedmetadata", markVideoReady, { once: true });
 video.addEventListener("loadeddata", markVideoReady, { once: true });
 video.addEventListener("canplay", markVideoReady, { once: true });
 video.addEventListener("error", () => {
@@ -537,13 +561,21 @@ video.addEventListener("error", () => {
   updateCombinedProgress();
 }, { once: true });
 
-if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
   markVideoReady();
 }
 
-document.addEventListener("pointerdown", attemptArtworkVideoPlayback, {
+document.addEventListener("touchstart", attemptArtworkVideoPlayback, {
+  once: true,
   passive: true
 });
+document.addEventListener("pointerdown", attemptArtworkVideoPlayback, {
+  once: true,
+  passive: true
+});
+window.setTimeout(() => {
+  if (!videoReady) markVideoUsable();
+}, 1800);
 resetButton.addEventListener("click", resetView);
 canvas.addEventListener("pointerdown", markInteraction, { once: true });
 window.addEventListener("resize", resize, { passive: true });
@@ -554,19 +586,12 @@ document.addEventListener("visibilitychange", () => {
     attemptArtworkVideoPlayback();
   }
 });
-window.addEventListener("pageshow", () => {
-  attemptArtworkVideoPlayback();
-  if (renderer && !animationFrame) render();
-});
-window.addEventListener("pagehide", (event) => {
+window.addEventListener("pagehide", () => {
   cancelAnimationFrame(animationFrame);
-  animationFrame = undefined;
   video.pause();
-  if (!event.persisted) {
-    renderer?.dispose();
-    environmentRenderTarget?.dispose();
-  }
-});
+  renderer?.dispose();
+  environmentRenderTarget?.dispose();
+}, { once: true });
 
 prepareArtworkVideo();
 initialise();

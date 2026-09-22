@@ -242,19 +242,11 @@ canvas {
 }
 
 #fighter-video {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 0;
-
-  width: 4px;
-  height: 4px;
-
-  opacity: .01;
-  object-fit: cover;
-
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
   pointer-events: none;
-  user-select: none;
 }
 
 @media (max-width: 680px), (hover: none), (pointer: coarse) {
