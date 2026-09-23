@@ -246,7 +246,7 @@ input {
 }
 
 
-/* V6 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â smooth GPU page-curl layer */
+/* V6 — smooth GPU page-curl layer */
 .page-curl {
   contain: strict;
   transform: translateZ(0);
@@ -268,7 +268,7 @@ input {
 }
 
 
-/* V8 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â transparent outside the curled page so the next page shows through */
+/* V8 — transparent outside the curled page so the next page shows through */
 .page-curl {
   background: transparent;
   backface-visibility: hidden;
@@ -276,7 +276,7 @@ input {
 }
 
 
-/* V9 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the old page leaves through geometry, not a hide/fade transition. */
+/* V9 — the old page leaves through geometry, not a hide/fade transition. */
 .page-curl,
 .page--current {
   transition: none;

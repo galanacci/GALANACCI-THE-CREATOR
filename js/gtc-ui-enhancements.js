@@ -20,10 +20,16 @@
   }
 
   const DESCRIPTIONS = Object.freeze({
-    "FIGHTPOSTERS": "Fight posters for major 2024 boxing events and the Olympics.",
-    "FIGHTPOSTERS.EXE": "Fight posters for major 2024 boxing events and the Olympics.",
-    "PUGILISM": "Digital drawings of boxing legends of different eras.",
-    "PUGILISM.EXE": "Digital drawings of boxing legends of different eras.",
+    "GALANACCI": "My initial clothing brand.",
+    "GALANACCI.EXE": "My initial clothing brand.",
+    "GVERSE": "A multi-disciplinary design studio.",
+    "GVERSE.EXE": "A multi-disciplinary design studio.",
+    "ARCHITECTURE": "Architecture portfolio.",
+    "ARCHITECTURE.EXE": "Architecture portfolio.",
+    "FIGHTPOSTERS": "Artworks of major boxing events in 2024",
+    "FIGHTPOSTERS.EXE": "Artworks of major boxing events in 2024",
+    "PUGILISM": "Artworks of boxing legends of different eras.",
+    "PUGILISM.EXE": "Artworks of boxing legends of different eras.",
     "365LOOKS": "365 days, 365 looks. Daily fashion sketches.",
     "365LOOKS.EXE": "365 days, 365 looks. Daily fashion sketches.",
     "2(XY-T)": "An iteration of Bradley Tangonan's XY - T project.",

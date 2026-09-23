@@ -55,7 +55,7 @@ git diff --cached --check
 if errorlevel 1 goto :invalid_diff
 
 echo.
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$m = Read-Host 'Enter a short commit message'; if ([string]::IsNullOrWhiteSpace($m)) { Write-Host 'A commit message is required.'; exit 1 }; & git commit -m $m; exit $LASTEXITCODE"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$m = Read-Host 'Enter a short commit message'; if ([string]::IsNullOrWhiteSpace($m)) { Write-Host 'A commit message is required.'; exit 1 }; if ($m -match '\[(skip ci|ci skip|no ci|skip actions|actions skip)\]') { Write-Host 'Do not skip GitHub Actions: it updates the VERSION number.'; exit 1 }; & git commit -m $m; exit $LASTEXITCODE"
 if errorlevel 1 goto :failed
 
 :fetch_remote
@@ -69,36 +69,52 @@ echo [2/4] Replaying local commits on top of origin/main...
 git rebase origin/main
 if errorlevel 1 goto :rebase_failed
 
+for /f "delims=" %%I in ('git rev-parse HEAD') do set "LOCAL_HEAD=%%I"
+for /f "delims=" %%I in ('git rev-parse origin/main') do set "REMOTE_HEAD=%%I"
+if "%LOCAL_HEAD%"=="%REMOTE_HEAD%" goto :already_current
+
+set "PUSHED_HEAD=%LOCAL_HEAD%"
+set "PUSHED_VERSION="
+for /f "tokens=2 delims=_" %%I in ('git grep -o "VERSION_[0-9]*" HEAD -- index.html') do set "PUSHED_VERSION=%%I"
+if not defined PUSHED_VERSION goto :missing_version
+
 echo.
-echo [3/4] Pushing main to GitHub...
+echo [3/4] Pushing main to GitHub and triggering the version update...
 git push origin main
 if errorlevel 1 goto :push_failed
 
 echo.
-echo [4/4] Waiting for any automatic post-push update...
+echo [4/4] Waiting for GitHub to increment VERSION_%PUSHED_VERSION%...
 set /a SYNC_ATTEMPT=0
 
 :post_push_check
 set /a SYNC_ATTEMPT+=1
+if %SYNC_ATTEMPT% GTR 60 goto :version_timeout
 timeout /t 5 /nobreak >nul
 git fetch origin main --quiet
 if errorlevel 1 goto :failed
 
-for /f "delims=" %%I in ('git rev-parse HEAD') do set "LOCAL_HEAD=%%I"
 for /f "delims=" %%I in ('git rev-parse origin/main') do set "REMOTE_HEAD=%%I"
+if "%REMOTE_HEAD%"=="%PUSHED_HEAD%" goto :post_push_check
 
-if "%LOCAL_HEAD%"=="%REMOTE_HEAD%" goto :post_push_next
-
-git merge-base --is-ancestor HEAD origin/main >nul 2>&1
+git merge-base --is-ancestor "%PUSHED_HEAD%" origin/main >nul 2>&1
 if errorlevel 1 goto :unexpected_divergence
 
-echo Automatic remote update detected. Syncing it locally...
+set "REMOTE_VERSION="
+for /f "tokens=2 delims=_" %%I in ('git grep -o "VERSION_[0-9]*" origin/main -- index.html') do set "REMOTE_VERSION=%%I"
+if not defined REMOTE_VERSION goto :missing_version
+if "%REMOTE_VERSION%"=="%PUSHED_VERSION%" goto :post_push_check
+git log -1 --format=%%s "%PUSHED_HEAD%..origin/main" --grep="^chore: update desktop number" | findstr /C:"chore: update desktop number" >nul
+if errorlevel 1 goto :post_push_check
+
+echo VERSION_%REMOTE_VERSION% is on GitHub. Syncing it locally...
 git pull --ff-only origin main
 if errorlevel 1 goto :failed
 
-:post_push_next
-if %SYNC_ATTEMPT% LSS 6 goto :post_push_check
+:already_current
+if "%LOCAL_HEAD%"=="%REMOTE_HEAD%" echo No new commit to push, so no version bump was triggered.
 
+:final_check
 git fetch origin main --quiet
 if errorlevel 1 goto :failed
 
@@ -118,6 +134,18 @@ echo ============================================================
 echo.
 git log -1 --oneline
 goto :success
+
+:missing_version
+echo.
+echo ERROR: Could not read the VERSION number from index.html.
+echo Check that both version labels are present and try again.
+goto :error
+
+:version_timeout
+echo.
+echo ERROR: The push succeeded, but GitHub did not increment the VERSION number within 5 minutes.
+echo Check the "Update desktop number" Action on GitHub. Do not repeat the push blindly.
+goto :error
 
 :missing_git
 echo ERROR: Git is not installed or is not available in PATH.

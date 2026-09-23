@@ -1,0 +1,95 @@
+.founder-content:has(.founder-origin-archive) {
+    padding: 0;
+}
+
+.founder-content:has(.founder-origin-archive) > .room-return {
+    z-index: 60;
+}
+
+.founder-origin-archive {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    background: #000;
+    opacity: 0;
+    transition: opacity 500ms ease;
+    isolation: isolate;
+}
+
+.founder-origin-archive.is-ready {
+    opacity: 1;
+}
+
+.origin-memory-field,
+.origin-focus-backdrop {
+    position: absolute;
+    inset: 0;
+}
+
+.origin-memory-field {
+    overflow: hidden;
+}
+
+.origin-focus-backdrop {
+    z-index: 20;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 460ms ease;
+}
+
+.founder-origin-archive.is-focused .origin-focus-backdrop {
+    opacity: 0.94;
+}
+
+.origin-memory {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    min-width: 0;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    line-height: 0;
+    cursor: zoom-in;
+    transform-origin: center;
+    will-change: transform, width, opacity;
+    transition: width 460ms cubic-bezier(.22,.78,.22,1),
+        transform 460ms cubic-bezier(.22,.78,.22,1),
+        opacity 360ms ease;
+}
+
+.origin-memory:hover,
+.origin-memory:focus,
+.origin-memory:focus-visible,
+.origin-memory:active {
+    border: 0;
+    outline: 0;
+    background: transparent;
+}
+
+.origin-memory:focus-visible img {
+    box-shadow: 0 0 0 1px #fff;
+}
+
+.origin-memory img {
+    display: block;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+    object-fit: contain;
+}
+
+.founder-origin-archive.is-focused .origin-memory:not(.is-focused) {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.origin-memory.is-focused {
+    z-index: 30 !important;
+    cursor: zoom-out;
+}

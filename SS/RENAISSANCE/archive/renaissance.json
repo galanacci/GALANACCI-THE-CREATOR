@@ -1,7 +1,45 @@
 {
   "version": 1,
-  "count": 9,
+  "count": 10,
   "artworks": [
+    {
+      "id": "010",
+      "title": "IN_THE_ZONE_3",
+      "source": "IN_THE_ZONE_3.png",
+      "source_width": 6812,
+      "source_height": 4654,
+      "width": 6812,
+      "height": 4654,
+      "overview": "./overview/010.webp",
+      "tiles": "./tiles/010",
+      "tile_size": 512,
+      "levels": [
+        {
+          "id": "L0",
+          "scale": 0.25,
+          "width": 1703,
+          "height": 1164,
+          "cols": 4,
+          "rows": 3
+        },
+        {
+          "id": "L1",
+          "scale": 0.5,
+          "width": 3406,
+          "height": 2327,
+          "cols": 7,
+          "rows": 5
+        },
+        {
+          "id": "L2",
+          "scale": 1.0,
+          "width": 6812,
+          "height": 4654,
+          "cols": 14,
+          "rows": 10
+        }
+      ]
+    },
     {
       "id": "001",
       "title": "210828",

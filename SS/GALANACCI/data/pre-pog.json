@@ -1,0 +1,754 @@
+[
+  {
+    "id": "pre-pog-001",
+    "src": "src/founder/origin/pre-pog/001-1e60672f-8d49-48db-88d8-f26af0c49ba2.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/001-1e60672f-8d49-48db-88d8-f26af0c49ba2.webp",
+    "alt": "Pre-PoG archive image 01",
+    "width": 900,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-002",
+    "src": "src/founder/origin/pre-pog/002-5b15f3ad-e997-4529-a0cc-5e5659c18979.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/002-5b15f3ad-e997-4529-a0cc-5e5659c18979.webp",
+    "alt": "Pre-PoG archive image 02",
+    "width": 1440,
+    "height": 1018
+  },
+  {
+    "id": "pre-pog-003",
+    "src": "src/founder/origin/pre-pog/003-7ca74b57-87b9-4b00-868d-9130ed77e361.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/003-7ca74b57-87b9-4b00-868d-9130ed77e361.webp",
+    "alt": "Pre-PoG archive image 03",
+    "width": 900,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-004",
+    "src": "src/founder/origin/pre-pog/004-88cca8b8-8bdc-4d59-b9da-4136e35534da.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/004-88cca8b8-8bdc-4d59-b9da-4136e35534da.webp",
+    "alt": "Pre-PoG archive image 04",
+    "width": 1440,
+    "height": 987
+  },
+  {
+    "id": "pre-pog-005",
+    "src": "src/founder/origin/pre-pog/005-365-looks.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/005-365-looks.webp",
+    "alt": "365 LOOKS — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-006",
+    "src": "src/founder/origin/pre-pog/006-852a0995-fc95-4723-bff2-e1bbc2253637.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/006-852a0995-fc95-4723-bff2-e1bbc2253637.webp",
+    "alt": "Pre-PoG archive image 06",
+    "width": 900,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-007",
+    "src": "src/founder/origin/pre-pog/007-2023-drop-campaign-2.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/007-2023-drop-campaign-2.webp",
+    "alt": "2023 DROP CAMPAIGN 2 — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-008",
+    "src": "src/founder/origin/pre-pog/008-2023-drop-campaign.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/008-2023-drop-campaign.webp",
+    "alt": "2023 DROP CAMPAIGN — pre-PoG archive",
+    "width": 1201,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-009",
+    "src": "src/founder/origin/pre-pog/009-2023-studio.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/009-2023-studio.webp",
+    "alt": "2023 STUDIO — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-010",
+    "src": "src/founder/origin/pre-pog/010-220515-greatness-poem-ig.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/010-220515-greatness-poem-ig.webp",
+    "alt": "220515 GREATNESS POEM IG — pre-PoG archive",
+    "width": 1080,
+    "height": 1350
+  },
+  {
+    "id": "pre-pog-011",
+    "src": "src/founder/origin/pre-pog/011-3990261f-ff3a-42aa-994a-6fb7e971861f.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/011-3990261f-ff3a-42aa-994a-6fb7e971861f.webp",
+    "alt": "Pre-PoG archive image 11",
+    "width": 1440,
+    "height": 987
+  },
+  {
+    "id": "pre-pog-012",
+    "src": "src/founder/origin/pre-pog/012-45701738-d650-4107-9c9c-9ea2b1890c21.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/012-45701738-d650-4107-9c9c-9ea2b1890c21.webp",
+    "alt": "Pre-PoG archive image 12",
+    "width": 1600,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-013",
+    "src": "src/founder/origin/pre-pog/013-65940567-f52c-446d-84d7-0e4149119d7c.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/013-65940567-f52c-446d-84d7-0e4149119d7c.webp",
+    "alt": "Pre-PoG archive image 13",
+    "width": 1068,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-014",
+    "src": "src/founder/origin/pre-pog/014-a139cdf4-4019-46a4-bf5a-e450154514fd.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/014-a139cdf4-4019-46a4-bf5a-e450154514fd.webp",
+    "alt": "Pre-PoG archive image 14",
+    "width": 585,
+    "height": 585
+  },
+  {
+    "id": "pre-pog-015",
+    "src": "src/founder/origin/pre-pog/015-b0960722-9330-4e86-a52a-2b60a94e9d35.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/015-b0960722-9330-4e86-a52a-2b60a94e9d35.webp",
+    "alt": "Pre-PoG archive image 15",
+    "width": 900,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-016",
+    "src": "src/founder/origin/pre-pog/016-bdff36a6-c6d8-4495-8871-24d1ea8f6e5f.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/016-bdff36a6-c6d8-4495-8871-24d1ea8f6e5f.webp",
+    "alt": "Pre-PoG archive image 16",
+    "width": 1440,
+    "height": 987
+  },
+  {
+    "id": "pre-pog-017",
+    "src": "src/founder/origin/pre-pog/017-brand-dev-2.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/017-brand-dev-2.webp",
+    "alt": "BRAND DEV 2 — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-018",
+    "src": "src/founder/origin/pre-pog/018-brand-dev-3.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/018-brand-dev-3.webp",
+    "alt": "BRAND DEV 3 — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-019",
+    "src": "src/founder/origin/pre-pog/019-brand-dev-4.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/019-brand-dev-4.webp",
+    "alt": "BRAND DEV 4 — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-020",
+    "src": "src/founder/origin/pre-pog/020-brand-dev-5.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/020-brand-dev-5.webp",
+    "alt": "BRAND DEV 5 — pre-PoG archive",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "id": "pre-pog-021",
+    "src": "src/founder/origin/pre-pog/021-brand-dev-7.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/021-brand-dev-7.webp",
+    "alt": "BRAND DEV 7 — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-022",
+    "src": "src/founder/origin/pre-pog/022-brand-dev.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/022-brand-dev.webp",
+    "alt": "BRAND DEV — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-023",
+    "src": "src/founder/origin/pre-pog/023-bts.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/023-bts.webp",
+    "alt": "BTS — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-024",
+    "src": "src/founder/origin/pre-pog/024-c1c12519-5693-469c-9468-d6be3162c09c.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/024-c1c12519-5693-469c-9468-d6be3162c09c.webp",
+    "alt": "Pre-PoG archive image 24",
+    "width": 900,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-025",
+    "src": "src/founder/origin/pre-pog/025-dcd12929-816d-488c-8b05-bd6f19c2665f.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/025-dcd12929-816d-488c-8b05-bd6f19c2665f.webp",
+    "alt": "Pre-PoG archive image 25",
+    "width": 1280,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-026",
+    "src": "src/founder/origin/pre-pog/026-drafting-graphic-tees.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/026-drafting-graphic-tees.webp",
+    "alt": "DRAFTING GRAPHIC TEES — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-027",
+    "src": "src/founder/origin/pre-pog/027-e542267e-eb80-4748-b6ee-4508ec9e2494.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/027-e542267e-eb80-4748-b6ee-4508ec9e2494.webp",
+    "alt": "Pre-PoG archive image 27",
+    "width": 900,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-028",
+    "src": "src/founder/origin/pre-pog/028-ec678d30-05ea-4481-b694-b934dd3c361b.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/028-ec678d30-05ea-4481-b694-b934dd3c361b.webp",
+    "alt": "Pre-PoG archive image 28",
+    "width": 900,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-029",
+    "src": "src/founder/origin/pre-pog/029-first-forge-denim-jacket-prototype.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/029-first-forge-denim-jacket-prototype.webp",
+    "alt": "FIRST FORGE DENIM JACKET PROTOTYPE — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-030",
+    "src": "src/founder/origin/pre-pog/030-founder-sketching.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/030-founder-sketching.webp",
+    "alt": "FOUNDER SKETCHING — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-031",
+    "src": "src/founder/origin/pre-pog/031-galanacci-graphic-lux-tee.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/031-galanacci-graphic-lux-tee.webp",
+    "alt": "GALANACCI GRAPHIC LUX TEE — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-032",
+    "src": "src/founder/origin/pre-pog/032-galanacci-graphics.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/032-galanacci-graphics.webp",
+    "alt": "GALANACCI GRAPHICS — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-033",
+    "src": "src/founder/origin/pre-pog/033-galanacci-orders.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/033-galanacci-orders.webp",
+    "alt": "GALANACCI ORDERS — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-034",
+    "src": "src/founder/origin/pre-pog/034-greantess-tee-2-0.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/034-greantess-tee-2-0.webp",
+    "alt": "GREANTESS TEE 2.0 — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-035",
+    "src": "src/founder/origin/pre-pog/035-greatness-graphic-development.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/035-greatness-graphic-development.webp",
+    "alt": "GREATNESS GRAPHIC DEVELOPMENT — pre-PoG archive",
+    "width": 1209,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-036",
+    "src": "src/founder/origin/pre-pog/036-hand-written-purpose.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/036-hand-written-purpose.webp",
+    "alt": "HAND WRITTEN PURPOSE — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-037",
+    "src": "src/founder/origin/pre-pog/037-img-0619.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/037-img-0619.webp",
+    "alt": "Pre-PoG archive image 37",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-038",
+    "src": "src/founder/origin/pre-pog/038-img-1094.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/038-img-1094.webp",
+    "alt": "Pre-PoG archive image 38",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-039",
+    "src": "src/founder/origin/pre-pog/039-img-1520.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/039-img-1520.webp",
+    "alt": "Pre-PoG archive image 39",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-040",
+    "src": "src/founder/origin/pre-pog/040-img-2608.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/040-img-2608.webp",
+    "alt": "Pre-PoG archive image 40",
+    "width": 738,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-041",
+    "src": "src/founder/origin/pre-pog/041-img-2745.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/041-img-2745.webp",
+    "alt": "Pre-PoG archive image 41",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-042",
+    "src": "src/founder/origin/pre-pog/042-img-2846.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/042-img-2846.webp",
+    "alt": "Pre-PoG archive image 42",
+    "width": 1080,
+    "height": 1350
+  },
+  {
+    "id": "pre-pog-043",
+    "src": "src/founder/origin/pre-pog/043-img-3708.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/043-img-3708.webp",
+    "alt": "Pre-PoG archive image 43",
+    "width": 737,
+    "height": 912
+  },
+  {
+    "id": "pre-pog-044",
+    "src": "src/founder/origin/pre-pog/044-img-4354.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/044-img-4354.webp",
+    "alt": "Pre-PoG archive image 44",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-045",
+    "src": "src/founder/origin/pre-pog/045-img-4398.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/045-img-4398.webp",
+    "alt": "Pre-PoG archive image 45",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "id": "pre-pog-046",
+    "src": "src/founder/origin/pre-pog/046-img-4613.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/046-img-4613.webp",
+    "alt": "Pre-PoG archive image 46",
+    "width": 900,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-047",
+    "src": "src/founder/origin/pre-pog/047-img-4618.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/047-img-4618.webp",
+    "alt": "Pre-PoG archive image 47",
+    "width": 1080,
+    "height": 1080
+  },
+  {
+    "id": "pre-pog-048",
+    "src": "src/founder/origin/pre-pog/048-img-4653.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/048-img-4653.webp",
+    "alt": "Pre-PoG archive image 48",
+    "width": 1600,
+    "height": 1200
+  },
+  {
+    "id": "pre-pog-049",
+    "src": "src/founder/origin/pre-pog/049-img-4822.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/049-img-4822.webp",
+    "alt": "Pre-PoG archive image 49",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-050",
+    "src": "src/founder/origin/pre-pog/050-img-4824.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/050-img-4824.webp",
+    "alt": "Pre-PoG archive image 50",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-051",
+    "src": "src/founder/origin/pre-pog/051-img-4927.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/051-img-4927.webp",
+    "alt": "Pre-PoG archive image 51",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-052",
+    "src": "src/founder/origin/pre-pog/052-img-4966.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/052-img-4966.webp",
+    "alt": "Pre-PoG archive image 52",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-053",
+    "src": "src/founder/origin/pre-pog/053-img-5055.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/053-img-5055.webp",
+    "alt": "Pre-PoG archive image 53",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-054",
+    "src": "src/founder/origin/pre-pog/054-img-5551.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/054-img-5551.webp",
+    "alt": "Pre-PoG archive image 54",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-055",
+    "src": "src/founder/origin/pre-pog/055-img-5882.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/055-img-5882.webp",
+    "alt": "Pre-PoG archive image 55",
+    "width": 1067,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-056",
+    "src": "src/founder/origin/pre-pog/056-img-6046.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/056-img-6046.webp",
+    "alt": "Pre-PoG archive image 56",
+    "width": 1067,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-057",
+    "src": "src/founder/origin/pre-pog/057-img-7496.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/057-img-7496.webp",
+    "alt": "Pre-PoG archive image 57",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-058",
+    "src": "src/founder/origin/pre-pog/058-img-7857.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/058-img-7857.webp",
+    "alt": "Pre-PoG archive image 58",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-059",
+    "src": "src/founder/origin/pre-pog/059-img-8215.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/059-img-8215.webp",
+    "alt": "Pre-PoG archive image 59",
+    "width": 739,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-060",
+    "src": "src/founder/origin/pre-pog/060-img-8238.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/060-img-8238.webp",
+    "alt": "Pre-PoG archive image 60",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-061",
+    "src": "src/founder/origin/pre-pog/061-img-8254.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/061-img-8254.webp",
+    "alt": "Pre-PoG archive image 61",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-062",
+    "src": "src/founder/origin/pre-pog/062-img-8300.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/062-img-8300.webp",
+    "alt": "Pre-PoG archive image 62",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-063",
+    "src": "src/founder/origin/pre-pog/063-img-8433.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/063-img-8433.webp",
+    "alt": "Pre-PoG archive image 63",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-064",
+    "src": "src/founder/origin/pre-pog/064-img-8612.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/064-img-8612.webp",
+    "alt": "Pre-PoG archive image 64",
+    "width": 1080,
+    "height": 722
+  },
+  {
+    "id": "pre-pog-065",
+    "src": "src/founder/origin/pre-pog/065-img-8693.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/065-img-8693.webp",
+    "alt": "Pre-PoG archive image 65",
+    "width": 739,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-066",
+    "src": "src/founder/origin/pre-pog/066-img-8912.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/066-img-8912.webp",
+    "alt": "Pre-PoG archive image 66",
+    "width": 738,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-067",
+    "src": "src/founder/origin/pre-pog/067-img-8916.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/067-img-8916.webp",
+    "alt": "Pre-PoG archive image 67",
+    "width": 1179,
+    "height": 1165
+  },
+  {
+    "id": "pre-pog-068",
+    "src": "src/founder/origin/pre-pog/068-img-9093-original.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/068-img-9093-original.webp",
+    "alt": "IMG 9093 Original — pre-PoG archive",
+    "width": 1600,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-069",
+    "src": "src/founder/origin/pre-pog/069-img-9516-original.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/069-img-9516-original.webp",
+    "alt": "IMG 9516 Original — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-070",
+    "src": "src/founder/origin/pre-pog/070-img-9818.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/070-img-9818.webp",
+    "alt": "Pre-PoG archive image 70",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-071",
+    "src": "src/founder/origin/pre-pog/071-img-9857.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/071-img-9857.webp",
+    "alt": "Pre-PoG archive image 71",
+    "width": 917,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-072",
+    "src": "src/founder/origin/pre-pog/072-img-9896.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/072-img-9896.webp",
+    "alt": "Pre-PoG archive image 72",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-073",
+    "src": "src/founder/origin/pre-pog/073-jared-anderson-wearing-og-greatness-tee.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/073-jared-anderson-wearing-og-greatness-tee.webp",
+    "alt": "JARED ANDERSON WEARING OG GREATNESS TEE — pre-PoG archive",
+    "width": 733,
+    "height": 833
+  },
+  {
+    "id": "pre-pog-074",
+    "src": "src/founder/origin/pre-pog/074-k2g-emblem-brand-dev.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/074-k2g-emblem-brand-dev.webp",
+    "alt": "K2G EMBLEM BRAND DEV — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-075",
+    "src": "src/founder/origin/pre-pog/075-lux-galanacci-graphic-tees.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/075-lux-galanacci-graphic-tees.webp",
+    "alt": "LUX GALANACCI GRAPHIC TEES — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-076",
+    "src": "src/founder/origin/pre-pog/076-og-galanacci-packaging.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/076-og-galanacci-packaging.webp",
+    "alt": "OG GALANACCI PACKAGING — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-077",
+    "src": "src/founder/origin/pre-pog/077-og-greatness-hoodie.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/077-og-greatness-hoodie.webp",
+    "alt": "OG GREATNESS HOODIE — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-078",
+    "src": "src/founder/origin/pre-pog/078-og-greatness-tee-bulk.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/078-og-greatness-tee-bulk.webp",
+    "alt": "OG GREATNESS TEE BULK — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-079",
+    "src": "src/founder/origin/pre-pog/079-og-greatness-tee-campaign.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/079-og-greatness-tee-campaign.webp",
+    "alt": "OG GREATNESS TEE CAMPAIGN — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-080",
+    "src": "src/founder/origin/pre-pog/080-og-greatness-tee-mockup.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/080-og-greatness-tee-mockup.webp",
+    "alt": "OG GREATNESS TEE MOCKUP — pre-PoG archive",
+    "width": 1600,
+    "height": 800
+  },
+  {
+    "id": "pre-pog-081",
+    "src": "src/founder/origin/pre-pog/081-og-greatness-tees.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/081-og-greatness-tees.webp",
+    "alt": "OG GREATNESS TEES — pre-PoG archive",
+    "width": 900,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-082",
+    "src": "src/founder/origin/pre-pog/082-og-packaging.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/082-og-packaging.webp",
+    "alt": "OG PACKAGING — pre-PoG archive",
+    "width": 900,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-083",
+    "src": "src/founder/origin/pre-pog/083-orders.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/083-orders.webp",
+    "alt": "ORDERS — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-084",
+    "src": "src/founder/origin/pre-pog/084-photo-output.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/084-photo-output.webp",
+    "alt": "Pre-PoG archive image 84",
+    "width": 900,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-085",
+    "src": "src/founder/origin/pre-pog/085-pog-embroidery-2.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/085-pog-embroidery-2.webp",
+    "alt": "POG EMBROIDERY 2 — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-086",
+    "src": "src/founder/origin/pre-pog/086-pog-embroidery.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/086-pog-embroidery.webp",
+    "alt": "POG EMBROIDERY — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-087",
+    "src": "src/founder/origin/pre-pog/087-pog-graphic-tee-dev.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/087-pog-graphic-tee-dev.webp",
+    "alt": "POG GRAPHIC TEE DEV — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-088",
+    "src": "src/founder/origin/pre-pog/088-pog-hand-embroidery.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/088-pog-hand-embroidery.webp",
+    "alt": "POG HAND EMBROIDERY — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-089",
+    "src": "src/founder/origin/pre-pog/089-pog-portrait.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/089-pog-portrait.webp",
+    "alt": "POG PORTRAIT — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-090",
+    "src": "src/founder/origin/pre-pog/090-screenprinting-1.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/090-screenprinting-1.webp",
+    "alt": "SCREENPRINTING 1 — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-091",
+    "src": "src/founder/origin/pre-pog/091-screenprinting-2.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/091-screenprinting-2.webp",
+    "alt": "SCREENPRINTING 2 — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-092",
+    "src": "src/founder/origin/pre-pog/092-screenprinting-3.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/092-screenprinting-3.webp",
+    "alt": "SCREENPRINTING 3 — pre-PoG archive",
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-093",
+    "src": "src/founder/origin/pre-pog/093-untitled-artwork.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/093-untitled-artwork.webp",
+    "alt": "Pre-PoG archive image 93",
+    "width": 900,
+    "height": 1600
+  },
+  {
+    "id": "pre-pog-094",
+    "src": "src/founder/origin/pre-pog/094-untitled-artwork.webp",
+    "thumb": "src/founder/origin/pre-pog/thumbs/094-untitled-artwork.webp",
+    "alt": "Pre-PoG archive image 94",
+    "width": 1200,
+    "height": 1600
+  }
+]
