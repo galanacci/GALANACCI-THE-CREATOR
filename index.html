@@ -101,7 +101,7 @@
           <span role="columnheader">CREATED BY</span>
         </div>
 
-                <a
+        <a
           class="app-list__row"
           data-app-link
           data-label="2(XY+T).EXE"
@@ -115,6 +115,22 @@
           </span>
           <span class="app-list__description app-list__meta" role="cell">An iteration of Bradley Tangonan's XY - T project.</span>
           <span class="app-list__meta gtc-date-cell" role="cell">2026</span>
+          <span class="app-list__meta gtc-created-cell" role="cell">GALANACCI</span>
+        </a>
+        <a
+          class="app-list__row"
+          data-app-link
+          data-label="FIBONACCI.EXE"
+          href="./experiments/FIBONACCI/index.html"
+          aria-label="Open FIBONACCI.EXE audio visualiser"
+          role="row"
+        >
+          <span class="app-list__name" role="cell">
+            <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
+            <span>FIBONACCI.EXE</span>
+          </span>
+          <span class="app-list__description app-list__meta" role="cell">An audio visualiser inspired by Fibonacci.</span>
+          <span class="app-list__meta gtc-date-cell" role="cell">2024</span>
           <span class="app-list__meta gtc-created-cell" role="cell">GALANACCI</span>
         </a>
       </div>
@@ -346,7 +362,7 @@
       <button type="button" class="folder-window__close" data-close-experiment aria-label="Close app">&times;</button>
     </header>
     <div class="experiment-window__body">
-      <iframe id="experiment-frame" title="App" allow="autoplay; fullscreen"></iframe>
+      <iframe id="experiment-frame" title="App" allow="autoplay; fullscreen; microphone" allowfullscreen></iframe>
     </div>
   </section>
 

@@ -399,6 +399,10 @@ button {
   pointer-events: auto;
 }
 
+.experiment-window.is-fibonacci-expanded .experiment-window__chrome {
+  display: none;
+}
+
 .experiment-window__chrome {
   display: flex;
   align-items: center;

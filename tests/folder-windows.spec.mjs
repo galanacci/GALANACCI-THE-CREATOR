@@ -40,7 +40,7 @@ test("mobile folder opens, keeps usable content and drags", async ({ page }, tes
   test.skip(testInfo.project.name !== "mobile-chromium", "Mobile window mechanics");
 
   const folder = await openFolder(page, "APPS", true);
-  await expect(folder.locator(".app-list__row")).toHaveCount(1);
+  await expect(folder.locator(".app-list__row")).toHaveCount(2);
 
   const beforeDrag = await folder.boundingBox();
   await dragBy(page, folder.locator(".folder-window__chrome"), 20, 28);

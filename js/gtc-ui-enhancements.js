@@ -20,6 +20,8 @@
   }
 
   const DESCRIPTIONS = Object.freeze({
+    "FIBONACCI": "An audio visualiser inspired by Fibonacci.",
+    "FIBONACCI.EXE": "An audio visualiser inspired by Fibonacci.",
     "GALANACCI": "My initial clothing brand.",
     "GALANACCI.EXE": "My initial clothing brand.",
     "GVERSE": "A multi-disciplinary design studio.",

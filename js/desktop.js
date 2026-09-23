@@ -416,12 +416,26 @@ function openFolderWindow(app) {
 function closeExperimentWindow() {
   if (!experimentWindow) return;
 
+  experimentWindow.classList.remove("is-fibonacci-expanded");
   experimentWindow.classList.remove("is-open");
   experimentWindow.hidden = true;
   experimentWindow.setAttribute("aria-hidden", "true");
 
   if (experimentFrame) experimentFrame.src = "about:blank";
 }
+
+window.addEventListener("message", (event) => {
+  if (
+    event.origin !== window.location.origin ||
+    event.source !== experimentFrame?.contentWindow ||
+    event.data?.type !== "gtc:fibonacci-fullscreen" ||
+    typeof event.data.expanded !== "boolean" ||
+    !new URL(experimentFrame.src).pathname.endsWith("/experiments/FIBONACCI/index.html") ||
+    experimentWindow.hidden
+  ) return;
+
+  experimentWindow.classList.toggle("is-fibonacci-expanded", event.data.expanded);
+});
 
 function openExperimentWindow(url, label) {
   if (!experimentWindow || !experimentFrame) return;

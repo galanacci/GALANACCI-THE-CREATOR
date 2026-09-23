@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIBONACCI.EXE</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: black;
+        }
+        #fibonacci-container {
+            width: 100%;
+            height: 100%;
+            cursor: none;
+        }
+        #microphone-status {
+            position: fixed;
+            right: 72px;
+            bottom: max(18px, env(safe-area-inset-bottom));
+            left: 72px;
+            color: rgba(255, 255, 255, 0.68);
+            font: 12px/1.5 Arial, sans-serif;
+            letter-spacing: 0.12em;
+            text-align: center;
+            pointer-events: none;
+        }
+        #fullscreen-button {
+            position: fixed;
+            right: 12px;
+            bottom: max(12px, env(safe-area-inset-bottom));
+            z-index: 10;
+            display: grid;
+            place-items: center;
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            border: 0;
+            background: rgba(0, 0, 0, 0.35);
+            color: #fff;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #fullscreen-button svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.7;
+            pointer-events: none;
+        }
+        #fullscreen-button[aria-pressed="true"] .icon-enter,
+        #fullscreen-button[aria-pressed="false"] .icon-exit {
+            display: none;
+        }
+        #fullscreen-button:hover,
+        #fullscreen-button:focus-visible {
+            color: #f2d8b7;
+        }
+        #fullscreen-button:focus-visible {
+            outline: 2px solid currentColor;
+            outline-offset: -2px;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Prevent default touch behaviors
+        document.addEventListener('touchmove', function(event) {
+            if (event.scale !== 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        document.addEventListener('gesturestart', function(event) {
+            event.preventDefault();
+        });
+
+        // Prevent zooming on double tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            // Keep native button activation intact on touch devices.
+            if (event.target instanceof Element && event.target.closest('button')) {
+                lastTouchEnd = 0;
+                return;
+            }
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+    <svg id="fibonacci-container"></svg>
+    <div id="microphone-status" role="status" aria-live="polite"></div>
+    <button id="fullscreen-button" type="button" aria-label="Enter fullscreen" aria-pressed="false" title="Enter fullscreen" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path class="icon-enter" d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6" />
+            <path class="icon-exit" d="M3 9h6V3m12 6h-6V3M3 15h6v6m12-6h-6v6" />
+        </svg>
+    </button>
+    <script src="script.js"></script>
+</body>
+</html>
