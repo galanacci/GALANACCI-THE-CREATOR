@@ -16,7 +16,66 @@
         #fibonacci-container {
             width: 100%;
             height: 100%;
-            cursor: none;
+            cursor: default;
+        }
+        #palette-control {
+            position: fixed;
+            z-index: 10;
+            top: 12px;
+            left: 12px;
+            font: 11px/1.2 Arial, sans-serif;
+            letter-spacing: 0.12em;
+        }
+        #palette-control[hidden] { display: none; }
+        #palette-button,
+        .palette-option {
+            min-height: 44px;
+            border: 1px solid rgba(255, 255, 255, 0.34);
+            background: rgba(0, 0, 0, 0.82);
+            color: #fff;
+            cursor: pointer;
+            font: inherit;
+            letter-spacing: inherit;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #palette-button {
+            min-width: 92px;
+            padding: 0 12px;
+            text-align: left;
+        }
+        #palette-button::after {
+            content: '⌄';
+            float: right;
+            margin-left: 10px;
+        }
+        #palette-options {
+            display: grid;
+            gap: 4px;
+            margin-top: 4px;
+            padding: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.34);
+            background: #080808;
+        }
+        #palette-options[hidden] { display: none; }
+        .palette-option {
+            min-width: 132px;
+            padding: 0 12px;
+            text-align: left;
+        }
+        .palette-option[aria-pressed="true"] {
+            border-color: #f2d8b7;
+            color: #f2d8b7;
+        }
+        #palette-button:hover,
+        .palette-option:hover,
+        #palette-button:focus-visible,
+        .palette-option:focus-visible {
+            color: #f2d8b7;
+        }
+        #palette-button:focus-visible,
+        .palette-option:focus-visible {
+            outline: 2px solid #f2d8b7;
+            outline-offset: 2px;
         }
         #microphone-status {
             position: fixed;
@@ -95,7 +154,16 @@
             lastTouchEnd = now;
         }, false);
     </script>
-    <svg id="fibonacci-container"></svg>
+    <svg id="fibonacci-container"><g id="fibonacci-dots"></g></svg>
+    <div id="palette-control">
+        <button id="palette-button" type="button" aria-expanded="false" aria-controls="palette-options">COLOUR</button>
+        <div id="palette-options" hidden>
+            <button class="palette-option" type="button" data-palette="mono" aria-pressed="true">MONO</button>
+            <button class="palette-option" type="button" data-palette="cream" aria-pressed="false">CREAM</button>
+            <button class="palette-option" type="button" data-palette="violet" aria-pressed="false">VIOLET</button>
+            <button class="palette-option" type="button" data-palette="prism" aria-pressed="false">PRISM</button>
+        </div>
+    </div>
     <div id="microphone-status" role="status" aria-live="polite"></div>
     <button id="fullscreen-button" type="button" aria-label="Enter fullscreen" aria-pressed="false" title="Enter fullscreen" disabled>
         <svg viewBox="0 0 24 24" aria-hidden="true">
