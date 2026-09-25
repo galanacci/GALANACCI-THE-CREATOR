@@ -1794,3 +1794,440 @@ button {
   border-bottom: 1px solid #000 !important;
 }
 /* GTC FOLDER LINE HIERARCHY V2 STYLE END */
+
+
+/* GTC WELCOME ORIENTATION V1 START */
+
+/*
+  Expanded orientation copy inside the existing GALANACCI OS
+  notification language. Same chrome, same OK action, clearer map.
+*/
+.portfolio-notice {
+  width: min(520px, calc(100vw - 36px)) !important;
+}
+
+.portfolio-notice__body {
+  min-height: 0 !important;
+  padding: 24px 28px 22px !important;
+  gap: 20px !important;
+  text-align: left !important;
+}
+
+.portfolio-notice__copy {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.portfolio-notice__copy p {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+.portfolio-notice__intro {
+  margin-bottom: 18px !important;
+}
+
+.portfolio-notice__guide {
+  display: grid;
+  gap: 14px;
+}
+
+.portfolio-notice__guide-item {
+  display: grid;
+  gap: 4px;
+}
+
+.portfolio-notice__guide-item > strong {
+  display: block;
+  font-weight: var(--os-type-bold, 700);
+  -webkit-text-stroke: .12px currentColor;
+  letter-spacing: .06em;
+}
+
+.portfolio-notice__guide-item p {
+  line-height: 1.45 !important;
+}
+
+.portfolio-notice__closing {
+  margin-top: 18px !important;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, .22);
+}
+
+.portfolio-notice__ok {
+  align-self: center !important;
+  margin-top: 0;
+}
+
+@media screen and (max-width: 600px) {
+  .portfolio-notice {
+    width: min(370px, calc(100vw - 24px)) !important;
+  }
+
+  .portfolio-notice__body {
+    padding: 20px 20px 18px !important;
+    gap: 18px !important;
+  }
+
+  .portfolio-notice__copy {
+    max-width: 100%;
+  }
+
+  .portfolio-notice__guide {
+    gap: 12px;
+  }
+
+  .portfolio-notice__intro {
+    margin-bottom: 16px !important;
+  }
+
+  .portfolio-notice__closing {
+    margin-top: 16px !important;
+    padding-top: 12px;
+  }
+}
+
+/* GTC WELCOME ORIENTATION V1 END */
+
+
+/* GTC WELCOME ORIENTATION VISUAL V2 START */
+
+/*
+  WELCOME is an OS orientation panel, not a generic text modal.
+  Keep the window language restrained and let hierarchy come from
+  alignment, spacing and rules.
+*/
+.portfolio-notice {
+  width: min(600px, calc(100vw - 40px)) !important;
+  border: 1px solid #111 !important;
+  background: #fff !important;
+}
+
+.portfolio-notice__body {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  background: #fff !important;
+  text-align: left !important;
+}
+
+.portfolio-notice__copy {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+.portfolio-notice__intro {
+  margin: 0 !important;
+  padding: 24px 28px 22px !important;
+  border-bottom: 1px solid rgba(0, 0, 0, .34);
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  letter-spacing: .02em !important;
+  text-align: left !important;
+}
+
+.portfolio-notice__intro strong {
+  font-weight: var(--os-type-bold, 700) !important;
+  -webkit-text-stroke: .12px currentColor;
+}
+
+.portfolio-notice__guide {
+  display: grid !important;
+  gap: 0 !important;
+  margin: 0 !important;
+  padding: 0 28px !important;
+}
+
+.portfolio-notice__guide-item {
+  display: grid !important;
+  grid-template-columns: 112px minmax(0, 1fr) !important;
+  align-items: start !important;
+  column-gap: 22px !important;
+  row-gap: 0 !important;
+  margin: 0 !important;
+  padding: 17px 0 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, .16);
+}
+
+.portfolio-notice__guide-item:last-child {
+  border-bottom: 0;
+}
+
+.portfolio-notice__guide-item > strong {
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  font-weight: var(--os-type-bold, 700) !important;
+  letter-spacing: .055em !important;
+  -webkit-text-stroke: .12px currentColor;
+  text-align: left !important;
+  white-space: nowrap;
+}
+
+.portfolio-notice__guide-item p {
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+  letter-spacing: .018em !important;
+  text-align: left !important;
+}
+
+.portfolio-notice__closing {
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 28px !important;
+  padding: 16px 0 18px !important;
+  border-top: 1px solid #111;
+  font-size: 11px !important;
+  line-height: 1.4 !important;
+  letter-spacing: .055em !important;
+  text-transform: uppercase;
+  text-align: left !important;
+  opacity: .72;
+}
+
+.portfolio-notice__ok {
+  align-self: center !important;
+  margin: 0 0 22px !important;
+  min-width: 84px !important;
+  min-height: 30px !important;
+  padding: 4px 18px !important;
+  border: 1px solid #111 !important;
+  background: var(--bg, #ead1b2) !important;
+  color: #111 !important;
+}
+
+@media screen and (max-width: 600px) {
+  .portfolio-notice {
+    width: min(390px, calc(100vw - 24px)) !important;
+  }
+
+  .portfolio-notice__intro {
+    padding: 20px 20px 18px !important;
+    font-size: 13px !important;
+  }
+
+  .portfolio-notice__guide {
+    padding: 0 20px !important;
+  }
+
+  .portfolio-notice__guide-item {
+    grid-template-columns: 1fr !important;
+    row-gap: 5px !important;
+    padding: 14px 0 !important;
+  }
+
+  .portfolio-notice__guide-item > strong {
+    font-size: 12px !important;
+  }
+
+  .portfolio-notice__guide-item p {
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+  }
+
+  .portfolio-notice__closing {
+    margin: 0 20px !important;
+    padding: 14px 0 16px !important;
+    font-size: 10px !important;
+  }
+
+  .portfolio-notice__ok {
+    margin-bottom: 18px !important;
+  }
+}
+
+/* GTC WELCOME ORIENTATION VISUAL V2 END */
+
+
+/* GTC WELCOME GRID ALIGN V5 START */
+
+/*
+  Canonical guide-row geometry.
+  Both desktop and mobile keep a strict two-column system.
+*/
+.portfolio-notice__copy .portfolio-notice__guide {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 0 !important;
+  margin: 0 !important;
+}
+
+.portfolio-notice__copy .portfolio-notice__guide .portfolio-notice__guide-item {
+  display: grid !important;
+  grid-template-columns: 118px minmax(0, 1fr) !important;
+  column-gap: 24px !important;
+  row-gap: 0 !important;
+
+  align-items: start !important;
+  justify-items: stretch !important;
+
+  margin: 0 !important;
+  padding: 16px 0 !important;
+}
+
+.portfolio-notice__copy .portfolio-notice__guide .portfolio-notice__guide-item > strong {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+
+  display: block !important;
+  align-self: start !important;
+  justify-self: start !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  position: static !important;
+  top: auto !important;
+  transform: none !important;
+
+  line-height: 1.4 !important;
+  text-align: left !important;
+}
+
+.portfolio-notice__copy .portfolio-notice__guide .portfolio-notice__guide-item > p {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+
+  display: block !important;
+  align-self: start !important;
+  justify-self: stretch !important;
+
+  width: 100% !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+
+  line-height: 1.4 !important;
+  text-align: left !important;
+}
+
+/*
+  Keep the final archive-status line centered and inset.
+*/
+.portfolio-notice__copy > .portfolio-notice__closing {
+  display: block !important;
+  box-sizing: border-box !important;
+
+  width: calc(100% - 56px) !important;
+  max-width: none !important;
+
+  margin: 0 28px !important;
+  padding: 18px 8px 20px !important;
+
+  text-align: center !important;
+}
+
+/*
+  MOBILE:
+  keep the SAME two-column logic rather than stacking.
+*/
+@media screen and (max-width: 600px) {
+  .portfolio-notice__copy .portfolio-notice__guide {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .portfolio-notice__copy .portfolio-notice__guide .portfolio-notice__guide-item {
+    grid-template-columns: 112px minmax(0, 1fr) !important;
+    column-gap: 18px !important;
+    row-gap: 0 !important;
+
+    align-items: start !important;
+
+    padding: 14px 0 !important;
+  }
+
+  .portfolio-notice__copy .portfolio-notice__guide .portfolio-notice__guide-item > strong,
+  .portfolio-notice__copy .portfolio-notice__guide .portfolio-notice__guide-item > p {
+    grid-row: 1 !important;
+    align-self: start !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+
+    line-height: 1.4 !important;
+  }
+
+  .portfolio-notice__copy .portfolio-notice__guide .portfolio-notice__guide-item > strong {
+    grid-column: 1 !important;
+  }
+
+  .portfolio-notice__copy .portfolio-notice__guide .portfolio-notice__guide-item > p {
+    grid-column: 2 !important;
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  .portfolio-notice__copy > .portfolio-notice__closing {
+    width: calc(100% - 40px) !important;
+    margin: 0 20px !important;
+    padding: 16px 8px 18px !important;
+    text-align: center !important;
+  }
+}
+
+/* GTC WELCOME GRID ALIGN V5 END */
+
+
+/* GTC WELCOME MOBILE CENTER V6 START */
+
+/*
+  Mobile WELCOME behaves as a true viewport modal.
+  Dynamic viewport units keep the visual centre correct when mobile
+  browser chrome expands/collapses.
+*/
+@media screen and (max-width: 700px) {
+  #portfolio-notice.portfolio-notice,
+  .portfolio-notice#portfolio-notice {
+    position: fixed !important;
+
+    left: 50% !important;
+    top: 50% !important;
+
+    right: auto !important;
+    bottom: auto !important;
+
+    margin: 0 !important;
+
+    transform: translate(-50%, -50%) !important;
+
+    width: min(390px, calc(100vw - 24px)) !important;
+
+    max-height: calc(100vh - 24px) !important;
+    max-height: calc(100dvh - 24px) !important;
+
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+
+    z-index: 10000 !important;
+  }
+}
+
+/* GTC WELCOME MOBILE CENTER V6 END */
