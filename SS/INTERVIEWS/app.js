@@ -461,7 +461,7 @@
       const tape = tapes[currentIndex];
       if (window.matchMedia("(max-width: 840px)").matches) {
         // Keep the selected tape centered without scrolling the entire app.
-        const maxScroll = Math.max(0, reel.scrollWidth - reel.clientWidth);
+        const maxScroll = mobileReelMax();
         reel.scrollTo({
           left: Math.min(maxScroll, Math.max(0,
             tape.offsetLeft + tape.offsetWidth / 2 - reel.clientWidth / 2
@@ -659,6 +659,26 @@
     }
   }
 
+  function mobileReelMax() {
+    const lastTape = reelTrack.querySelector(".broadcast__tape:last-child");
+    if (!lastTape) return 0;
+    // Use the actual last card, not WebKit's scrollWidth for a max-content
+    // flex track, which can leave an empty tail inside the iframe.
+    return Math.max(0, Math.ceil(
+      lastTape.getBoundingClientRect().right -
+      reelTrack.getBoundingClientRect().left - reel.clientWidth
+    ));
+  }
+
+  function clampMobileReel() {
+    if (!window.matchMedia("(max-width: 840px)").matches) return;
+    const maxScroll = mobileReelMax();
+    if (reel.scrollLeft > maxScroll) reel.scrollLeft = maxScroll;
+    else if (reel.scrollLeft < 0) reel.scrollLeft = 0;
+  }
+
+  reel.addEventListener("scroll", clampMobileReel, { passive: true });
+
   function applyPendingYoutubeStart() {
     if (!pendingYoutubeStart || !youtubePlayer) return;
     if (activeType !== "youtube" || archiveItems[currentIndex]?.id !== pendingYoutubeStart.id) {
@@ -849,11 +869,9 @@
   reel.addEventListener(
     "pointerdown",
     (event) => {
-      // Touch has native horizontal panning. Handling it again here can
-      // compound the movement and reveal empty space beyond the last tape.
-      if (event.pointerType === "touch") {
-        return;
-      }
+      // Let touch use the browser's smooth horizontal scrolling. Only mouse
+      // dragging needs the custom pointer controller below.
+      if (event.pointerType === "touch") return;
 
       if (
         event.pointerType ===
@@ -919,7 +937,7 @@
           "(max-width: 840px)"
         ).matches
       ) {
-        const maxScroll = Math.max(0, reel.scrollWidth - reel.clientWidth);
+        const maxScroll = mobileReelMax();
         reel.scrollLeft = Math.min(maxScroll, Math.max(0,
           dragState.scrollLeft - dx
         ));
@@ -953,6 +971,7 @@
     } catch {
       /* Optional enhancement. */
     }
+
   }
 
   reel.addEventListener(

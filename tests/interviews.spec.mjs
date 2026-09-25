@@ -136,6 +136,54 @@ test("mobile archive stops at its first and last thumbnail", async ({ page }, te
   expect(atStart.firstLeft).toBeLessThanOrEqual(atStart.reelLeft + 1);
 });
 
+test("repeated mobile touch swipes cannot pass the archive endpoints", async ({ page }, testInfo) => {
+  test.setTimeout(30_000);
+  test.skip(testInfo.project.name !== "mobile-chromium", "Mobile touch reel only");
+  await page.goto("/SS/INTERVIEWS/index.html", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("[data-loading]")).toHaveClass(/is-hidden/, { timeout: 20_000 });
+
+  const reel = page.locator(".broadcast__reel");
+  await expect(reel).toHaveCSS("overflow-x", "auto");
+  const bounds = await reel.boundingBox();
+  const y = bounds.y + bounds.height / 2;
+  const left = bounds.x + 35;
+  const right = bounds.x + bounds.width - 35;
+  const client = await page.context().newCDPSession(page);
+  const swipe = async (from, to) => {
+    await client.send("Input.dispatchTouchEvent", {
+      type: "touchStart", touchPoints: [{ x: from, y, id: 1 }]
+    });
+    for (let step = 1; step <= 8; step += 1) {
+      await client.send("Input.dispatchTouchEvent", {
+        type: "touchMove",
+        touchPoints: [{ x: from + (to - from) * step / 8, y, id: 1 }]
+      });
+    }
+    await client.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  };
+
+  const position = () => reel.evaluate((element) => ({
+    left: element.scrollLeft,
+    max: Math.max(0, Math.ceil(
+      element.querySelector(".broadcast__tape:last-child").getBoundingClientRect().right -
+      element.firstElementChild.getBoundingClientRect().left - element.clientWidth
+    )),
+    firstLeft: element.querySelector(".broadcast__tape:first-child").getBoundingClientRect().left,
+    lastRight: element.querySelector(".broadcast__tape:last-child").getBoundingClientRect().right,
+    reelLeft: element.getBoundingClientRect().left,
+    reelRight: element.getBoundingClientRect().right
+  }));
+
+  await reel.evaluate((element) => { element.scrollLeft = element.scrollWidth; });
+  for (let attempt = 0; attempt < 3; attempt += 1) await swipe(right, left);
+  const atEnd = await position();
+  expect(atEnd.left).toBeGreaterThanOrEqual(atEnd.max - 1);
+  expect(atEnd.lastRight).toBeGreaterThanOrEqual(atEnd.reelRight - 1);
+  await page.locator("[data-format-tab='spotify']").click();
+  await expect(page.locator(".broadcast__tape").first()).toBeInViewport();
+  await client.detach();
+});
+
 test("mobile player and navigation stay in place across interviews", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile-chromium", "Mobile layout only");
 

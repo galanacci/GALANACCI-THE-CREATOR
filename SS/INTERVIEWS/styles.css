@@ -715,11 +715,15 @@ button {
 
   .broadcast__reel {
     height: 100%;
+    overflow-x: auto;
     overscroll-behavior-x: none;
+    touch-action: pan-x;
+    -webkit-overflow-scrolling: touch;
   }
 
   .broadcast__reel-track {
     height: 100%;
+    width: 100%;
   }
 
   .broadcast__tape {
