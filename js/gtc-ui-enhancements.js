@@ -20,6 +20,8 @@
   }
 
   const DESCRIPTIONS = Object.freeze({
+    "PUGILIST": "Cubist inspired boxing illustrations.",
+    "PUGILIST.EXE": "Cubist inspired boxing illustrations.",
     "FIBONACCI": "An audio visualiser inspired by Fibonacci.",
     "FIBONACCI.EXE": "An audio visualiser inspired by Fibonacci.",
     "GALANACCI": "My initial clothing brand.",

@@ -1,0 +1,304 @@
+:root {
+  --paper: #ead1b2;
+  --ink: #111111;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  font-family: "Times New Roman", Georgia, serif;
+  user-select: none;
+  -webkit-user-select: none;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+.app-main {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--paper);
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+.app-main.is-dragging {
+  cursor: grabbing;
+}
+
+#viewer {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--paper);
+  touch-action: none;
+}
+
+.hud {
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.hud--name {
+  top: clamp(18px, 3vh, 34px);
+  left: 50%;
+  width: min(78vw, 900px);
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+#fighterName {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: clamp(18px, 2.4vw, 34px);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .hud--name {
+    top: max(18px, env(safe-area-inset-top));
+    width: 88vw;
+  }
+
+  #fighterName {
+    font-size: clamp(14px, 4.7vw, 22px);
+    letter-spacing: 0.12em;
+  }
+}
+
+/* SS SLIDER NAVIGATION - BLACKBOOK STYLE */
+.scrubber {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  min-height: 34px;
+  color: var(--ink);
+  opacity: .82;
+  transition: opacity 140ms ease;
+  font-family: Arial, Helvetica, sans-serif;
+  pointer-events: auto;
+}
+
+.scrubber:hover,
+.scrubber:focus-within,
+.scrubber.is-scrubbing {
+  opacity: 1;
+}
+
+.scrubber__range {
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: ew-resize;
+  touch-action: pan-x;
+}
+
+.scrubber__range::-webkit-slider-runnable-track {
+  height: 1px;
+  background: rgba(17, 17, 17, .42);
+}
+
+.scrubber__range::-moz-range-track {
+  height: 1px;
+  background: rgba(17, 17, 17, .42);
+}
+
+.scrubber__range::-webkit-slider-thumb {
+  width: 16.5px;
+  height: 16.5px;
+  margin-top: -7.75px;
+  border: 0;
+  border-radius: 50%;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--ink);
+}
+
+.scrubber__range::-moz-range-thumb {
+  width: 16.5px;
+  height: 16.5px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.scrubber__meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  min-width: 78px;
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .11em;
+  font-variant-numeric: tabular-nums;
+}
+
+.scrubber__divider {
+  opacity: .42;
+}
+
+@media (max-width: 680px), (hover: none), (pointer: coarse) {
+  .scrubber {
+    left: max(36px, calc(env(safe-area-inset-left) + 24px));
+    right: max(36px, calc(env(safe-area-inset-right) + 24px));
+    gap: 12px;
+  }
+
+  .scrubber__range {
+    touch-action: none;
+  }
+
+  .scrubber__meta {
+    min-width: 64px;
+    font-size: 8px;
+  }
+}
+
+/* SS SLIDER OS FRAME V2 START */
+/*
+  GALANACCI OS-aligned control strip.
+  Cream comes from root style.css --bg.
+  Sharp rectangle. Black slider. Black counter.
+*/
+.scrubber {
+  min-height: 40px;
+  padding: 0 12px;
+  background: #ead1b2;
+  color: #000000;
+  border: 1px solid #000000;
+  border-radius: 0;
+  box-shadow: none;
+  opacity: 1;
+}
+
+.scrubber__range::-webkit-slider-runnable-track {
+  height: 1px;
+  background: #000000;
+}
+
+.scrubber__range::-moz-range-track {
+  height: 1px;
+  background: #000000;
+}
+
+.scrubber__range::-webkit-slider-thumb {
+  background: #000000;
+}
+
+.scrubber__range::-moz-range-thumb {
+  background: #000000;
+}
+
+.scrubber__meta {
+  color: #000000;
+}
+
+.scrubber__divider {
+  opacity: .55;
+}
+
+@media (max-width: 680px), (hover: none), (pointer: coarse) {
+  .scrubber {
+    min-height: 44px;
+    padding: 0 12px;
+  }
+}
+/* SS SLIDER OS FRAME V2 END */
+
+
+/* GTC PUGILIST REFRESH V3 START */
+
+/*
+  PUGILIST transparent artwork sits directly on GALANACCI OS cream:
+  #ead1b2
+*/
+
+html,
+body,
+.app-main,
+#viewer {
+  background-color: var(--paper) !important;
+}
+
+/*
+  Keep the WARRIORSOFBOXING title position,
+  but allow full artwork names to wrap centrally.
+*/
+.hud--name {
+  width: min(92vw, 1180px) !important;
+  max-width: 92vw !important;
+  text-align: center !important;
+}
+
+#fighterName {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+
+  font-size: clamp(16px, 1.8vw, 28px) !important;
+  line-height: 1.08 !important;
+  letter-spacing: .055em !important;
+
+  white-space: normal !important;
+  text-wrap: balance !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+
+  overflow: visible !important;
+  text-overflow: clip !important;
+
+  text-align: center !important;
+}
+
+@media (max-width: 768px) {
+  .hud--name {
+    width: 92vw !important;
+    max-width: 92vw !important;
+  }
+
+  #fighterName {
+    font-size: clamp(13px, 4vw, 20px) !important;
+    line-height: 1.1 !important;
+    letter-spacing: .04em !important;
+  }
+}
+
+/* GTC PUGILIST REFRESH V3 END */

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>PUGILIST.EXE</title>
+  <link rel="stylesheet" href="./styles.css?v=pugilist-refresh-v3">
+  <link rel="stylesheet" href="../viewer-hint.css?v=1">
+  <link rel="stylesheet" href="../archive-watermark.css">
+</head>
+<body>
+  <main id="appMain" class="app-main" aria-label="PUGILIST portrait viewer">
+    <canvas id="viewer" aria-label="Drag horizontally to move through the boxing portraits"></canvas>
+
+    <div class="hud hud--name" aria-live="polite">
+      <span id="fighterName">LOADING…</span>
+    </div>
+    <p class="viewer-hint viewer-hint--backed" aria-label="Drag to browse portraits. On touch devices, swipe to browse portraits.">
+      <span class="viewer-hint__desktop" aria-hidden="true">DRAG TO BROWSE PORTRAITS</span>
+      <span class="viewer-hint__touch" aria-hidden="true">SWIPE TO BROWSE PORTRAITS</span>
+    </p>
+    <section id="scrubber" class="scrubber" aria-label="Portrait navigation">
+      <input
+        id="portrait-slider"
+        class="scrubber__range"
+        type="range"
+        min="1"
+        max="1"
+        value="1"
+        step="1"
+        aria-label="Browse boxing portraits"
+      >
+      <div class="scrubber__meta" aria-live="polite">
+        <span id="portrait-current">001</span>
+        <span class="scrubber__divider">/</span>
+        <span id="portrait-total">001</span>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js?v=pugilist-mobile-sharpness-v1"></script>
+</body>
+</html>

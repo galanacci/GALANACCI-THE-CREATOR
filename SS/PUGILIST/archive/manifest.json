@@ -1,0 +1,40 @@
+{
+    "entries":  [
+                    {
+                        "name":  "AJ VS KLITSCHKO",
+                        "image":  "./images/001.png"
+                    },
+                    {
+                        "name":  "B FOR BOXER (BIVOL V CANELO, 2022)",
+                        "image":  "./images/002.png"
+                    },
+                    {
+                        "name":  "DEATH BY A THOUSAND LEFT HANDS (DE LA HOYA V PACQUIAO, 2008)",
+                        "image":  "./images/003.png"
+                    },
+                    {
+                        "name":  "EVVEN GREATS FALL (ALI V FRAIZER 1)",
+                        "image":  "./images/004.png"
+                    },
+                    {
+                        "name":  "GIANTS KNEEL (DEMPSEY V WILLARD, 1917)",
+                        "image":  "./images/005.png"
+                    },
+                    {
+                        "name":  "KISS OF DEATH (AJ VS NGANNOU)",
+                        "image":  "./images/006.png"
+                    },
+                    {
+                        "name":  "PAC V MARQUEZ IIII",
+                        "image":  "./images/007.png"
+                    },
+                    {
+                        "name":  "THE LET DOWN (MAYWEATHER V PACQUIAO, 2015)",
+                        "image":  "./images/008.png"
+                    },
+                    {
+                        "name":  "THREE ROUND DRAMA (HAGLER V HEARNS, 1985)",
+                        "image":  "./images/009.png"
+                    }
+                ]
+}

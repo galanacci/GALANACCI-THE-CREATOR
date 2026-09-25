@@ -1,0 +1,704 @@
+const ARCHIVE_PATHS = [
+  './archive/manifest.json',
+  './demo/manifest.json',
+];
+
+const canvas = document.getElementById('viewer');
+const ctx = canvas.getContext('2d', { alpha: false });
+const appMain = document.getElementById('appMain');
+const nameEl = document.getElementById('fighterName');
+
+const portraitSlider = document.getElementById('portrait-slider');
+const scrubber = document.getElementById('scrubber');
+const portraitCurrent = document.getElementById('portrait-current');
+const portraitTotal = document.getElementById('portrait-total');
+
+const PAPER = '#ead1b2';
+const DPR_CAP = 2;
+
+const state = {
+  manifestBaseUrl: null,
+  entries: [],
+  rawPosition: 0,
+  pairIndex: -1,
+  currentImg: null,
+  nextImg: null,
+  pairToken: 0,
+  cache: new Map(),
+  buffers: {
+    currentBase: document.createElement('canvas'),
+    nextBase: document.createElement('canvas'),
+    currentEdge: document.createElement('canvas'),
+    nextEdge: document.createElement('canvas'),
+  },
+  dragging: false,
+  pointerId: null,
+  dragStartX: 0,
+  dragStartPosition: 0,
+  snapRaf: 0,
+};
+
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+const pad = (value, digits) => String(value).padStart(digits, '0');
+
+function modulo(value, length) {
+  return ((value % length) + length) % length;
+}
+
+function easeOutCubic(t) {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+function easeInOutCubic(t) {
+  return t < .5
+    ? 4 * t * t * t
+    : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+function normaliseName(stem) {
+  return stem
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toUpperCase();
+}
+
+function fitArtworkTitle() {
+  if (!nameEl) return;
+
+  const mobile = window.innerWidth < 769;
+  const maxSize = mobile ? 18 : 26;
+  const minSize = mobile ? 11 : 14;
+  const container = nameEl.parentElement;
+
+  if (!container) return;
+
+  nameEl.style.fontSize = `${maxSize}px`;
+
+  let size = maxSize;
+  const available = Math.max(1, container.clientWidth - 8);
+
+  while (
+    nameEl.scrollWidth > available &&
+    size > minSize
+  ) {
+    size -= 1;
+    nameEl.style.fontSize = `${size}px`;
+  }
+}
+function pairState() {
+  const baseRaw = Math.floor(state.rawPosition);
+  const t = state.rawPosition - baseRaw;
+  const baseIndex = modulo(baseRaw, state.entries.length);
+
+  return {
+    baseIndex,
+    nextIndex: modulo(baseIndex + 1, state.entries.length),
+    t,
+  };
+}
+
+function pixelsPerPortrait() {
+  return clamp(canvas.clientWidth * .26, 130, 360);
+}
+
+async function loadManifest() {
+  for (const path of ARCHIVE_PATHS) {
+    try {
+      const manifestUrl = new URL(path, window.location.href);
+      const response = await fetch(manifestUrl.href, { cache: 'no-store' });
+
+      if (!response.ok) continue;
+
+      const data = await response.json();
+
+      if (Array.isArray(data.entries) && data.entries.length) {
+        state.manifestBaseUrl = manifestUrl;
+        return data.entries;
+      }
+    } catch (error) {
+      // Try the next source.
+    }
+  }
+
+  throw new Error('Could not load manifest.json from archive/ or demo/.');
+}
+
+function loadImage(src) {
+  if (state.cache.has(src)) return state.cache.get(src);
+
+  const promise = new Promise((resolve, reject) => {
+    const image = new Image();
+    image.decoding = 'async';
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
+  }).catch((error) => {
+    state.cache.delete(src);
+    throw error;
+  });
+
+  state.cache.set(src, promise);
+  return promise;
+}
+
+function resizeCanvas() {
+  const dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
+  const width = Math.max(1, appMain.clientWidth);
+  const height = Math.max(1, appMain.clientHeight);
+
+  canvas.width = Math.round(width * dpr);
+  canvas.height = Math.round(height * dpr);
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  if (state.currentImg && state.nextImg) {
+    rebuildBuffers();
+  }
+
+  render();
+}
+
+function portraitLayout(image, viewWidth, viewHeight) {
+  const desktop = viewWidth >= 900;
+
+  const naturalWidth = image.naturalWidth || image.width;
+  const naturalHeight = image.naturalHeight || image.height;
+
+  if (desktop) {
+    // DESKTOP MODE:
+    // Keep strong left/right breathing room and avoid the portrait becoming
+    // excessively enlarged inside a wide landscape viewport.
+    const topReserve = clamp(viewHeight * .12, 86, 132);
+    const sideGutter = clamp(viewWidth * .105, 92, 170);
+
+    const contentWidth = Math.max(1, viewWidth - sideGutter * 2);
+    const contentHeight = Math.max(1, viewHeight - topReserve);
+
+    const baseScale = Math.min(
+      contentWidth / naturalWidth,
+      contentHeight / naturalHeight
+    );
+
+    const scale = baseScale * 1.18 * 1.15;
+    const width = naturalWidth * scale;
+    const height = naturalHeight * scale;
+
+    const x = sideGutter + (contentWidth - width) / 2;
+    const y =
+      topReserve +
+      (contentHeight - height) / 2 -
+      contentHeight * .045;
+
+    return { x, y, width, height };
+  }
+
+  // MOBILE MODE:
+  // No side padding. Use the full mobile viewport width and restore the
+  // close-up face-fill treatment that works better on portrait screens.
+  const topReserve = clamp(viewHeight * .09, 64, 96);
+  const contentWidth = viewWidth;
+  const contentHeight = Math.max(1, viewHeight - topReserve);
+
+  // Fill the available width first. If needed, also ensure the portrait is
+  // tall enough to fill the stage so it never becomes a small centered image.
+  const baseScale = Math.max(
+    contentWidth / naturalWidth,
+    contentHeight / naturalHeight
+  );
+
+  const scale = baseScale * 1.035 * 1.15;
+  const width = naturalWidth * scale;
+  const height = naturalHeight * scale;
+
+  const x = (viewWidth - width) / 2;
+
+  // Keep enough negative space for the top-centered name while moving the
+  // face higher than the V6.5 mobile composition.
+  const y =
+    topReserve +
+    (contentHeight - height) / 2 -
+    contentHeight * .055;
+
+  return { x, y, width, height };
+}
+
+function prepareBaseBuffer(buffer, image) {
+  const width = Math.max(1, Math.round(canvas.clientWidth));
+  const height = Math.max(1, Math.round(canvas.clientHeight));
+  const dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
+
+  /*
+    MOBILE SHARPNESS V1
+
+    The visible canvas is DPR-scaled in resizeCanvas().
+    These offscreen buffers must be rendered at the same effective
+    pixel density, otherwise a CSS-resolution bitmap gets enlarged
+    on high-DPI phones and the artwork looks soft.
+  */
+  buffer.width = Math.max(1, Math.round(width * dpr));
+  buffer.height = Math.max(1, Math.round(height * dpr));
+
+  const bctx = buffer.getContext('2d');
+
+  /*
+    Clear/fill using physical buffer pixels first.
+  */
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+  bctx.clearRect(0, 0, buffer.width, buffer.height);
+  bctx.fillStyle = PAPER;
+  bctx.fillRect(0, 0, buffer.width, buffer.height);
+
+  /*
+    Layout remains in CSS pixels so composition is unchanged.
+    The DPR transform maps that exact composition into a sharper
+    physical-pixel backing store.
+  */
+  bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const bounds = portraitLayout(image, width, height);
+
+  bctx.imageSmoothingEnabled = true;
+  bctx.imageSmoothingQuality = 'high';
+
+  bctx.drawImage(
+    image,
+    bounds.x,
+    bounds.y,
+    bounds.width,
+    bounds.height
+  );
+
+  bctx.setTransform(1, 0, 0, 1, 0, 0);
+}
+
+function buildEdgeMap(source, target) {
+  const width = source.width;
+  const height = source.height;
+
+  target.width = width;
+  target.height = height;
+
+  const sourceCtx = source.getContext('2d', { willReadFrequently: true });
+  const targetCtx = target.getContext('2d');
+
+  const sourceImage = sourceCtx.getImageData(0, 0, width, height);
+  const output = targetCtx.createImageData(width, height);
+
+  const inputData = sourceImage.data;
+  const outputData = output.data;
+
+  for (let i = 0; i < inputData.length; i += 4) {
+    const luminance =
+      .299 * inputData[i] +
+      .587 * inputData[i + 1] +
+      .114 * inputData[i + 2];
+
+    const ink = 1 - luminance / 255;
+    const alpha =
+      Math.pow(clamp((ink - .025) / .93, 0, 1), 1.16) * 255;
+
+    outputData[i] = 17;
+    outputData[i + 1] = 17;
+    outputData[i + 2] = 17;
+    outputData[i + 3] = alpha;
+  }
+
+  targetCtx.putImageData(output, 0, 0);
+}
+
+function rebuildBuffers() {
+  if (!state.currentImg || !state.nextImg) return;
+
+  prepareBaseBuffer(state.buffers.currentBase, state.currentImg);
+  prepareBaseBuffer(state.buffers.nextBase, state.nextImg);
+  buildEdgeMap(state.buffers.currentBase, state.buffers.currentEdge);
+  buildEdgeMap(state.buffers.nextBase, state.buffers.nextEdge);
+}
+
+async function ensurePair(baseIndex) {
+  if (
+    state.pairIndex === baseIndex &&
+    state.currentImg &&
+    state.nextImg
+  ) {
+    return;
+  }
+
+  const token = ++state.pairToken;
+  const nextIndex = modulo(baseIndex + 1, state.entries.length);
+
+  const [currentImg, nextImg] = await Promise.all([
+    loadImage(state.entries[baseIndex].image),
+    loadImage(state.entries[nextIndex].image),
+  ]);
+
+  if (token !== state.pairToken) return;
+
+  state.pairIndex = baseIndex;
+  state.currentImg = currentImg;
+  state.nextImg = nextImg;
+
+  rebuildBuffers();
+  render();
+
+  const followingIndex = modulo(baseIndex + 2, state.entries.length);
+  loadImage(state.entries[followingIndex].image).catch(() => {});
+}
+
+function fillPaper() {
+  const width = canvas.clientWidth;
+  const height = canvas.clientHeight;
+
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = PAPER;
+  ctx.fillRect(0, 0, width, height);
+}
+
+function drawImageLayer(
+  buffer,
+  alpha = 1,
+  dx = 0,
+  dy = 0,
+  scale = 1,
+  blur = 0,
+  composite = 'source-over'
+) {
+  const width = canvas.clientWidth;
+  const height = canvas.clientHeight;
+
+  const drawWidth = width * scale;
+  const drawHeight = height * scale;
+
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.globalCompositeOperation = composite;
+  ctx.filter = blur > 0 ? `blur(${blur}px)` : 'none';
+
+  ctx.drawImage(
+    buffer,
+    dx + (width - drawWidth) / 2,
+    dy + (height - drawHeight) / 2,
+    drawWidth,
+    drawHeight
+  );
+
+  ctx.restore();
+}
+
+function updateName(baseIndex, nextIndex, t) {
+  const nearestIndex = t < .5 ? baseIndex : nextIndex;
+  nameEl.textContent = state.entries[nearestIndex].name;
+  fitArtworkTitle();
+}
+
+function drawStill(buffer) {
+  fillPaper();
+  drawImageLayer(buffer, 1);
+}
+
+function drawMorph(t) {
+  fillPaper();
+
+  const eased = easeInOutCubic(t);
+  const width = canvas.clientWidth;
+
+  const currentAlpha = 1 - eased;
+  const nextAlpha = eased;
+
+  const currentShiftX = -width * .008 * eased;
+  const nextShiftX = width * .008 * (1 - eased);
+  const currentScale = 1 - .003 * eased;
+  const nextScale = 1.003 - .003 * eased;
+
+  drawImageLayer(
+    state.buffers.currentBase,
+    currentAlpha,
+    currentShiftX,
+    0,
+    currentScale,
+    0,
+    'source-over'
+  );
+
+  drawImageLayer(
+    state.buffers.nextBase,
+    nextAlpha,
+    nextShiftX,
+    0,
+    nextScale,
+    0,
+    'source-over'
+  );
+
+  const centerPulse = Math.sin(eased * Math.PI);
+
+  drawImageLayer(
+    state.buffers.currentEdge,
+    .09 * currentAlpha * centerPulse,
+    currentShiftX * .35,
+    0,
+    currentScale,
+    .2,
+    'multiply'
+  );
+
+  drawImageLayer(
+    state.buffers.nextEdge,
+    .09 * nextAlpha * centerPulse,
+    nextShiftX * .35,
+    0,
+    nextScale,
+    .2,
+    'multiply'
+  );
+}
+
+function render() {
+  if (!state.entries.length) return;
+
+  const pair = pairState();
+
+  updateName(
+    pair.baseIndex,
+    pair.nextIndex,
+    pair.t
+  );
+
+  if (
+    state.pairIndex !== pair.baseIndex ||
+    !state.currentImg ||
+    !state.nextImg
+  ) {
+    ensurePair(pair.baseIndex).catch(console.error);
+    return;
+  }
+
+  if (pair.t <= .001) {
+    drawStill(state.buffers.currentBase);
+    return;
+  }
+
+  if (pair.t >= .999) {
+    drawStill(state.buffers.nextBase);
+    return;
+  }
+
+  drawMorph(pair.t);
+}
+
+function currentPortraitIndex() {
+  if (!state.entries.length) return 0;
+  return modulo(Math.round(state.rawPosition), state.entries.length);
+}
+
+function updateScrubber(index = currentPortraitIndex()) {
+  if (!portraitSlider || !portraitCurrent || !portraitTotal || !state.entries.length) return;
+
+  const safeIndex = clamp(index, 0, state.entries.length - 1);
+  const digits = Math.max(3, String(state.entries.length).length);
+
+  portraitSlider.max = String(state.entries.length);
+  portraitSlider.value = String(safeIndex + 1);
+  portraitCurrent.textContent = pad(safeIndex + 1, digits);
+  portraitTotal.textContent = pad(state.entries.length, digits);
+}
+
+function setRawPosition(value) {
+  state.rawPosition = value;
+  updateScrubber();
+  render();
+}
+
+function setPortraitFromScrubber(index) {
+  if (!state.entries.length) return;
+
+  cancelSnap();
+  setRawPosition(clamp(index, 0, state.entries.length - 1));
+}
+
+function cancelSnap() {
+  if (!state.snapRaf) return;
+  cancelAnimationFrame(state.snapRaf);
+  state.snapRaf = 0;
+}
+
+function snapToNearestPortrait() {
+  cancelSnap();
+
+  const start = state.rawPosition;
+  const target = Math.round(start);
+  const delta = target - start;
+
+  if (Math.abs(delta) < .0005) {
+    setRawPosition(target);
+    return;
+  }
+
+  const duration = 230;
+  const startedAt = performance.now();
+
+  function frame(now) {
+    const t = clamp(
+      (now - startedAt) / duration,
+      0,
+      1
+    );
+
+    setRawPosition(
+      start + delta * easeOutCubic(t)
+    );
+
+    if (t < 1) {
+      state.snapRaf = requestAnimationFrame(frame);
+    } else {
+      state.snapRaf = 0;
+      setRawPosition(target);
+    }
+  }
+
+  state.snapRaf = requestAnimationFrame(frame);
+}
+
+function beginDrag(event) {
+  if (event.target.closest?.('.scrubber')) return;
+  if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+  event.preventDefault();
+  cancelSnap();
+
+  state.dragging = true;
+  state.pointerId = event.pointerId;
+  state.dragStartX = event.clientX;
+  state.dragStartPosition = state.rawPosition;
+
+  appMain.classList.add('is-dragging');
+  appMain.setPointerCapture?.(event.pointerId);
+}
+
+function moveDrag(event) {
+  if (
+    !state.dragging ||
+    event.pointerId !== state.pointerId
+  ) {
+    return;
+  }
+
+  event.preventDefault();
+
+  const deltaX =
+    state.dragStartX - event.clientX;
+
+  setRawPosition(
+    state.dragStartPosition +
+    deltaX / pixelsPerPortrait()
+  );
+}
+
+function endDrag(event) {
+  if (
+    !state.dragging ||
+    event.pointerId !== state.pointerId
+  ) {
+    return;
+  }
+
+  state.dragging = false;
+  appMain.classList.remove('is-dragging');
+  appMain.releasePointerCapture?.(event.pointerId);
+  state.pointerId = null;
+
+  snapToNearestPortrait();
+}
+
+appMain.addEventListener('pointerdown', beginDrag);
+appMain.addEventListener('pointermove', moveDrag);
+appMain.addEventListener('pointerup', endDrag);
+appMain.addEventListener('pointercancel', endDrag);
+
+function bindPortraitNavigator() {
+  if (!portraitSlider || !scrubber) return;
+
+  const stopScrubberEvent = (event) => {
+    event.stopPropagation();
+  };
+
+  [scrubber, portraitSlider].forEach((element) => {
+    element.addEventListener('pointerdown', stopScrubberEvent);
+    element.addEventListener('pointermove', stopScrubberEvent);
+    element.addEventListener('pointerup', stopScrubberEvent);
+    element.addEventListener('pointercancel', stopScrubberEvent);
+    element.addEventListener('click', stopScrubberEvent);
+  });
+
+  portraitSlider.addEventListener('pointerdown', () => {
+    scrubber.classList.add('is-scrubbing');
+  });
+
+  portraitSlider.addEventListener('input', () => {
+    setPortraitFromScrubber(Number(portraitSlider.value) - 1);
+  });
+
+  portraitSlider.addEventListener('change', () => {
+    setPortraitFromScrubber(Number(portraitSlider.value) - 1);
+    scrubber.classList.remove('is-scrubbing');
+  });
+
+  portraitSlider.addEventListener('pointerup', () => {
+    setPortraitFromScrubber(Number(portraitSlider.value) - 1);
+    scrubber.classList.remove('is-scrubbing');
+  });
+
+  portraitSlider.addEventListener('pointercancel', () => {
+    scrubber.classList.remove('is-scrubbing');
+  });
+}
+
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'ArrowLeft') {
+    cancelSnap();
+    setRawPosition(
+      Math.round(state.rawPosition) - 1
+    );
+  }
+
+  if (event.key === 'ArrowRight') {
+    cancelSnap();
+    setRawPosition(
+      Math.round(state.rawPosition) + 1
+    );
+  }
+});
+
+window.addEventListener('resize', resizeCanvas);
+
+(async function init() {
+  const entries = await loadManifest();
+
+  state.entries = entries.map((entry) => ({
+    name: entry.name
+      ? normaliseName(entry.name)
+      : normaliseName(
+          entry.image
+            .split('/')
+            .pop()
+            .replace(/\.[^.]+$/, '')
+        ),
+    image: new URL(
+      entry.image,
+      state.manifestBaseUrl
+    ).href,
+  }));
+
+  updateScrubber(0);
+  bindPortraitNavigator();
+
+  resizeCanvas();
+  await ensurePair(0);
+  render();
+})().catch((error) => {
+  console.error(error);
+  nameEl.textContent = 'ARCHIVE ERROR';
+});
