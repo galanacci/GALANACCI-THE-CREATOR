@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+  <meta
+    name="description"
+    content="Recorded interviews and conversations."
+  >
+  <title>INTERVIEWS.EXE</title>
+  <link rel="stylesheet" href="./styles.css?v=interviews-dark-tabs-v7">
+</head>
+<body>
+  <main class="broadcast" data-broadcast-app data-active-type="youtube">
+    <nav class="broadcast__tabs" aria-label="Interview format">
+      <button type="button" class="broadcast__tab is-active" data-format-tab="youtube" aria-pressed="true">VIDEO INTERVIEWS</button>
+      <button type="button" class="broadcast__tab" data-format-tab="spotify" aria-pressed="false">AUDIO INTERVIEWS</button>
+    </nav>
+
+    <section class="broadcast__room">
+      <div class="broadcast__screen-shell">
+        <div class="broadcast__screen-bezel">
+          <div class="broadcast__screen" data-youtube-screen>
+            <div
+              id="youtube-player"
+              aria-label="GALANACCI interview player"
+            ></div>
+          </div>
+
+          <div
+            class="broadcast__spotify-stage"
+            data-spotify-stage
+            aria-label="GALANACCI Spotify interview player"
+          >
+            <div class="broadcast__spotify-deck">
+              <div class="broadcast__spotify-deck-label">
+                <span>AUDIO INTERVIEWS</span>
+                <strong>LISTEN ON SPOTIFY</strong>
+              </div>
+
+              <div
+                id="spotify-player"
+                class="broadcast__spotify-player"
+              ></div>
+            </div>
+          </div>
+
+          <div class="broadcast__loading" data-loading>
+            <span class="broadcast__loading-dot" aria-hidden="true"></span>
+            <span>CONNECTING TO ARCHIVE</span>
+          </div>
+        </div>
+
+        <div class="broadcast__screen-meta">
+          <div class="broadcast__now-playing">
+            <span class="broadcast__status">
+              <i aria-hidden="true"></i>
+              NOW PLAYING <span data-source-label>YOUTUBE VIDEO</span>
+
+            </span>
+            <h2 data-current-title>GALANACCI BROADCAST ARCHIVE</h2>
+          </div>
+
+          <div class="broadcast__controls" aria-label="Transmission controls">
+            <button
+              type="button"
+              class="broadcast__control"
+              data-prev
+              aria-label="Previous interview"
+            >
+              PREV
+            </button>
+
+            <button
+              type="button"
+              class="broadcast__control"
+              data-next
+              aria-label="Next interview"
+            >
+              NEXT
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="broadcast__archive">
+        <div class="broadcast__archive-heading">
+          <div>
+            <span data-archive-heading>VIDEO ARCHIVE</span>
+            <strong data-archive-count>LOADING</strong>
+          </div>
+
+          <p>
+            Drag archive / select tape
+          </p>
+        </div>
+
+        <div
+          class="broadcast__reel"
+          data-reel
+          tabindex="0"
+          aria-label="Interview archive reel"
+        >
+          <div class="broadcast__reel-track" data-reel-track>
+            <div class="broadcast__placeholder">
+              <span>LOADING TRANSMISSIONS</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <footer class="broadcast__footer">
+      <p>
+        RECORDED INTERVIEWS AND CONVERSATIONS.
+      </p>
+
+      <a
+        class="broadcast__youtube-link"
+        data-video-link
+        href="https://www.youtube.com/playlist?list=PL_UEBZlt-mUJZb2SB6wQ2jLCvxs7C_-LM"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        OPEN YOUTUBE PLAYLIST
+      </a>
+      <a class="broadcast__youtube-link" data-audio-link href="https://open.spotify.com/" target="_blank" rel="noopener noreferrer" hidden>OPEN SPOTIFY EPISODE</a>
+    </footer>
+
+    <div class="broadcast__error" data-error hidden>
+      <strong>ARCHIVE CONNECTION FAILED</strong>
+      <span>
+        Open the YouTube playlist directly using the link below.
+      </span>
+    </div>
+  </main>
+<script src="./app.js?v=interviews-shawn-porter-v8"></script>
+</body>
+</html>
