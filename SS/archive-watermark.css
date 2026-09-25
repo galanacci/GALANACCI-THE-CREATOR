@@ -1,0 +1,58 @@
+/* Staggered viewing marks cover the iframe viewport, not the OS window chrome. */
+body > main::before,
+body > main::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 101;
+  pointer-events: none;
+  user-select: none;
+  /* Five complete square rows always fit the viewer height. */
+  --mark-size: 20vh;
+  --mark-half: 10vh;
+  --mark-row: 40vh;
+  background-image: url("../assets/favicon.svg");
+  background-repeat: repeat;
+  background-size: var(--mark-size) var(--mark-size);
+  background-position-y: top;
+  mix-blend-mode: difference;
+  opacity: 0.09;
+}
+
+@supports (height: 1dvh) {
+  body > main::before,
+  body > main::after {
+    --mark-size: 20dvh;
+    --mark-half: 10dvh;
+    --mark-row: 40dvh;
+  }
+}
+
+body > main::after {
+  background-position-x: center;
+  -webkit-mask-image: repeating-linear-gradient(to bottom, #000 0 var(--mark-size), transparent var(--mark-size) var(--mark-row));
+  mask-image: repeating-linear-gradient(to bottom, #000 0 var(--mark-size), transparent var(--mark-size) var(--mark-row));
+}
+
+body > main::before {
+  background-position-x: calc(50% + var(--mark-half));
+  -webkit-mask-image: repeating-linear-gradient(to bottom, transparent 0 var(--mark-size), #000 var(--mark-size) var(--mark-row));
+  mask-image: repeating-linear-gradient(to bottom, transparent 0 var(--mark-size), #000 var(--mark-size) var(--mark-row));
+}
+
+body > main.experience::before,
+body > main.experience::after {
+  z-index: 2;
+}
+
+.viewer-hint,
+.interaction-hint,
+.hud {
+  z-index: 102 !important;
+}
+
+.scrubber,
+.artwork-scrubber,
+.navigator {
+  z-index: 103 !important;
+}
