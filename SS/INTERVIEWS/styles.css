@@ -647,3 +647,122 @@ button {
     gap: 10px;
   }
 }
+
+/* The mobile app is a single viewport: only the archive reel scrolls. */
+@media (max-width: 840px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .broadcast {
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .broadcast__tabs {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    flex: 0 0 auto;
+  }
+
+  .broadcast__room {
+    flex: 1 1 auto;
+    grid-template-rows: minmax(0, 1fr) auto;
+    overflow: hidden;
+  }
+
+  .broadcast__screen-shell {
+    min-height: 0;
+    overflow: hidden;
+    padding: 8px 10px;
+  }
+
+  .broadcast__screen-bezel {
+    flex: 0 1 auto;
+    width: min(100%, calc((100dvh - 330px) * 16 / 9));
+  }
+
+  .broadcast__screen-meta {
+    flex: 0 0 auto;
+    padding-top: 8px;
+    gap: 8px;
+  }
+
+  .broadcast__status {
+    margin-bottom: 4px;
+  }
+
+  .broadcast__now-playing h2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    height: calc(14px * 1.2 * 3);
+    overflow: hidden;
+  }
+
+  .broadcast__archive {
+    height: clamp(184px, 26dvh, 220px);
+    overflow: hidden;
+  }
+
+  .broadcast__archive-heading {
+    display: none;
+  }
+
+  .broadcast__reel {
+    height: 100%;
+    overscroll-behavior-x: none;
+  }
+
+  .broadcast__reel-track {
+    height: 100%;
+  }
+
+  .broadcast__tape {
+    flex-basis: min(170px, 44vw);
+    height: 100%;
+    min-height: 0;
+    gap: 4px;
+    padding: 8px;
+    overflow: hidden;
+  }
+
+  .broadcast__tape-info {
+    align-self: start;
+    gap: 4px;
+  }
+
+  .broadcast__tape-name {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+  }
+
+  .broadcast__footer {
+    flex: 0 0 auto;
+    min-height: 34px;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    padding: 6px 10px;
+  }
+
+  .broadcast[data-active-type="spotify"] .broadcast__spotify-stage {
+    min-height: 0;
+    padding: 10px;
+  }
+
+  .broadcast__spotify-deck {
+    gap: 8px;
+  }
+
+  .broadcast__spotify-stage iframe {
+    height: 152px !important;
+  }
+}

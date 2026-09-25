@@ -67,6 +67,141 @@ test("previous and next controls remain equal in size while browsing", async ({ 
   expect(Math.abs(initial[0] - afterPrev[0])).toBeLessThan(1);
 });
 
+test("mobile interview tabs and controls stay within one screen", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "Mobile layout only");
+
+  for (const height of [844, 667]) {
+    await page.setViewportSize({ width: 390, height });
+    await page.goto("/SS/INTERVIEWS/index.html", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("[data-loading]")).toHaveClass(/is-hidden/, { timeout: 20_000 });
+
+    for (const type of ["youtube", "spotify"]) {
+      await page.locator(`[data-format-tab='${type}']`).click();
+      await page.locator("[data-next]").click();
+      await expect(page.locator(".broadcast__archive-heading")).toBeHidden();
+
+      const layout = await page.evaluate(() => {
+        const box = (selector) => document.querySelector(selector).getBoundingClientRect();
+        return {
+          scrollY: window.scrollY,
+          scrollHeight: document.documentElement.scrollHeight,
+          viewportHeight: window.innerHeight,
+          tabsTop: box(".broadcast__tabs").top,
+          controlsBottom: box(".broadcast__controls").bottom,
+          archiveBottom: box(".broadcast__archive").bottom,
+          footerBottom: box(".broadcast__footer").bottom
+        };
+      });
+
+      expect(layout.scrollY).toBe(0);
+      expect(layout.scrollHeight).toBeLessThanOrEqual(layout.viewportHeight + 1);
+      expect(layout.tabsTop).toBe(0);
+      expect(layout.controlsBottom).toBeLessThan(layout.archiveBottom);
+      expect(layout.footerBottom).toBeLessThanOrEqual(layout.viewportHeight + 1);
+
+      const titleLayout = await page.locator(".broadcast__tape").first().evaluate((tape) => {
+        const title = tape.querySelector(".broadcast__tape-name").getBoundingClientRect();
+        const reel = tape.closest(".broadcast__reel").getBoundingClientRect();
+        return { titleTop: title.top, titleBottom: title.bottom, reelBottom: reel.bottom };
+      });
+      expect(titleLayout.titleBottom).toBeGreaterThan(titleLayout.titleTop);
+      expect(titleLayout.titleBottom).toBeLessThanOrEqual(titleLayout.reelBottom - 1);
+    }
+  }
+});
+
+test("mobile archive stops at its first and last thumbnail", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "Mobile reel only");
+  await page.goto("/SS/INTERVIEWS/index.html", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("[data-loading]")).toHaveClass(/is-hidden/, { timeout: 20_000 });
+
+  const reel = page.locator(".broadcast__reel");
+  await reel.evaluate((element) => { element.scrollLeft = 100_000; });
+  const atEnd = await reel.evaluate((element) => ({
+    scrollLeft: element.scrollLeft,
+    maxScroll: element.scrollWidth - element.clientWidth,
+    lastRight: element.querySelector(".broadcast__tape:last-child").getBoundingClientRect().right,
+    reelRight: element.getBoundingClientRect().right
+  }));
+  expect(atEnd.scrollLeft).toBeLessThanOrEqual(atEnd.maxScroll + 1);
+  expect(atEnd.lastRight).toBeGreaterThanOrEqual(atEnd.reelRight - 1);
+
+  await reel.evaluate((element) => { element.scrollLeft = -100_000; });
+  const atStart = await reel.evaluate((element) => ({
+    scrollLeft: element.scrollLeft,
+    firstLeft: element.querySelector(".broadcast__tape:first-child").getBoundingClientRect().left,
+    reelLeft: element.getBoundingClientRect().left
+  }));
+  expect(atStart.scrollLeft).toBeGreaterThanOrEqual(0);
+  expect(atStart.firstLeft).toBeLessThanOrEqual(atStart.reelLeft + 1);
+});
+
+test("mobile player and navigation stay in place across interviews", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "Mobile layout only");
+
+  for (const height of [844, 667]) {
+    await page.setViewportSize({ width: 390, height });
+    await page.goto("/SS/INTERVIEWS/index.html", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("[data-loading]")).toHaveClass(/is-hidden/, { timeout: 20_000 });
+
+    const geometry = async () => page.evaluate(() => {
+      const rect = (selector) => {
+        const box = document.querySelector(selector).getBoundingClientRect();
+        return { top: box.top, left: box.left, width: box.width, height: box.height };
+      };
+      return {
+        player: rect(".broadcast__screen-bezel"),
+        prev: rect("[data-prev]"),
+        next: rect("[data-next]")
+      };
+    });
+
+    const initial = await geometry();
+    for (let index = 0; index < 4; index += 1) {
+      await page.locator("[data-next]").click();
+      const afterNext = await geometry();
+      for (const part of ["player", "prev", "next"]) {
+        for (const edge of ["top", "left", "width", "height"]) {
+          expect(Math.abs(afterNext[part][edge] - initial[part][edge])).toBeLessThan(1);
+        }
+      }
+    }
+  }
+});
+
+test("switching from the end of videos keeps audio thumbnails in view", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "Mobile reel only");
+  await page.goto("/SS/INTERVIEWS/index.html", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("[data-loading]")).toHaveClass(/is-hidden/, { timeout: 20_000 });
+
+  const reel = page.locator(".broadcast__reel");
+  await reel.evaluate((element) => { element.scrollLeft = element.scrollWidth; });
+  await page.locator("[data-format-tab='spotify']").click();
+  await expect(page.locator(".broadcast__tape")).toHaveCount(2);
+
+  const audioLayout = await reel.evaluate((element) => {
+    const visible = element.getBoundingClientRect();
+    const first = element.querySelector(".broadcast__tape:first-child").getBoundingClientRect();
+    return {
+      scrollLeft: element.scrollLeft,
+      maxScroll: element.scrollWidth - element.clientWidth,
+      firstLeft: first.left,
+      firstRight: first.right,
+      reelLeft: visible.left,
+      reelRight: visible.right
+    };
+  });
+  expect(audioLayout.scrollLeft).toBeGreaterThanOrEqual(0);
+  expect(audioLayout.scrollLeft).toBeLessThanOrEqual(audioLayout.maxScroll + 1);
+  expect(audioLayout.firstLeft).toBeLessThan(audioLayout.reelRight);
+  expect(audioLayout.firstRight).toBeGreaterThan(audioLayout.reelLeft);
+
+  await page.locator("[data-format-tab='youtube']").click();
+  await expect(page.locator(".broadcast__tape")).toHaveCount(6);
+  await page.locator("[data-format-tab='spotify']").click();
+  await expect(page.locator(".broadcast__tape").first()).toBeInViewport();
+});
+
 test("the Shawn Porter interview shows its custom title and starts at two minutes", async ({ page }) => {
   test.setTimeout(45_000);
   await page.goto("/SS/INTERVIEWS/index.html", { waitUntil: "domcontentloaded" });
@@ -111,6 +246,15 @@ test("INTERVIEWS opens inside the OS app window", async ({ page }, testInfo) => 
   const app = page.frameLocator("#experiment-frame");
   await expect(app.locator("[data-loading]")).toHaveClass(/is-hidden/, { timeout: 20_000 });
   await expect(app.locator("iframe#youtube-player")).toBeVisible();
+  if (testInfo.project.name === "mobile-chromium") {
+    const embeddedLayout = await app.locator("body").evaluate((body) => ({
+      scrollHeight: body.ownerDocument.documentElement.scrollHeight,
+      viewportHeight: body.ownerDocument.defaultView.innerHeight,
+      tabsTop: body.querySelector(".broadcast__tabs").getBoundingClientRect().top
+    }));
+    expect(embeddedLayout.scrollHeight).toBeLessThanOrEqual(embeddedLayout.viewportHeight + 1);
+    expect(embeddedLayout.tabsTop).toBe(0);
+  }
   await app.locator("[data-format-tab='spotify']").click();
   await app.locator(".broadcast__tape").last().click();
   await expect(app.locator("[data-source-label]")).toHaveText("SPOTIFY AUDIO");

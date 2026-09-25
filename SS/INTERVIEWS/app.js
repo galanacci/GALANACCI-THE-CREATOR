@@ -458,13 +458,23 @@
       scrollIntoView &&
       tapes[currentIndex]
     ) {
-      tapes[
-        currentIndex
-      ].scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "center"
-      });
+      const tape = tapes[currentIndex];
+      if (window.matchMedia("(max-width: 840px)").matches) {
+        // Keep the selected tape centered without scrolling the entire app.
+        const maxScroll = Math.max(0, reel.scrollWidth - reel.clientWidth);
+        reel.scrollTo({
+          left: Math.min(maxScroll, Math.max(0,
+            tape.offsetLeft + tape.offsetWidth / 2 - reel.clientWidth / 2
+          )),
+          behavior: "smooth"
+        });
+      } else {
+        tape.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "nearest"
+        });
+      }
     }
   }
 
@@ -755,6 +765,11 @@
   function activateType(type) {
     if (type === activeType) return;
 
+    // Cancel any in-flight video-reel scroll before replacing its contents.
+    // WebKit can retain the old offset when the new reel is shorter.
+    reel.scrollLeft = 0;
+    reel.scrollTop = 0;
+
     activeType = type;
     formatTabs.forEach((tab) => {
       const selected = tab.dataset.formatTab === type;
@@ -766,7 +781,9 @@
       : "VIDEO ARCHIVE";
 
     buildArchiveItems();
-    syncUi(false);
+    reel.scrollLeft = 0;
+    reel.scrollTop = 0;
+    syncUi(true);
 
     const item = archiveItems[currentIndex];
     if (item?.type === "spotify") {
@@ -832,6 +849,12 @@
   reel.addEventListener(
     "pointerdown",
     (event) => {
+      // Touch has native horizontal panning. Handling it again here can
+      // compound the movement and reveal empty space beyond the last tape.
+      if (event.pointerType === "touch") {
+        return;
+      }
+
       if (
         event.pointerType ===
           "mouse" &&
@@ -896,9 +919,10 @@
           "(max-width: 840px)"
         ).matches
       ) {
-        reel.scrollLeft =
-          dragState.scrollLeft -
-          dx;
+        const maxScroll = Math.max(0, reel.scrollWidth - reel.clientWidth);
+        reel.scrollLeft = Math.min(maxScroll, Math.max(0,
+          dragState.scrollLeft - dx
+        ));
       } else {
         reel.scrollTop =
           dragState.scrollTop -
