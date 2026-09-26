@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#050505">
   <title>GTHEFIGHTER.EXE</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./styles.css?v=artwork-slider-v1">
+  <link rel="stylesheet" href="./styles.css?v=gthefighter-instagram-profile-v4">
   <script type="importmap">
     {
       "imports": {
@@ -49,6 +49,18 @@
     </p>
 
     <button id="reset-view" class="reset-view" type="button">RESET VIEW</button>
+    <!-- GTC SOCIAL ARCHIVE V3 TRIGGER START -->
+    <button
+      id="social-archive-trigger"
+      class="social-archive-trigger"
+      type="button"
+      aria-haspopup="dialog"
+      aria-controls="social-archive-dialog"
+      aria-expanded="false"
+    >
+      SOCIAL ARCHIVE
+    </button>
+    <!-- GTC SOCIAL ARCHIVE V3 TRIGGER END -->
 
     <section id="artwork-scrubber" class="artwork-scrubber" aria-label="Artwork navigation">
       <input
@@ -91,8 +103,77 @@
       crossorigin="anonymous"
       aria-hidden="true"
     ></video>
-  </main>
+
+    <!-- GTC SOCIAL ARCHIVE V4 MODAL START -->
+    <section
+      id="social-archive-dialog"
+      class="social-archive"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="social-archive-title"
+      hidden
+    >
+      <button
+        class="social-archive__backdrop"
+        type="button"
+        data-social-archive-close
+        aria-label="Close social archive"
+      ></button>
+
+      <div class="social-archive__panel social-archive__panel--profile">
+        <header class="social-archive__header">
+          <div>
+            <span>ARCHIVED PROJECT / INSTAGRAM</span>
+            <h2 id="social-archive-title">@GTHEFIGHTER</h2>
+          </div>
+
+          <button
+            class="social-archive__close"
+            type="button"
+            data-social-archive-close
+            aria-label="Close social archive"
+          >
+            &times;
+          </button>
+        </header>
+
+        <div class="social-archive__body social-archive__body--profile">
+          <div class="social-archive__archive-status">
+            <span>ARCHIVED SOCIAL RECORD</span>
+            <p>GTHEFIGHTER, 2021-2022.</p>
+          </div>
+
+          <div class="social-archive__instagram-shell">
+            <iframe
+              class="social-archive__instagram-embed"
+              src="https://www.instagram.com/gthefighter/embed/"
+              title="@gthefighter Instagram profile"
+              loading="lazy"
+              scrolling="yes"
+              frameborder="0"
+              allowtransparency="true"
+            ></iframe>
+          </div>
+        </div>
+
+        <footer class="social-archive__footer">
+          <span>ARCHIVED PROJECT</span>
+
+          <a
+            class="social-archive__open"
+            href="https://www.instagram.com/gthefighter/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            OPEN INSTAGRAM
+          </a>
+        </footer>
+      </div>
+    </section>
+    <!-- GTC SOCIAL ARCHIVE V4 MODAL END -->
+</main>
 
   <script type="module" src="./app.js?v=artwork-slider-v1"></script>
+  <script src="./social-archive.js?v=gthefighter-instagram-profile-v4"></script>
 </body>
 </html>

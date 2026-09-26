@@ -501,3 +501,406 @@ body,
 }
 
 /* GTHEFIGHTER FRAME VISIBILITY TEXT FIX V2 END */
+
+
+/* GTC GTHEFIGHTER SOCIAL ARCHIVE V3 START */
+
+.social-archive-trigger {
+  position: absolute;
+  z-index: 104;
+  top: clamp(62px, 7.5vw, 94px);
+  right: clamp(22px, 4vw, 56px);
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 1px solid rgba(234, 209, 178, .68);
+  background: rgba(5, 5, 5, .64);
+  color: var(--cream);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  cursor: pointer;
+  pointer-events: auto;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.social-archive-trigger:hover,
+.social-archive-trigger:focus-visible {
+  background: var(--cream);
+  color: var(--black);
+  outline: none;
+}
+
+.social-archive {
+  position: absolute;
+  inset: 0;
+  z-index: 180;
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 4vw, 46px);
+  pointer-events: auto;
+}
+
+.social-archive[hidden] {
+  display: none !important;
+}
+
+.social-archive__backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgba(0, 0, 0, .78);
+  cursor: default;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.social-archive__panel {
+  position: relative;
+  z-index: 1;
+  width: min(640px, 100%);
+  max-height: min(660px, calc(100dvh - 40px));
+  overflow: auto;
+  border: 1px solid var(--cream);
+  background: #050505;
+  color: var(--cream);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, .48);
+}
+
+.social-archive__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 18px 20px 17px;
+  border-bottom: 1px solid rgba(234, 209, 178, .42);
+}
+
+.social-archive__header span,
+.social-archive__eyebrow,
+.social-archive__meta dt,
+.social-archive__meta dd,
+.social-archive__footer,
+.social-archive__open {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.social-archive__header span {
+  display: block;
+  margin-bottom: 7px;
+  color: rgba(234, 209, 178, .62);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: .16em;
+}
+
+.social-archive__header h2 {
+  margin: 0;
+  font-family: "Times New Roman", Times, serif;
+  font-size: clamp(22px, 4vw, 38px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: .08em;
+}
+
+.social-archive__close {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  margin: -6px -8px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--cream);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 27px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.social-archive__close:hover,
+.social-archive__close:focus-visible {
+  color: #fff;
+  outline: 1px solid var(--cream);
+  outline-offset: -4px;
+}
+
+.social-archive__body {
+  display: grid;
+  grid-template-columns: minmax(150px, .8fr) minmax(0, 1.2fr);
+  min-height: 300px;
+}
+
+.social-archive__identity {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(22px, 5vw, 44px);
+  border-right: 1px solid rgba(234, 209, 178, .28);
+  overflow: hidden;
+}
+
+.social-archive__identity span {
+  display: block;
+  font-family: Arial Black, Arial, Helvetica, sans-serif;
+  font-size: clamp(44px, 8vw, 86px);
+  font-weight: 900;
+  line-height: .78;
+  letter-spacing: -.07em;
+}
+
+.social-archive__identity span:nth-child(2) {
+  margin-left: .45em;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--cream);
+}
+
+.social-archive__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(24px, 5vw, 46px);
+}
+
+.social-archive__eyebrow {
+  margin: 0 0 14px;
+  color: rgba(234, 209, 178, .58);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: .16em;
+}
+
+.social-archive__copy > p:not(.social-archive__eyebrow) {
+  margin: 0;
+  max-width: 390px;
+  font-family: "Times New Roman", Times, serif;
+  font-size: clamp(16px, 2vw, 21px);
+  line-height: 1.4;
+  letter-spacing: .03em;
+}
+
+.social-archive__meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 28px 0 0;
+  padding: 18px 0 0;
+  border-top: 1px solid rgba(234, 209, 178, .28);
+}
+
+.social-archive__meta div {
+  display: grid;
+  gap: 5px;
+}
+
+.social-archive__meta dt {
+  color: rgba(234, 209, 178, .54);
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: .15em;
+}
+
+.social-archive__meta dd {
+  margin: 0;
+  font-size: 9px;
+  letter-spacing: .1em;
+}
+
+.social-archive__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 20px;
+  border-top: 1px solid rgba(234, 209, 178, .42);
+  font-size: 8px;
+  letter-spacing: .13em;
+}
+
+.social-archive__footer > span {
+  color: rgba(234, 209, 178, .54);
+}
+
+.social-archive__open {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 8px 14px;
+  border: 1px solid var(--cream);
+  color: var(--cream);
+  text-decoration: none;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .12em;
+}
+
+.social-archive__open:hover,
+.social-archive__open:focus-visible {
+  background: var(--cream);
+  color: var(--black);
+  outline: none;
+}
+
+.social-archive-open #frame-viewer,
+.social-archive-open .artwork-scrubber,
+.social-archive-open .reset-view,
+.social-archive-open .social-archive-trigger {
+  pointer-events: none !important;
+}
+
+@media (max-width: 680px), (hover: none), (pointer: coarse) {
+  .social-archive-trigger {
+    top: max(54px, calc(env(safe-area-inset-top) + 34px));
+    right: max(14px, calc(env(safe-area-inset-right) + 14px));
+    min-height: 38px;
+    padding: 8px 9px;
+    font-size: 9px;
+  }
+
+  .social-archive {
+    padding:
+      max(12px, env(safe-area-inset-top))
+      max(12px, env(safe-area-inset-right))
+      max(12px, env(safe-area-inset-bottom))
+      max(12px, env(safe-area-inset-left));
+  }
+
+  .social-archive__panel {
+    width: 100%;
+    max-height: calc(100dvh - 24px);
+  }
+
+  .social-archive__header {
+    padding: 16px;
+  }
+
+  .social-archive__body {
+    grid-template-columns: 1fr;
+  }
+
+  .social-archive__identity {
+    min-height: 150px;
+    padding: 26px 20px 22px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(234, 209, 178, .28);
+  }
+
+  .social-archive__identity span {
+    font-size: clamp(48px, 15vw, 74px);
+  }
+
+  .social-archive__copy {
+    padding: 24px 18px;
+  }
+
+  .social-archive__copy > p:not(.social-archive__eyebrow) {
+    font-size: 17px;
+  }
+
+  .social-archive__footer {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 14px 16px 16px;
+  }
+
+  .social-archive__open {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+/* GTC GTHEFIGHTER SOCIAL ARCHIVE V3 END */
+
+
+/* GTC GTHEFIGHTER INSTAGRAM PROFILE V4 START */
+
+.social-archive__panel--profile {
+  width: min(760px, 100%) !important;
+}
+
+.social-archive__body--profile {
+  display: block !important;
+  min-height: 0 !important;
+}
+
+.social-archive__archive-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+
+  padding: 12px 16px;
+
+  border-bottom: 1px solid rgba(234, 209, 178, .3);
+  background: #050505;
+  color: var(--cream);
+}
+
+.social-archive__archive-status span,
+.social-archive__archive-status p {
+  margin: 0;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 8px;
+  line-height: 1.25;
+  letter-spacing: .13em;
+}
+
+.social-archive__archive-status span {
+  color: rgba(234, 209, 178, .62);
+}
+
+.social-archive__instagram-shell {
+  width: 100%;
+  min-height: 520px;
+
+  overflow: hidden;
+
+  background: #fff;
+}
+
+.social-archive__instagram-embed {
+  display: block;
+
+  width: 100%;
+  height: 520px;
+  min-height: 520px;
+
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  background: #fff;
+}
+
+@media (max-width: 680px), (hover: none), (pointer: coarse) {
+  .social-archive__panel--profile {
+    width: 100% !important;
+  }
+
+  .social-archive__archive-status {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+
+    padding: 11px 14px;
+  }
+
+  .social-archive__instagram-shell {
+    min-height: 500px;
+  }
+
+  .social-archive__instagram-embed {
+    height: 500px;
+    min-height: 500px;
+  }
+}
+
+/* GTC GTHEFIGHTER INSTAGRAM PROFILE V4 END */

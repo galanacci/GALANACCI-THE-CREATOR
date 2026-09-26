@@ -332,3 +332,20 @@ input {
   }
 }
 /* SS SLIDER OS FRAME V2 END */
+
+
+/* GTC BLACKBOOK WATERMARK LAYER V1 START */
+
+/*
+  BLACKBOOK's .book-stage used position:fixed, which created a
+  stacking context around the scrubber. That prevented the scrubber's
+  z-index from rising above the shared archive watermark pseudo-layer.
+
+  The parent .flipbook is already fixed/inset:0, so absolute positioning
+  preserves the exact full-screen geometry without the extra stacking context.
+*/
+.book-stage {
+  position: absolute !important;
+}
+
+/* GTC BLACKBOOK WATERMARK LAYER V1 END */
