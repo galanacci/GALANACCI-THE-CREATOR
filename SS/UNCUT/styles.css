@@ -1,0 +1,60 @@
+@font-face {
+  font-family: "Windows95";
+  src: url("../../assets/fonts/w95fa.woff2") format("woff2");
+  font-display: swap;
+}
+
+:root {
+  --font-brand: "Windows95", "Courier New", monospace;
+  --os-cream: #ead1b2;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #000; }
+body { color: var(--os-cream); font-family: var(--font-brand); }
+.documentary-room { position: relative; width: 100%; height: 100%; height: 100dvh; }
+.documentary-environment { height: 100%; }
+.documentary-environment-header { color: var(--os-cream); }
+.documentary-environment-header p { color: rgba(234, 209, 178, .72); }
+.documentary-environment-header h1 { margin: 9px 0 0; font-size: clamp(15px, 1.4vw, 20px); letter-spacing: .16em; }
+.documentary-crt-interface { bottom: max(18px, env(safe-area-inset-bottom)); }
+.documentary-crt-controls > button,
+.documentary-crt-archive-toggle {
+  min-height: 44px;
+  border-color: var(--os-cream);
+  color: var(--os-cream);
+  background: #000;
+}
+#documentary-room .documentary-crt-controls > button:is(:hover, :focus-visible),
+#documentary-room .documentary-crt-archive-toggle:is(:hover, :focus-visible, [aria-expanded="true"]) {
+  border-color: var(--os-cream);
+  color: #000;
+  background: var(--os-cream) !important;
+  outline: 0;
+}
+.documentary-crt-archive-menu { border-color: var(--os-cream); }
+.documentary-crt-year-filter:focus-visible,
+.documentary-crt-now-playing span,
+.documentary-crt-episode-option.is-current span,
+.documentary-crt-episode-option.is-current strong { color: var(--os-cream); }
+.documentary-crt-episode-option.is-current,
+.documentary-crt-episode-option:focus-visible { outline: 1px solid var(--os-cream); outline-offset: -1px; }
+.documentary-crt-episode-list { scrollbar-color: var(--os-cream) #080808; }
+.documentary-crt-now-playing p { color: rgba(234, 209, 178, .76); }
+.documentary-crt-episode-option { color: rgba(234, 209, 178, .76); }
+.documentary-crt-episode-option:is(:hover, :focus-visible, .is-current) { color: var(--os-cream); }
+.documentary-crt-episode-option time { color: rgba(234, 209, 178, .55); }
+
+@media (max-width: 680px) {
+  .documentary-crt-interface { bottom: max(18px, env(safe-area-inset-bottom)); }
+  .documentary-crt-controls { width: calc(100vw - 28px); }
+  .documentary-crt-archive-menu { top: 20px; bottom: 82px; width: calc(100vw - 28px); }
+  .documentary-crt-controls > button,
+  .documentary-crt-archive-toggle { min-width: 0; min-height: 44px; font-size: 11px; letter-spacing: .08em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .documentary-crt-glass::before,
+  .documentary-crt-glass::after { animation: none; }
+}

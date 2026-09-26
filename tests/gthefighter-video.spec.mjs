@@ -157,7 +157,7 @@ test("iframe playback starts again after closing and reopening the app", async (
   await launch();
   await appWindow.getByRole("button", { name: "Close app" }).click();
   await expect(appWindow).toBeHidden();
-  await expect(page.locator("#experiment-frame")).toHaveAttribute("src", "about:blank");
+  await expect(page.locator("#experiment-frame")).toHaveAttribute("data-app-url", "about:blank");
   await expect(folder).toBeVisible();
 
   await launch();

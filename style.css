@@ -417,6 +417,29 @@ button {
   letter-spacing: .14em;
 }
 
+.experiment-window__chrome > span {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.experiment-window__share {
+  align-self: stretch;
+  min-width: 64px;
+  padding: 0 10px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+
+.experiment-window__share:hover,
+.experiment-window__share:focus-visible {
+  background: rgba(0, 0, 0, .12);
+  outline: 0;
+}
+
 .experiment-window__body {
   flex: 1 1 auto;
   min-height: 0;

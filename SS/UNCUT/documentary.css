@@ -1,0 +1,255 @@
+/* Video Journal — the reconstructed workspace and its live CRT archive. */
+.documentary-room {
+    overflow: hidden;
+    background: #17120e;
+}
+
+.documentary-environment {
+    position: absolute;
+    inset: 0;
+    --crt-screen-radius: 3% / 4.5%;
+    z-index: 4;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    overflow: hidden;
+    background: #000;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 700ms ease, visibility 0s linear 0s;
+}
+
+.world-room .documentary-environment.page-template { display: block; grid-template: none; gap: 0; width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+
+.documentary-scene,
+.documentary-renderer { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.documentary-scene { z-index: 0; opacity: 0; transition: opacity 900ms ease; }
+.documentary-scene.is-ready { opacity: 1; }
+.documentary-renderer { touch-action: manipulation; filter: brightness(.84) contrast(1.09) saturate(.9) sepia(.19); }
+
+.documentary-crt-player {
+    position: absolute;
+    z-index: 2;
+    left: var(--crt-left, 50%);
+    top: var(--crt-top, 50%);
+    width: var(--crt-width, 0px);
+    height: var(--crt-height, 0px);
+    overflow: hidden;
+    border-radius: var(--crt-screen-radius);
+    background: #010202;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    clip-path: inset(0 round 3% / 4.5%);
+    transform: none;
+    transition: opacity 360ms ease, visibility 0s linear 360ms;
+    filter: brightness(.86) contrast(1.14) saturate(.78) sepia(.06);
+}
+.documentary-crt-glass {
+    position: absolute;
+    z-index: 3;
+    left: var(--crt-left, 50%);
+    top: var(--crt-top, 50%);
+    width: var(--crt-width, 0px);
+    height: var(--crt-height, 0px);
+    overflow: hidden;
+    border-radius: var(--crt-screen-radius);
+    clip-path: inset(0 round 3% / 4.5%);
+    pointer-events: none;
+    box-shadow: inset 0 0 50px 19px rgba(0,0,0,.5);
+    transition: box-shadow 700ms ease;
+}
+.documentary-crt-player.is-playing:not(.is-tuning) + .documentary-crt-glass {
+    box-shadow:
+        0 -10px 20px -7px rgba(109,188,216,.2),
+        12px 0 18px -11px rgba(109,188,216,.16),
+        -12px 0 18px -11px rgba(109,188,216,.16),
+        inset 0 10px 13px -11px rgba(157,217,231,.13),
+        inset 10px 0 13px -12px rgba(157,217,231,.1),
+        inset -10px 0 13px -12px rgba(157,217,231,.1),
+        inset 0 0 38px 14px rgba(0,0,0,.3);
+}
+.documentary-crt-player.is-playing {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+    transition: opacity 360ms ease, visibility 0s linear 0s;
+}
+.documentary-crt-player iframe { position: relative; z-index: 1; display: block; width: 100%; height: 100%; border: 0; border-radius: inherit; background: #000; opacity: 0; transition: opacity 760ms ease; }
+.documentary-crt-player iframe.is-signal-ready { opacity: .94; }
+.documentary-crt-player.is-tuning iframe { opacity: 0; transition-duration: 170ms; }
+.documentary-crt-glass::before,
+.documentary-crt-glass::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; }
+.documentary-crt-glass::before {
+    z-index: 1;
+    opacity: .44;
+    background:
+        linear-gradient(180deg,transparent 0%,transparent 37%,rgba(226,235,227,.2) 47%,rgba(0,0,0,.16) 53%,transparent 64%,transparent 100%) 0 -120% / 100% 220% no-repeat,
+        repeating-linear-gradient(0deg,rgba(8,8,8,.36) 0,rgba(8,8,8,.36) 1px,rgba(255,255,255,.1) 2px,transparent 4px) 0 0 / 100% 4px,
+        repeating-linear-gradient(90deg,rgba(255,40,40,.06) 0 1px,rgba(70,255,120,.045) 1px 2px,rgba(80,120,255,.055) 2px 3px) 0 0 / 3px 100%;
+    mix-blend-mode: soft-light;
+    animation: documentary-crt-scan 3.2s linear infinite,documentary-crt-flicker 2.9s steps(2,end) infinite;
+}
+.documentary-crt-glass::after {
+    z-index: 2;
+    box-shadow: inset 0 0 42px 16px rgba(0,0,0,.31);
+    background:
+        linear-gradient(180deg,transparent 0%,transparent 76%,rgba(0,0,0,.12) 100%),
+        radial-gradient(ellipse at 42% 0%,rgba(224,226,218,.075),transparent 39%),
+        radial-gradient(ellipse at 0% 0%,rgba(0,0,0,.52) 0%,rgba(0,0,0,.32) 11%,transparent 33%),
+        radial-gradient(ellipse at 100% 0%,rgba(0,0,0,.52) 0%,rgba(0,0,0,.32) 11%,transparent 33%),
+        radial-gradient(ellipse at 0% 100%,rgba(0,0,0,.52) 0%,rgba(0,0,0,.32) 11%,transparent 33%),
+        radial-gradient(ellipse at 100% 100%,rgba(0,0,0,.52) 0%,rgba(0,0,0,.32) 11%,transparent 33%),
+        radial-gradient(ellipse at center,transparent 52%,rgba(0,0,0,.09) 74%,rgba(0,0,0,.38) 100%);
+    animation: documentary-crt-glass-pulse 3.8s ease-in-out infinite;
+}
+@keyframes documentary-crt-scan {
+    0% { background-position: 0 -120%,0 0,0 0; }
+    47% { background-position: 0 18%,0 2px,1px 0; }
+    48% { background-position: 0 31%,0 7px,5px 0; }
+    100% { background-position: 0 220%,0 12px,9px 0; }
+}
+@keyframes documentary-crt-flicker {
+    0%, 89%, 100% { opacity: .44; }
+    90% { opacity: .62; }
+    92% { opacity: .35; }
+    94% { opacity: .54; }
+}
+@keyframes documentary-crt-glass-pulse {
+    0%,100% { opacity: .97; filter: brightness(.99); }
+    42% { opacity: 1; filter: brightness(1.055); }
+    68% { opacity: .985; filter: brightness(1.015); }
+}
+
+.documentary-environment::before,
+.documentary-environment::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.documentary-environment::before {
+    background:
+        radial-gradient(circle at 38% 47%,rgba(173,84,28,.07) 0%,rgba(91,43,18,.035) 31%,transparent 58%),
+        radial-gradient(circle at 50% 43%,rgba(0,0,0,.02) 18%,rgba(14,7,3,.31) 61%,rgba(0,0,0,.9) 125%);
+}
+.documentary-environment::after { opacity: .18; background: repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0,rgba(255,255,255,.018) 1px,transparent 1px,transparent 4px); mix-blend-mode: screen; }
+
+.documentary-environment > .room-return { z-index: 8; }
+.documentary-environment-header { position: absolute; top: 40px; right: 40px; z-index: 3; color: #fff; text-align: right; pointer-events: none; }
+.documentary-environment-header p,
+.documentary-environment-header h2 { margin: 0; font-family: var(--font-brand); letter-spacing: .16em; }
+.documentary-environment-header p { color: rgba(255,255,255,.42); font-size: 9px; }
+.documentary-environment-header h2 { margin-top: 9px; font-size: clamp(15px,1.4vw,20px); }
+
+.documentary-scene-status { position: absolute; left: 50%; top: 50%; z-index: 3; margin: 0; color: rgba(255,255,255,.48); font-family: var(--font-brand); font-size: 9px; letter-spacing: .18em; transform: translate(-50%,-50%); transition: opacity 280ms ease; }
+.documentary-scene.is-ready + .documentary-scene-status { opacity: 0; pointer-events: none; }
+
+.documentary-crt-interface { position: absolute; left: 0; right: 0; bottom: max(25px,env(safe-area-inset-bottom)); z-index: 5; display: grid; justify-items: center; gap: 10px; }
+.documentary-crt-controls {
+    width: min(720px,calc(100vw - 40px));
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    column-gap: clamp(8px,1.5vw,14px);
+    row-gap: 15px;
+    align-items: stretch;
+}
+.documentary-crt-controls:not([hidden]) { display: grid; }
+.documentary-crt-controls > button,
+.documentary-crt-archive-toggle {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 72px;
+    height: 42px;
+    min-height: 42px;
+    margin: 0;
+    padding: 0 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #fff;
+    background: #000;
+    color: #fff;
+    font-family: var(--font-brand);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .18em;
+    cursor: pointer;
+    transition: color 160ms ease,border-color 160ms ease;
+}
+.documentary-crt-controls > button:is(:hover,:focus-visible),
+.documentary-crt-archive-toggle:is(:hover,:focus-visible,[aria-expanded="true"]) { border-color: #ead1b2; outline: 0; color: #ead1b2; }
+#documentary-room .documentary-crt-controls > button,
+#documentary-room .documentary-crt-archive-toggle,
+#documentary-room .documentary-crt-controls > button:is(:hover,:focus,:focus-visible,:active),
+#documentary-room .documentary-crt-archive-toggle:is(:hover,:focus,:focus-visible,:active,[aria-expanded="true"]) {
+    background: #000 !important;
+}
+.documentary-crt-controls > button:disabled { opacity: .3; cursor: default; }
+.documentary-crt-controls > button { gap: 8px; }
+.documentary-crt-controls > button.is-previous::before,
+.documentary-crt-controls > button.is-next::after {
+    content: '➔'; display: inline-block; flex: 0 0 auto;
+    font-family: Arial,sans-serif; font-size: 15px; line-height: 1; letter-spacing: 0;
+}
+.documentary-crt-controls > button.is-previous::before { transform: rotate(180deg); }
+.documentary-crt-archive-control { position: relative; min-width: 0; }
+.documentary-crt-archive-toggle { position: relative; z-index: 10; flex-direction: column; gap: 3px; }
+.documentary-crt-controls > .room-navigation-credit { grid-column: 1 / -1; justify-self: center; margin: 0; color: #fff; font-size: 8px; font-weight: 700; line-height: normal; letter-spacing: 0; text-align: center; white-space: nowrap; }
+.documentary-crt-archive-menu {
+    position: fixed; left: 50%; top: 96px; bottom: 108px; z-index: 9;
+    box-sizing: border-box; width: min(720px,calc(100vw - 80px));
+    padding: 24px 28px; border: 1px solid rgba(255,255,255,.5); background: rgba(0,0,0,.98);
+    color: #fff; overflow: hidden; opacity: 0; visibility: hidden; flex-direction: column;
+    transform: translate(-50%,16px);
+    transition: opacity 180ms ease,transform 240ms ease,visibility 0s linear 240ms;
+    pointer-events: none;
+}
+.documentary-crt-archive-menu.is-open { display: flex; opacity: 1; visibility: visible; transform: translate(-50%,0); transition-delay: 0s; pointer-events: auto; }
+.documentary-crt-archive-menu header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 2px 4px 12px; border-bottom: 1px solid rgba(255,255,255,.18); }
+.documentary-crt-archive-menu header p { margin: 0; font-family: var(--font-brand); font-size: 12px; font-weight: 600; letter-spacing: .18em; }
+.documentary-crt-year-control { position: relative; display: inline-flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.documentary-crt-year-control::after { content: ""; position: static; flex: 0 0 auto; width: 6px; height: 6px; border-right: 1px solid currentColor; border-bottom: 1px solid currentColor; pointer-events: none; transform: translateY(-2px) rotate(45deg); }
+.documentary-crt-year-filter { width: auto; min-width: 0; padding: 7px 0; border: 0; border-radius: 0; outline: 0; appearance: none; background: #000; color: #fff; font-family: var(--font-brand); font-size: 11px; letter-spacing: .12em; text-align: right; cursor: pointer; }
+.documentary-crt-year-filter:focus-visible { border: 0; outline: 0; color: #ead1b2; }
+.documentary-crt-now-playing { flex: 0 0 auto; padding: 16px 4px 17px; border-bottom: 1px solid rgba(255,255,255,.18); }
+.documentary-crt-now-playing span { display: block; color: #ead1b2; font-family: var(--font-brand); font-size: 11px; font-weight: 600; letter-spacing: .17em; }
+.documentary-crt-now-playing h3 { margin: 8px 0 7px; color: #fff; font-family: var(--font-brand); font-size: 12px; line-height: 1.35; letter-spacing: .12em; }
+.documentary-crt-now-playing p { max-width: 620px; margin: 0; color: rgba(255,255,255,.68); font-family: var(--font-brand); font-size: 11px; line-height: 1.65; letter-spacing: .07em; }
+.documentary-crt-episode-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: #ead1b2 #080808; }
+.documentary-crt-episode-option { width: 100%; min-height: 54px; display: grid; grid-template-columns: 52px minmax(0,1fr) auto; align-items: center; gap: 14px; padding: 13px 4px; border: 0; border-bottom: 1px solid rgba(255,255,255,.12); background: #000; color: rgba(255,255,255,.72); text-align: left; cursor: pointer; }
+.documentary-crt-episode-option span,
+.documentary-crt-episode-option time { font-family: var(--font-brand); font-size: 9px; letter-spacing: .12em; }
+.documentary-crt-episode-option strong { overflow: hidden; font-family: var(--font-brand); font-size: 11px; font-weight: 600; letter-spacing: .1em; text-overflow: ellipsis; white-space: nowrap; }
+.documentary-crt-episode-option time { color: rgba(255,255,255,.4); }
+.documentary-crt-episode-option:is(:hover,:focus-visible,.is-current) { outline: 0; color: #fff; }
+.documentary-crt-episode-option.is-current span { color: #ead1b2; }
+.documentary-crt-episode-option.is-current { outline: 1px solid #ead1b2; outline-offset: -1px; }
+.documentary-crt-episode-option.is-current strong { color: #ead1b2; }
+
+html[data-performance-tier="low"] .documentary-renderer { filter: brightness(.86) contrast(1.08) saturate(.88); }
+html[data-performance-tier="low"] .documentary-crt-player::after { animation: documentary-crt-scan 4.8s linear infinite; }
+html[data-performance-tier="low"] .documentary-crt-glass { animation: none; }
+
+@media (max-width: 680px) {
+    .documentary-environment-header { top: 24px; right: 24px; }
+    .documentary-crt-interface { bottom: max(25px,env(safe-area-inset-bottom)); }
+    .documentary-crt-controls { width: calc(100vw - 40px); grid-template-columns: repeat(3,minmax(0,1fr)); column-gap: 8px; row-gap: 15px; }
+    .documentary-crt-controls > button,
+    .documentary-crt-archive-toggle { padding: 0 7px; font-size: 9px; }
+    .documentary-crt-archive-menu { top: max(78px,calc(env(safe-area-inset-top) + 62px)); bottom: 110px; width: calc(100vw - 36px); padding: 22px 18px; }
+    .documentary-crt-archive-menu header p { font-size: 13px; }
+    .documentary-crt-year-filter { font-size: 12px; }
+    .documentary-crt-episode-option { min-height: 68px; grid-template-columns: 46px minmax(0,1fr); gap: 8px 12px; padding: 14px 6px; }
+    .documentary-crt-episode-option strong { font-size: 13px; line-height: 1.4; white-space: normal; }
+    .documentary-crt-episode-option span,
+    .documentary-crt-episode-option time { font-size: 10px; line-height: 1.3; }
+    .documentary-crt-episode-option time { grid-column: 2; }
+    .documentary-crt-now-playing { padding: 16px 4px 17px; touch-action: none; cursor: pointer; }
+    .documentary-crt-now-playing span { font-size: 12px; }
+    .documentary-crt-now-playing h3 { font-size: 14px; line-height: 1.4; }
+    .documentary-crt-now-playing p { font-size: 13px; line-height: 1.65; }
+}

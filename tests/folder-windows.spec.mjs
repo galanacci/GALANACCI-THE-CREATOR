@@ -85,7 +85,7 @@ test("internal .EXE opens in iframe and closing it preserves the folder", async 
   const appWindow = page.locator("#experiment-window");
   await expect(appWindow).toBeVisible();
   await expect(page.locator("#experiment-frame")).toHaveAttribute(
-    "src",
+    "data-app-url",
     /experiments\/2\(XY-T\)\/index\.html$/
   );
   await expect(folder).toBeVisible();
@@ -95,7 +95,7 @@ test("internal .EXE opens in iframe and closing it preserves the folder", async 
   else await close.click();
 
   await expect(appWindow).toBeHidden();
-  await expect(page.locator("#experiment-frame")).toHaveAttribute("src", "about:blank");
+  await expect(page.locator("#experiment-frame")).toHaveAttribute("data-app-url", "about:blank");
   await expect(folder).toBeVisible();
   await expect(row).toBeFocused();
 });
@@ -116,7 +116,7 @@ test("GTHEFIGHTER.EXE is listed in SS and opens as an internal 3D app", async ({
   await expect(appWindow).toBeVisible();
   await expect(page.locator("#experiment-window-title")).toHaveText("GTHEFIGHTER.EXE");
   await expect(page.locator("#experiment-frame")).toHaveAttribute(
-    "src",
+    "data-app-url",
     /SS\/GTHEFIGHTER\/index\.html$/
   );
   await expect(folder).toBeVisible();

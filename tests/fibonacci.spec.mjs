@@ -54,7 +54,7 @@ test("FIBONACCI.EXE opens from APPS without a watermark and animates after start
   else await row.dblclick();
 
   await expect(page.locator("#experiment-frame")).toHaveAttribute("allow", /microphone/);
-  await expect(page.locator("#experiment-frame")).toHaveAttribute("src", /experiments\/FIBONACCI\/index\.html$/);
+  await expect(page.locator("#experiment-frame")).toHaveAttribute("data-app-url", /experiments\/FIBONACCI\/index\.html$/);
   const frame = page.frameLocator("#experiment-frame");
   await expect(frame.locator("#fibonacci-container circle")).toHaveCount(5000);
   await expect(frame.locator(".watermark, .watermark-container")).toHaveCount(0);

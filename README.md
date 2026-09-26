@@ -22,6 +22,8 @@ The live desktop currently contains:
 |  `- icons/
 |- js/
 |  |- apps.js
+|  |- folder-catalog.js
+|  |- render-folder-catalog.js
 |  `- desktop.js
 |- experiments/
 |- SS/
@@ -35,9 +37,23 @@ Open `index.html` in a browser for a simple local preview. The root page is also
 the GitHub Pages entry point. Because the site uses JavaScript modules, a local
 HTTP server is recommended when testing module or asset loading.
 
-## Adding an application
+## Adding a folder application
 
-Edit `js/apps.js` and add an entry to `APPS`:
+Add the self-contained project under `experiments/` (APPS) or `SS/`, then add
+one entry to the matching array in `js/folder-catalog.js`. The catalogue holds
+its label, type, page URL, year, description, accessible name, and share slug.
+The folder rows are rendered before the OS attaches its launch and filter
+controls. Keep the folder window shells in `index.html`; do not add rows there.
+If you introduce a new type, add its option to that folder's filter in
+`index.html` as well.
+
+If the app has a share page, run `npm run build:share` after changing its
+catalogue details. Check the generated pages and preview image before committing.
+
+## Adding a desktop shortcut
+
+Only for an app that belongs directly on the desktop, edit `js/apps.js` and
+add an entry to `APPS`:
 
 ```js
 {

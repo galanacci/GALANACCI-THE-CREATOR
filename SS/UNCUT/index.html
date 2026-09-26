@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="A weekly video journal.">
+  <title>UNCUT.EXE</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="./documentary.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main id="documentary-room" class="documentary-room is-open" aria-label="UNCUT weekly video journal">
+    <div id="documentary-environment" class="documentary-environment" aria-label="UNCUT workspace">
+      <header class="documentary-environment-header" aria-hidden="true">
+        <p>GALANACCI OS / SS</p>
+        <h1>UNCUT</h1>
+      </header>
+      <div id="documentary-scene" class="documentary-scene" aria-hidden="true"></div>
+      <div id="documentary-crt-player" class="documentary-crt-player" aria-hidden="true"></div>
+      <div class="documentary-crt-glass" aria-hidden="true"></div>
+      <p id="documentary-scene-status" class="documentary-scene-status" role="status" aria-live="polite">RECONSTRUCTING WORKSPACE…</p>
+      <div class="documentary-crt-interface">
+        <div id="documentary-crt-controls" class="documentary-crt-controls" aria-label="Choose an UNCUT episode" hidden>
+          <button id="documentary-crt-previous" class="is-previous" type="button" data-crt-sound>PREVIOUS</button>
+          <div class="documentary-crt-archive-control">
+            <button id="documentary-crt-archive-toggle" class="documentary-crt-archive-toggle" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="documentary-crt-archive-menu">EPISODES</button>
+            <section id="documentary-crt-archive-menu" class="documentary-crt-archive-menu" aria-label="UNCUT episode archive" aria-hidden="true" inert></section>
+          </div>
+          <button id="documentary-crt-next" class="is-next" type="button" data-crt-sound>NEXT</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

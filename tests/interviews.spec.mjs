@@ -289,7 +289,7 @@ test("INTERVIEWS opens inside the OS app window", async ({ page }, testInfo) => 
   else await row.dblclick();
 
   await expect(page.locator("#experiment-window")).toBeVisible();
-  await expect(page.locator("#experiment-frame")).toHaveAttribute("src", /SS\/INTERVIEWS\/index\.html$/);
+  await expect(page.locator("#experiment-frame")).toHaveAttribute("data-app-url", /SS\/INTERVIEWS\/index\.html$/);
   await expect(page.locator("#experiment-frame")).toHaveAttribute("allow", /autoplay/);
   const app = page.frameLocator("#experiment-frame");
   await expect(app.locator("[data-loading]")).toHaveClass(/is-hidden/, { timeout: 20_000 });

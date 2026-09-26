@@ -1,4 +1,8 @@
 import { APPS } from "./apps.js";
+import { renderFolderCatalogs } from "./render-folder-catalog.js?v=uncut-v1";
+
+// The folder rows must exist before route lookup and launch listeners bind.
+renderFolderCatalogs();
 
 const GRID = 16;
 const EDGE = 20;
@@ -24,6 +28,7 @@ const folderWindows = [...document.querySelectorAll("[data-folder-window]")];
 const experimentWindow = document.getElementById("experiment-window");
 const experimentFrame = document.getElementById("experiment-frame");
 const experimentTitle = document.getElementById("experiment-window-title");
+const shareExperiment = document.querySelector("[data-share-experiment]");
 const transition = document.getElementById("launch-transition");
 const launchLabel = document.getElementById("launch-label");
 
@@ -106,6 +111,7 @@ let selected = null;
 let dragging = null;
 let folderResizing = null;
 let launchLocked = false;
+let lastExperimentOpener = null;
 
 const storageGet = (key) => {
   try { return localStorage.getItem(key); }
@@ -407,13 +413,32 @@ function openFolderWindow(app) {
 
   folderWindow.hidden = false;
   folderWindow.setAttribute("aria-hidden", "false");
+  folderWindow.dispatchEvent(new Event("gtc:folder-open"));
 
   requestAnimationFrame(() => {
     folderWindow.classList.add("is-open");
   });
 }
 
-function closeExperimentWindow() {
+const appLinks = new Map(
+  [...document.querySelectorAll("[data-app-link]")].map((link) => [
+    (link.dataset.label || "").replace(/\.exe$/i, "").toLowerCase(),
+    link
+  ])
+);
+
+const appFromUrl = () => appLinks.get(
+  new URLSearchParams(window.location.search).get("app")?.toLowerCase()
+);
+
+function updateAppUrl(slug, method = "pushState") {
+  const url = new URL(window.location.href);
+  if (slug) url.searchParams.set("app", slug);
+  else url.searchParams.delete("app");
+  window.history[method](window.history.state, "", url);
+}
+
+function closeExperimentWindow({ syncUrl = true } = {}) {
   if (!experimentWindow) return;
 
   experimentWindow.classList.remove("is-fibonacci-expanded");
@@ -421,7 +446,14 @@ function closeExperimentWindow() {
   experimentWindow.hidden = true;
   experimentWindow.setAttribute("aria-hidden", "true");
 
-  if (experimentFrame) experimentFrame.src = "about:blank";
+  if (experimentFrame) {
+    experimentFrame.contentWindow?.location.replace("about:blank");
+    experimentFrame.dataset.appUrl = "about:blank";
+  }
+  if (lastExperimentOpener?.isConnected) lastExperimentOpener.focus();
+  if (syncUrl && new URLSearchParams(window.location.search).has("app")) {
+    updateAppUrl(null, "replaceState");
+  }
 }
 
 window.addEventListener("message", (event) => {
@@ -430,14 +462,14 @@ window.addEventListener("message", (event) => {
     event.source !== experimentFrame?.contentWindow ||
     event.data?.type !== "gtc:fibonacci-fullscreen" ||
     typeof event.data.expanded !== "boolean" ||
-    !new URL(experimentFrame.src).pathname.endsWith("/experiments/FIBONACCI/index.html") ||
+    !new URL(experimentFrame.dataset.appUrl || "about:blank").pathname.endsWith("/experiments/FIBONACCI/index.html") ||
     experimentWindow.hidden
   ) return;
 
   experimentWindow.classList.toggle("is-fibonacci-expanded", event.data.expanded);
 });
 
-function openExperimentWindow(url, label) {
+function openExperimentWindow(url, label, { syncUrl = true } = {}) {
   if (!experimentWindow || !experimentFrame) return;
 
   // Keep the folder that launched the app open underneath the .EXE window.
@@ -447,13 +479,60 @@ function openExperimentWindow(url, label) {
 
   experimentTitle.textContent = label;
   experimentFrame.title = label;
-  experimentFrame.src = url;
+  if (experimentFrame.dataset.appUrl !== url || experimentWindow.hidden) {
+    experimentFrame.contentWindow?.location.replace(url);
+    experimentFrame.dataset.appUrl = url;
+  }
 
   experimentWindow.hidden = false;
   experimentWindow.setAttribute("aria-hidden", "false");
 
   requestAnimationFrame(() => {
     experimentWindow.classList.add("is-open");
+  });
+
+  if (syncUrl) {
+    const slug = (label || "").replace(/\.exe$/i, "").toLowerCase();
+    if (appLinks.has(slug) && appFromUrl() !== appLinks.get(slug)) {
+      updateAppUrl(slug);
+    }
+  }
+}
+
+let pendingAppObserver = null;
+
+function syncAppRoute() {
+  pendingAppObserver?.disconnect();
+  pendingAppObserver = null;
+
+  const link = appFromUrl();
+  if (!link) {
+    if (!experimentWindow.hidden) closeExperimentWindow({ syncUrl: false });
+    return;
+  }
+
+  const ready = () =>
+    !document.getElementById("gtc-os-boot") &&
+    document.getElementById("portfolio-notice-layer")?.hidden;
+
+  if (ready()) {
+    lastExperimentOpener = null;
+    openExperimentWindow(link.href, link.dataset.label, { syncUrl: false });
+    return;
+  }
+
+  pendingAppObserver = new MutationObserver(() => {
+    if (!ready()) return;
+    pendingAppObserver.disconnect();
+    pendingAppObserver = null;
+    // Navigation may have changed while the boot or WELCOME was visible.
+    syncAppRoute();
+  });
+  pendingAppObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["hidden"]
   });
 }
 
@@ -711,14 +790,18 @@ window.addEventListener("resize", () => {
 
 window.addEventListener("pageshow", () => {
   launchLocked = false;
-  closeExperimentWindow();
+  closeExperimentWindow({ syncUrl: false });
 
   if (transition) {
     transition.classList.remove("is-open");
     transition.hidden = true;
     transition.setAttribute("aria-hidden", "true");
   }
+
+  syncAppRoute();
 });
+
+window.addEventListener("popstate", syncAppRoute);
 
 folderWindows.forEach(setupFolderWindow);
 
@@ -726,14 +809,56 @@ experimentWindow
   ?.querySelector("[data-close-experiment]")
   ?.addEventListener("click", closeExperimentWindow);
 
+shareExperiment?.addEventListener("click", async () => {
+  const slug = (experimentTitle.textContent || "")
+    .replace(/\.exe$/i, "")
+    .toLowerCase();
+  if (!appLinks.has(slug)) return;
+
+  const url = new URL(`/share/${encodeURIComponent(slug)}/`, window.location.origin);
+
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: experimentTitle.textContent, url: url.href });
+      return;
+    }
+
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(url.href);
+    } else {
+      const field = document.createElement("textarea");
+      field.value = url.href;
+      field.style.position = "fixed";
+      field.style.opacity = "0";
+      document.body.appendChild(field);
+      field.select();
+      const copied = document.execCommand("copy");
+      field.remove();
+      if (!copied) throw new Error("Clipboard unavailable");
+    }
+
+    shareExperiment.textContent = "COPIED";
+    window.setTimeout(() => { shareExperiment.textContent = "SHARE"; }, 1800);
+  } catch (error) {
+    if (error.name !== "AbortError") {
+      window.prompt("Copy app link", url.href);
+    }
+  }
+});
+
 document.querySelectorAll("[data-app-link]").forEach((link) => {
   const openLinkedApp = (event) => {
     event.preventDefault();
+
+    lastExperimentOpener = link;
 
     openExperimentWindow(
       link.href,
       link.dataset.label || link.textContent.trim()
     );
+    if (event.type === "keydown") {
+      experimentWindow.querySelector("[data-close-experiment]")?.focus();
+    }
   };
 
   link.addEventListener("click", (event) => {

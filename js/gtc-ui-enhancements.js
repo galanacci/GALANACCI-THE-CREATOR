@@ -19,56 +19,11 @@
     }
   }
 
-  const DESCRIPTIONS = Object.freeze({
-    "INTERVIEWS": "Recorded interviews and conversations.",
-    "INTERVIEWS.EXE": "Recorded interviews and conversations.",
-    "PUGILIST": "Cubist inspired boxing illustrations.",
-    "PUGILIST.EXE": "Cubist inspired boxing illustrations.",
-    "FIBONACCI": "An audio visualiser inspired by Fibonacci.",
-    "FIBONACCI.EXE": "An audio visualiser inspired by Fibonacci.",
-    "GALANACCI": "My initial clothing brand.",
-    "GALANACCI.EXE": "My initial clothing brand.",
-    "GVERSE": "A multi-disciplinary design studio.",
-    "GVERSE.EXE": "A multi-disciplinary design studio.",
-    "ARCHITECTURE": "Architecture portfolio.",
-    "ARCHITECTURE.EXE": "Architecture portfolio.",
-    "FIGHTPOSTERS": "Artworks of major boxing events in 2024",
-    "FIGHTPOSTERS.EXE": "Artworks of major boxing events in 2024",
-    "PUGILISM": "Artworks of boxing legends of different eras.",
-    "PUGILISM.EXE": "Artworks of boxing legends of different eras.",
-    "365LOOKS": "365 days, 365 looks. Daily fashion sketches.",
-    "365LOOKS.EXE": "365 days, 365 looks. Daily fashion sketches.",
-    "2(XY-T)": "An iteration of Bradley Tangonan's XY - T project.",
-    "2(XY-T).EXE": "An iteration of Bradley Tangonan's XY - T project.",
-    "2(XY+T)": "An iteration of Bradley Tangonan's XY - T project.",
-    "2(XY+T).EXE": "An iteration of Bradley Tangonan's XY - T project.",
-    "WARRIORSOFBOXING": "Ink drawings of boxing's hall of famers.",
-    "WARRIORSOFBOXING.EXE": "Ink drawings of boxing's hall of famers.",
-    "GTHEFIGHTER": "A digital art collection exploring boxing's greats.",
-    "GTHEFIGHTER.EXE": "A digital art collection exploring boxing's greats.",
-    "EVERYDAYS": "Mixed media digital art inspired by Beeple.",
-    "EVERYDAYS.EXE": "Mixed media digital art inspired by Beeple.",
-    "RENAISSANCE": "Digital paintings inspired by Caravaggio.",
-    "RENAISSANCE.EXE": "Digital paintings inspired by Caravaggio.",
-    "BLACKBOOK": "Old diary ink drawings.",
-    "BLACKBOOK.EXE": "Old diary ink drawings."
-  });
-
   function normalise(value) {
     return String(value || "")
       .replace(/\s+/g, " ")
       .trim()
       .toUpperCase();
-  }
-
-  function descriptionFor(value) {
-    const label = normalise(value);
-
-    const key = Object.keys(DESCRIPTIONS)
-      .sort((a, b) => b.length - a.length)
-      .find((candidate) => label.includes(candidate));
-
-    return key ? DESCRIPTIONS[key] : "";
   }
 
   function parseCreatedDate(value) {
@@ -182,9 +137,6 @@
         "app-list__meta"
       );
 
-      descriptionCell.textContent =
-        descriptionFor(nameCell?.textContent || "");
-
       [
         nameCell,
         descriptionCell,
@@ -234,12 +186,94 @@
     });
   }
 
+  function initFolderFilters(folder) {
+    const controls = folder.querySelector("[data-folder-controls]");
+    const list = folder.querySelector(".app-list");
+    if (!controls || !list) return;
+
+    const search = controls.querySelector("[data-folder-search]");
+    const type = controls.querySelector("[data-folder-type]");
+    const sort = controls.querySelector("[data-folder-sort]");
+    const clear = controls.querySelector("[data-folder-clear]");
+    const count = controls.querySelector("[data-folder-count]");
+    const body = folder.querySelector(".app-folder-body");
+    const rows = [...list.querySelectorAll(":scope > .app-list__row")];
+    const originalOrder = new Map(rows.map((row, index) => [row, index]));
+    const empty = document.createElement("div");
+    empty.className = "app-list__empty";
+    empty.textContent = "NO MATCHING FILES";
+    empty.hidden = true;
+    list.appendChild(empty);
+
+    function applyFilters() {
+      const query = search.value.trim().replace(/\s+/g, " ").toLowerCase();
+      const category = type.value;
+      const direction = sort.value === "oldest" ? 1 : -1;
+
+      rows
+        .slice()
+        .sort((a, b) => {
+          const aDate = parseCreatedDate(a.querySelector(".gtc-date-cell")?.textContent);
+          const bDate = parseCreatedDate(b.querySelector(".gtc-date-cell")?.textContent);
+          return direction * (aDate - bDate) || originalOrder.get(a) - originalOrder.get(b);
+        })
+        .forEach((row) => list.insertBefore(row, empty));
+
+      let visible = 0;
+      rows.forEach((row) => {
+        const name = row.dataset.label || row.querySelector(".app-list__name")?.textContent || "";
+        const description = row.querySelector(".app-list__description")?.textContent || "";
+        const matchesText = `${name} ${description}`.toLowerCase().includes(query);
+        const matchesType = category === "all" || row.dataset.appType === category;
+        row.hidden = !(matchesText && matchesType);
+        if (row.hidden) {
+          row.classList.remove("is-selected");
+          row.removeAttribute("aria-selected");
+        } else {
+          visible += 1;
+        }
+      });
+
+      empty.hidden = visible !== 0;
+      count.textContent = `${visible} / ${rows.length} FILES`;
+      clear.disabled = !query && category === "all" && sort.value === "newest";
+      if (body) {
+        body.scrollTop = 0;
+        body.scrollLeft = 0;
+      }
+    }
+
+    function resetFilters() {
+      search.value = "";
+      type.value = "all";
+      sort.value = "newest";
+      applyFilters();
+    }
+
+    search.addEventListener("input", applyFilters);
+    search.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !search.value) return;
+      event.preventDefault();
+      event.stopPropagation();
+      search.value = "";
+      applyFilters();
+    });
+    type.addEventListener("change", applyFilters);
+    sort.addEventListener("change", applyFilters);
+    clear.addEventListener("click", resetFilters);
+    folder.addEventListener("gtc:folder-open", resetFilters);
+    applyFilters();
+  }
+
   function enhanceFolders() {
     document
       .querySelectorAll(".app-list")
       .forEach(ensureDescriptionColumn);
 
     updateFolderTitles();
+    document
+      .querySelectorAll("[data-folder-window]")
+      .forEach(initFolderFilters);
   }
 
   function initNotice() {

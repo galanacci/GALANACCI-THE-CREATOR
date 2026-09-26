@@ -22,7 +22,7 @@
   <!-- GTC ENTRY RETURN V4.1 END -->
 
 <link rel="stylesheet" href="style.css?v=welcome-mobile-center-v6">
-  <link rel="stylesheet" href="styles/app-folder-list.css?v=folder-line-hierarchy-v2">
+  <link rel="stylesheet" href="styles/app-folder-list.css?v=mobile-folder-type-v1">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=ui-favicon-v2">
   <link rel="stylesheet" href="styles/gtc-os-boot.css?v=boot-word-hard-cut-js-v2">
 </head>
@@ -101,39 +101,23 @@
           <span role="columnheader">CREATED BY</span>
         </div>
 
-        <a
-          class="app-list__row"
-          data-app-link
-          data-label="2(XY+T).EXE"
-          href="./experiments/2(XY-T)/index.html"
-          aria-label="Open 2(XY+T).EXE experiment"
-          role="row"
-        >
-          <span class="app-list__name" role="cell">
-            <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
-            <span>2(XY+T).EXE</span>
-          </span>
-          <span class="app-list__description app-list__meta" role="cell">An iteration of Bradley Tangonan's XY - T project.</span>
-          <span class="app-list__meta gtc-date-cell" role="cell">2026</span>
-          <span class="app-list__meta gtc-created-cell" role="cell">GALANACCI</span>
-        </a>
-        <a
-          class="app-list__row"
-          data-app-link
-          data-label="FIBONACCI.EXE"
-          href="./experiments/FIBONACCI/index.html"
-          aria-label="Open FIBONACCI.EXE audio visualiser"
-          role="row"
-        >
-          <span class="app-list__name" role="cell">
-            <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
-            <span>FIBONACCI.EXE</span>
-          </span>
-          <span class="app-list__description app-list__meta" role="cell">An audio visualiser inspired by Fibonacci.</span>
-          <span class="app-list__meta gtc-date-cell" role="cell">2024</span>
-          <span class="app-list__meta gtc-created-cell" role="cell">GALANACCI</span>
-        </a>
+        <!-- Entries from js/folder-catalog.js render before OS controls initialise. -->
       </div>
+    </div>
+
+    <div class="app-folder-toolbar" data-folder-controls>
+      <input type="search" data-folder-search aria-label="Search APPS files" placeholder="SEARCH FILES" autocomplete="off">
+      <select data-folder-type aria-label="Filter APPS by type">
+        <option value="all">ALL TYPES</option>
+        <option value="visual">VISUAL</option>
+        <option value="audio">AUDIO</option>
+      </select>
+      <select data-folder-sort aria-label="Sort APPS files">
+        <option value="newest">NEWEST</option>
+        <option value="oldest">OLDEST</option>
+      </select>
+      <button type="button" data-folder-clear aria-label="Clear APPS filters" disabled>CLEAR</button>
+      <output data-folder-count aria-live="polite"></output>
     </div>
 
     <span class="folder-window__resize-handle folder-window__resize-handle--n" data-resize="n" aria-hidden="true"></span>
@@ -168,214 +152,26 @@
           <span role="columnheader">CREATED BY</span>
         </div>
 
-        <a
-          class="app-list__row"
-          data-app-link
-          data-label="WARRIORSOFBOXING.EXE"
-          href="./SS/WARRIORSOFBOXING/index.html"
-          aria-label="Open WARRIORSOFBOXING.EXE"
-          role="row"
-        >
-          <span class="app-list__name" role="cell">
-            <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
-            <span>WARRIORSOFBOXING.EXE</span>
-          </span>
-          <span class="app-list__meta" role="cell">2022</span>
-          <span class="app-list__meta" role="cell">GALANACCI</span>
-        </a>
-<a
-  class="app-list__row"
-  data-app-link
-  data-label="PUGILIST.EXE"
-  href="./SS/PUGILIST/index.html"
-  aria-label="Open PUGILIST.EXE archive"
-  role="row"
->
-  <span class="app-list__name" role="cell">
-    <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
-    <span>PUGILIST.EXE</span>
-  </span>
-  <span class="app-list__description app-list__meta" role="cell">Cubist inspired boxing illustrations.</span>
-  <span class="app-list__meta gtc-date-cell" role="cell">2024</span>
-  <span class="app-list__meta gtc-created-cell" role="cell">GALANACCI</span>
-</a>
-
-        <a
-          class="app-list__row"
-          data-app-link
-          data-label="GTHEFIGHTER.EXE"
-          href="./SS/GTHEFIGHTER/index.html"
-          aria-label="Open GTHEFIGHTER.EXE"
-          role="row"
-        >
-          <span class="app-list__name" role="cell">
-            <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
-            <span>GTHEFIGHTER.EXE</span>
-          </span>
-          <span class="app-list__meta" role="cell">2021</span>
-          <span class="app-list__meta" role="cell">GALANACCI</span>
-        </a>
-
-        <a
-          class="app-list__row"
-          data-app-link
-          data-label="EVERYDAYS.EXE"
-          href="./SS/EVERYDAYS/index.html"
-          aria-label="Open EVERYDAYS.EXE"
-          role="row"
-        >
-          <span class="app-list__name" role="cell">
-            <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
-            <span>EVERYDAYS.EXE</span>
-          </span>
-          <span class="app-list__meta" role="cell">2021</span>
-          <span class="app-list__meta" role="cell">GALANACCI</span>
-        </a>
-
-        <a
-          class="app-list__row"
-          data-app-link
-          data-label="RENAISSANCE.EXE"
-          href="./SS/RENAISSANCE/index.html"
-          aria-label="Open RENAISSANCE.EXE"
-          role="row"
-        >
-          <span class="app-list__name" role="cell">
-            <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
-            <span>RENAISSANCE.EXE</span>
-          </span>
-          <span class="app-list__meta" role="cell">2021</span>
-          <span class="app-list__meta" role="cell">GALANACCI</span>
-        </a>
-        <a
-          class="app-list__row"
-          data-app-link
-          data-label="GALANACCI.EXE"
-          href="./SS/GALANACCI/index.html"
-          aria-label="Open GALANACCI.EXE"
-          role="row"
-        >
-          <span class="app-list__name" role="cell">
-            <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
-            <span>GALANACCI.EXE</span>
-          </span>
-          <span class="app-list__description app-list__meta" role="cell">My initial clothing brand.</span>
-          <span class="app-list__meta gtc-date-cell" role="cell">2021</span>
-          <span class="app-list__meta gtc-created-cell" role="cell">GALANACCI</span>
-        </a>
-<a
-  class="app-list__row"
-  data-app-link
-  data-label="PUGILISM.EXE"
-  href="./SS/PUGILISM/index.html"
-  aria-label="Open PUGILISM.EXE archive"
-  role="row"
->
-  <span class="app-list__name" role="cell">
-    <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
-    <span>PUGILISM.EXE</span>
-  </span>
-  <span class="app-list__description app-list__meta" role="cell">Artworks of boxing legends of different eras.</span>
-  <span class="app-list__meta gtc-date-cell" role="cell">2022</span>
-  <span class="app-list__meta gtc-created-cell" role="cell">GALANACCI</span>
-</a>
-<a
-  class="app-list__row"
-  data-app-link
-  data-label="FIGHTPOSTERS.EXE"
-  href="./SS/FIGHTPOSTERS/index.html"
-  aria-label="Open FIGHTPOSTERS.EXE archive"
-  role="row"
->
-  <span class="app-list__name" role="cell">
-    <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
-    <span>FIGHTPOSTERS.EXE</span>
-  </span>
-  <span class="app-list__description app-list__meta" role="cell">Artworks of major boxing events in 2024</span>
-  <span class="app-list__meta gtc-date-cell" role="cell">2024</span>
-  <span class="app-list__meta gtc-created-cell" role="cell">GALANACCI</span>
-</a>
-
-        <a
-          class="app-list__row"
-          data-app-link
-          data-label="BLACKBOOK.EXE"
-          href="./SS/BLACKBOOK/index.html"
-          aria-label="Open BLACKBOOK.EXE"
-          role="row"
-        >
-          <span class="app-list__name" role="cell">
-            <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
-            <span>BLACKBOOK.EXE</span>
-          </span>
-          <span class="app-list__meta" role="cell">2020</span>
-          <span class="app-list__meta" role="cell">GALANACCI</span>
-        </a>
-        <a
-          class="app-list__row"
-          data-app-link
-          data-label="ARCHITECTURE.EXE"
-          href="./SS/ARCHITECTURE/index.html"
-          aria-label="Open ARCHITECTURE.EXE portfolio"
-          role="row"
-        >
-          <span class="app-list__name" role="cell">
-            <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
-            <span>ARCHITECTURE.EXE</span>
-          </span>
-          <span class="app-list__description app-list__meta" role="cell">Architecture portfolio.</span>
-          <span class="app-list__meta gtc-date-cell" role="cell">2019</span>
-          <span class="app-list__meta gtc-created-cell" role="cell">GALANACCI</span>
-        </a>
-        <a
-          class="app-list__row"
-          data-app-link
-          data-label="GVERSE.EXE"
-          href="./SS/GVERSE/index.html"
-          aria-label="Open GVERSE.EXE portfolio"
-          role="row"
-        >
-          <span class="app-list__name" role="cell">
-            <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
-            <span>GVERSE.EXE</span>
-          </span>
-          <span class="app-list__description app-list__meta" role="cell">A multi-disciplinary design studio.</span>
-          <span class="app-list__meta gtc-date-cell" role="cell">2023</span>
-          <span class="app-list__meta gtc-created-cell" role="cell">GALANACCI</span>
-        </a>
-<a
-  class="app-list__row"
-  data-app-link
-  data-label="365LOOKS.EXE"
-  href="./SS/365LOOKS/index.html"
-  aria-label="Open 365LOOKS.EXE archive"
-  role="row"
->
-  <span class="app-list__name" role="cell">
-    <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
-    <span>365LOOKS.EXE</span>
-  </span>
-  <span class="app-list__description app-list__meta" role="cell">365 days, 365 looks. Daily fashion sketches.</span>
-  <span class="app-list__meta gtc-date-cell" role="cell">2023</span>
-  <span class="app-list__meta gtc-created-cell" role="cell">GALANACCI</span>
-</a>
-<a
-  class="app-list__row"
-  data-app-link
-  data-label="INTERVIEWS.EXE"
-  href="./SS/INTERVIEWS/index.html"
-  aria-label="Open INTERVIEWS.EXE archive"
-  role="row"
->
-  <span class="app-list__name" role="cell">
-    <img src="assets/icons/EXE_PLACEHOLDER.svg" alt="" draggable="false">
-    <span>INTERVIEWS.EXE</span>
-  </span>
-  <span class="app-list__description app-list__meta" role="cell">Recorded interviews and conversations.</span>
-  <span class="app-list__meta gtc-date-cell" role="cell">2022</span>
-  <span class="app-list__meta gtc-created-cell" role="cell">GALANACCI</span>
-</a>
+        <!-- Entries from js/folder-catalog.js render before OS controls initialise. -->
       </div>
+    </div>
+
+    <div class="app-folder-toolbar" data-folder-controls>
+      <input type="search" data-folder-search aria-label="Search SS files" placeholder="SEARCH FILES" autocomplete="off">
+      <select data-folder-type aria-label="Filter SS by type">
+        <option value="all">ALL TYPES</option>
+        <option value="art">VISUAL ART</option>
+        <option value="video">VIDEO JOURNAL</option>
+        <option value="brand">FASHION &amp; BRAND</option>
+        <option value="portfolio">PORTFOLIO</option>
+        <option value="interviews">INTERVIEWS</option>
+      </select>
+      <select data-folder-sort aria-label="Sort SS files">
+        <option value="newest">NEWEST</option>
+        <option value="oldest">OLDEST</option>
+      </select>
+      <button type="button" data-folder-clear aria-label="Clear SS filters" disabled>CLEAR</button>
+      <output data-folder-count aria-live="polite"></output>
     </div>
 
     <span class="folder-window__resize-handle folder-window__resize-handle--n" data-resize="n" aria-hidden="true"></span>
@@ -391,6 +187,7 @@
   <section id="experiment-window" class="experiment-window" hidden aria-hidden="true" role="dialog" aria-labelledby="experiment-window-title">
     <header class="experiment-window__chrome">
       <span id="experiment-window-title">APP</span>
+      <button type="button" class="experiment-window__share" data-share-experiment aria-label="Share app link">SHARE</button>
       <button type="button" class="folder-window__close" data-close-experiment aria-label="Close app">&times;</button>
     </header>
     <div class="experiment-window__body">
@@ -436,18 +233,18 @@
       <div class="portfolio-notice__body">
         <div id="portfolio-notice-copy" class="portfolio-notice__copy">
   <p class="portfolio-notice__intro">
-    You are now using <strong>GALANACCI OS 26</strong> - An evolving archive of works, experiments and worlds by GALANACCI THE CREATOR.
+    You are now using <strong>GALANACCI OS 26</strong>. An evolving archive of works, experiments and worlds by <strong>GALANACCI THE CREATOR</strong>.
   </p>
 
   <div class="portfolio-notice__guide">
     <section class="portfolio-notice__guide-item">
       <strong>HOW TO USE</strong>
-      <p>Open .EXE files and folders to explore. Drag windows and desktop objects. Use x to close.</p>
+      <p>Double click for desktop or tap for mobile to open .EXE files and folders.</p>
     </section>
 
     <section class="portfolio-notice__guide-item">
       <strong>SS</strong>
-      <p>Archive works from different eras of the GALANACCI practice.</p>
+      <p>Archive works of GALANACCI from different eras.</p>
     </section>
 
     <section class="portfolio-notice__guide-item">
@@ -478,9 +275,9 @@
   <!-- GTC PORTFOLIO NOTICE V1 END -->
 
   <script type="module" src="js/apps.js?v=20260919-ss-folder-v3"></script>
-  <script type="module" src="js/desktop.js?v=grid-collision-v3"></script>
+  <script type="module" src="js/desktop.js?v=uncut-v1"></script>
 
-  <script src="js/gtc-ui-enhancements.js?v=interviews-error-description-v3"></script>
+  <script src="js/gtc-ui-enhancements.js?v=folder-catalog-v1"></script>
   <script src="js/gtc-os-boot.js?v=os-session-login-v1"></script>
   <script type="module" src="js/desktop-poster.js?v=desktop-poster-v3"></script>
 </body>
