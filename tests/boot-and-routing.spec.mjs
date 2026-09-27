@@ -64,6 +64,30 @@ test("PoG return architecture expects https://galanacci.com/?entry=pog", async (
   await expect(page.locator("#gtc-os-boot")).toHaveCount(0);
 });
 
+test("PoG EXIT returns to a desktop with its grid intact", async ({ page }, testInfo) => {
+  await page.route("https://pioneersofgreatness.com/**", (route) => route.fulfill({
+    contentType: "text/html",
+    body: '<!doctype html><title>PoG</title><a href="http://127.0.0.1:4173/?entry=pog">EXIT</a>'
+  }));
+
+  await openDesktop(page);
+  const pog = shortcut(page, "PoG.EXE");
+  if (testInfo.project.name === "mobile-chromium") await pog.tap();
+  else await pog.dblclick();
+  await expect(page).toHaveURL("https://pioneersofgreatness.com/?entry=galanacci");
+  await page.getByRole("link", { name: "EXIT" }).click();
+
+  await expect(page).toHaveURL("http://127.0.0.1:4173/");
+  await expect(page.locator("#gtc-os-boot")).toHaveCount(0);
+  await expect(page.locator("#portfolio-notice-layer")).toBeHidden();
+  const grid = page.locator("#gtc-desktop > .desktop-grid");
+  await expect(grid).toBeVisible();
+  await expect(grid.locator("#desktop-grid-pattern rect")).toHaveCount(2);
+  const bounds = await grid.boundingBox();
+  expect(bounds.width).toBe(page.viewportSize().width);
+  expect(bounds.height).toBe(page.viewportSize().height);
+});
+
 test("back and forward navigation clears launch locks and stale overlays", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Desktop launch uses double click");
   test.setTimeout(35_000);

@@ -1,4 +1,4 @@
-import { FOLDER_CATALOG } from "./folder-catalog.js?v=multi-category-v1";
+import { FOLDER_CATALOG } from "./folder-catalog.js?v=preview-cards-v1";
 
 function cell(className, text) {
   const span = document.createElement("span");
@@ -28,11 +28,23 @@ export function renderFolderCatalogs() {
       const name = document.createElement("span");
       name.className = "app-list__name";
       name.setAttribute("role", "cell");
+      const preview = document.createElement("img");
+      preview.className = "app-list__preview";
+      preview.src = entry.preview;
+      preview.alt = "";
+      preview.loading = "lazy";
+      preview.decoding = "async";
+      preview.draggable = false;
+      preview.addEventListener("error", () => {
+        const fallback = `assets/share/${entry.shareSlug}.png`;
+        if (!preview.src.endsWith(fallback)) preview.src = fallback;
+      });
       const icon = document.createElement("img");
+      icon.className = "app-list__file-icon";
       icon.src = "assets/icons/EXE_PLACEHOLDER.svg";
       icon.alt = "";
       icon.draggable = false;
-      name.append(icon, document.createElement("span"));
+      name.append(preview, icon, document.createElement("span"));
       name.lastElementChild.textContent = entry.label;
 
       link.append(

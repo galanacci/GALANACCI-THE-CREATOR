@@ -41,3 +41,11 @@ test("mobile folder visual baseline", async ({ page }, testInfo) => {
   await openFolder(page, "APPS", true);
   await expect(page).toHaveScreenshot("mobile-folder-window.png");
 });
+
+test("mobile SS gallery visual baseline", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "Mobile visual baseline");
+
+  await openDesktop(page);
+  await openFolder(page, "SS", true);
+  await expect(page).toHaveScreenshot("mobile-ss-gallery.png");
+});

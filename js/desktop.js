@@ -1,5 +1,5 @@
 import { APPS } from "./apps.js";
-import { renderFolderCatalogs } from "./render-folder-catalog.js?v=multi-category-v1";
+import { renderFolderCatalogs } from "./render-folder-catalog.js?v=preview-cards-v1";
 import { layoutEditing, publishedPosition } from "./layout-config.js?v=owner-layout-v1";
 
 // The folder rows must exist before route lookup and launch listeners bind.
