@@ -37,6 +37,22 @@ Open `index.html` in a browser for a simple local preview. The root page is also
 the GitHub Pages entry point. Because the site uses JavaScript modules, a local
 HTTP server is recommended when testing module or asset loading.
 
+## Editing the desktop layout
+
+Double-click `EDIT-LAYOUT.bat` (or run `npm run layout:edit`), then open
+`http://127.0.0.1:4174/?entry=pog&layout=edit`. Keep the editor window running.
+Drag the three desktop shortcuts and the poster, then click **SAVE**. This
+updates `js/desktop-layout.json` in your local repository. **DISCARD** reloads
+the last saved arrangement.
+
+The editor saves desktop and mobile layouts separately. To edit the mobile
+layout, narrow the browser viewport to 700px or less before arranging and
+saving. After reviewing both layouts, use the normal sync-to-main process to
+publish them. The editor runs only on the loopback-only local preview server;
+adding `?layout=edit` to the public site or another preview does not unlock it.
+Visitors cannot drag desktop shortcuts or the poster. Folder windows and the
+interactive artworks inside apps still work normally.
+
 ## Adding a folder application
 
 Add the self-contained project under `experiments/` (APPS) or `SS/`, then add
@@ -66,7 +82,8 @@ add an entry to `APPS`:
 ```
 
 Folder entries use `type: "folder"` and a `folderTarget` value. The desktop
-handles positioning, dragging, selection, keyboard activation, and launching.
+handles positioning, selection, keyboard activation, and launching. Desktop
+shortcuts can be dragged only in the local layout editor.
 
 ## Preserved work
 

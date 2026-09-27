@@ -1,9 +1,58 @@
-import { createReadStream, statSync } from "node:fs";
+import { createReadStream, readFileSync, statSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, join, normalize, relative, resolve } from "node:path";
 
 const root = resolve(process.cwd());
 const port = Number(process.env.PORT || 4173);
+const layoutEditorEnabled = process.env.GTC_LAYOUT_EDITOR === "1";
+const layoutFile = resolve(root, "js", "desktop-layout.json");
+const shortcutIds = ["pog-exe", "experiments-folder", "ss-folder"];
+
+function validPosition(position) {
+  return position && ["x", "y"].every((axis) =>
+    typeof position[axis] === "number" &&
+    Number.isFinite(position[axis]) &&
+    position[axis] >= 0 && position[axis] <= 1
+  );
+}
+
+async function saveLayout(request, response) {
+  const expectedOrigin = `http://${request.headers.host}`;
+  const validHost = ["127.0.0.1", "localhost"].some((host) =>
+    request.headers.host === `${host}:${port}`
+  );
+  if (!validHost || request.headers.origin !== expectedOrigin ||
+      request.headers["x-gtc-layout-editor"] !== "1") {
+    response.writeHead(403).end("Forbidden");
+    return;
+  }
+
+  try {
+    let body = "";
+    for await (const chunk of request) {
+      body += chunk;
+      if (body.length > 8192) throw new Error("Layout payload is too large");
+    }
+    const incoming = JSON.parse(body);
+    const valid = ["desktop", "mobile"].includes(incoming.profile) &&
+      validPosition(incoming.poster) &&
+      incoming.shortcuts &&
+      shortcutIds.every((id) => validPosition(incoming.shortcuts[id]));
+    if (!valid) throw new Error("Invalid layout");
+
+    const current = JSON.parse(readFileSync(layoutFile, "utf8"));
+    current[incoming.profile] = {
+      shortcuts: Object.fromEntries(shortcutIds.map((id) => [id, incoming.shortcuts[id]])),
+      poster: incoming.poster
+    };
+    writeFileSync(layoutFile, `${JSON.stringify(current, null, 2)}\n`, "utf8");
+    response.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+    response.end(JSON.stringify({ saved: true, profile: incoming.profile }));
+  } catch (error) {
+    response.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
+    response.end(JSON.stringify({ saved: false, error: error.message }));
+  }
+}
 
 const types = new Map([
   [".css", "text/css; charset=utf-8"],
@@ -42,6 +91,18 @@ function safePath(pathname) {
 
 const server = createServer((request, response) => {
   const pathname = new URL(request.url, `http://${request.headers.host}`).pathname;
+  if (pathname === "/__layout/status" && request.method === "GET") {
+    response.writeHead(200, {
+      "Cache-Control": "no-store",
+      "Content-Type": "application/json; charset=utf-8"
+    });
+    response.end(JSON.stringify({ editor: layoutEditorEnabled }));
+    return;
+  }
+  if (layoutEditorEnabled && pathname === "/__layout/save" && request.method === "POST") {
+    void saveLayout(request, response);
+    return;
+  }
   const filePath = safePath(pathname === "/" ? "/index.html" : pathname);
 
   if (!filePath) {

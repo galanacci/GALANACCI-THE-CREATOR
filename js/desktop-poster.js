@@ -1,10 +1,11 @@
+import { layoutEditing, publishedPosition } from "./layout-config.js?v=owner-layout-v1";
+
 (() => {
   "use strict";
 
   const poster = document.querySelector("[data-desktop-poster]");
   if (!poster) return;
 
-  const posterKey = "gtc:desktop-poster-position";
   const GRID = 16;
   const EDGE = 12;
   const COLLISION_GAP = 10;
@@ -20,32 +21,14 @@
   });
 
   const readPosterPosition = () => {
-    try {
-      const raw = sessionStorage.getItem(posterKey);
-      if (!raw) return null;
-
-      const parsed = JSON.parse(raw);
-
-      if (
-        Number.isFinite(parsed?.x) &&
-        Number.isFinite(parsed?.y)
-      ) {
-        return parsed;
-      }
-    } catch {}
-
-    return null;
-  };
-
-  const writePosterPosition = (position) => {
-    try {
-      sessionStorage.setItem(posterKey, JSON.stringify(position));
-    } catch {}
+    const { maxX, maxY } = getBounds();
+    return publishedPosition("poster", null, maxX, maxY);
   };
 
   const defaultPosition = () => ({
-    x: Math.round(window.innerWidth * .70),
-    y: Math.round(window.innerHeight * .10)
+    x: window.innerWidth - poster.offsetWidth -
+      (window.innerWidth < 360 ? 16 : window.innerWidth <= 700 ? 32 : 64),
+    y: Math.max(72, Math.round(window.innerHeight * .10))
   });
 
   const clampPosition = (position) => {
@@ -125,15 +108,11 @@
   };
 
   const repairPosterPosition = () => {
-    const requested =
-      poster._posterPosition ||
-      readPosterPosition() ||
-      defaultPosition();
+    const requested = readPosterPosition() || defaultPosition();
 
     const repaired = findAvailablePosition(requested);
 
     renderPoster(repaired);
-    writePosterPosition(repaired);
   };
 
   /*
@@ -147,6 +126,7 @@
   let posterDrag = null;
 
   poster.addEventListener("pointerdown", (event) => {
+    if (!layoutEditing) return;
     if (event.button !== undefined && event.button !== 0) return;
 
     event.preventDefault();
@@ -204,8 +184,6 @@
     );
 
     renderPoster(settled);
-    writePosterPosition(settled);
-
     posterDrag = null;
   };
 

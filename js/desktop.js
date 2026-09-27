@@ -1,23 +1,15 @@
 import { APPS } from "./apps.js";
 import { renderFolderCatalogs } from "./render-folder-catalog.js?v=multi-category-v1";
+import { layoutEditing, publishedPosition } from "./layout-config.js?v=owner-layout-v1";
 
 // The folder rows must exist before route lookup and launch listeners bind.
 renderFolderCatalogs();
+document.dispatchEvent(new Event("gtc:catalog-ready"));
 
 const GRID = 16;
 const EDGE = 20;
 const COLLISION_GAP = 0;
-const POSITION_PREFIX = "gtc:desktop-position:";
-
-/*
-  Stable first-visit desktop positions.
-  Once a user moves a shortcut, localStorage takes priority forever.
-*/
-const DEFAULT_SHORTCUT_POSITIONS = Object.freeze({
-  "pog-exe": Object.freeze({ x: 32, y: 32 }),
-  "experiments-folder": Object.freeze({ x: 32, y: 160 }),
-  "ss-folder": Object.freeze({ x: 32, y: 288 })
-});
+// Published positions take priority; otherwise shortcuts form a bottom-left stack.
 const HINT_KEY = "gtc:desktop-hint:v1";
 const LAUNCH_DELAY = 520;
 
@@ -48,77 +40,11 @@ const snapWithinBounds = (value, min, max) => {
 };
 const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
 
-/*
-  Mobile desktop shortcuts should behave like a launcher, not like a freeform
-  draggable canvas. Deterministic positions prevent saved touch drags from
-  colliding with PoG.EXE, APPS, and SS.
-*/
-function mobileLockedShortcutPosition(shortcut) {
-  const { maxX, maxY } = boundsFor(shortcut);
-  const id = shortcut.dataset.appId;
-
-  const leftColumn = clamp(64, EDGE, maxX);
-  const rightColumn = clamp(
-    window.innerWidth - shortcut.offsetWidth - 52,
-    EDGE,
-    maxX
-  );
-
-  const upperRow = clamp(
-    Math.round(window.innerHeight * .43),
-    EDGE,
-    maxY
-  );
-
-  const lowerRow = clamp(
-    upperRow + shortcut.offsetHeight + 22,
-    EDGE,
-    maxY
-  );
-
-  if (id === "pog-exe") {
-    return {
-      x: rightColumn,
-      y: upperRow
-    };
-  }
-
-  if (id === "ss-folder") {
-    return {
-      x: leftColumn,
-      y: upperRow
-    };
-  }
-
-  if (id === "experiments-folder") {
-    return {
-      x: leftColumn,
-      y: lowerRow
-    };
-  }
-
-  const shortcuts = [
-    ...document.querySelectorAll(".desktop-shortcut")
-  ];
-
-  const index = Math.max(0, shortcuts.indexOf(shortcut));
-
-  return {
-    x: clamp(leftColumn, EDGE, maxX),
-    y: clamp(upperRow + index * (shortcut.offsetHeight + 22), EDGE, maxY)
-  };
-}
-
 let selected = null;
 let dragging = null;
 let folderResizing = null;
 let launchLocked = false;
 let lastExperimentOpener = null;
-
-const storageGet = (key) => {
-  try { return localStorage.getItem(key); }
-  catch { return null; }
-};
 
 const storageSet = (key, value) => {
   try { localStorage.setItem(key, value); }
@@ -166,53 +92,20 @@ function boundsFor(shortcut) {
 }
 
 function defaultPosition(shortcut) {
-  const savedDefault =
-    DEFAULT_SHORTCUT_POSITIONS[shortcut.dataset.appId];
-
-  if (savedDefault) {
-    return { ...savedDefault };
-  }
-
-  const shortcuts = [
-    ...document.querySelectorAll(".desktop-shortcut")
-  ];
-
-  const index = Math.max(0, shortcuts.indexOf(shortcut));
-  const row = index % 5;
-  const column = Math.floor(index / 5);
+  const index = Math.max(0, APPS.findIndex((app) => app.id === shortcut.dataset.appId));
+  const { maxX, maxY } = boundsFor(shortcut);
+  const spacing = shortcut.offsetHeight + 24;
 
   return {
-    x: EDGE + column * 128,
-    y: EDGE + row * 128
+    x: snapWithinBounds(window.innerWidth < 360 ? 32 : 48, EDGE, maxX),
+    y: snapWithinBounds(maxY - (APPS.length - index - 1) * spacing, EDGE, maxY)
   };
 }
 
 function readPosition(shortcut) {
-  const key = POSITION_PREFIX + shortcut.dataset.appId;
-
-  try {
-    const parsed = JSON.parse(storageGet(key));
-
-    if (
-      Number.isFinite(parsed?.x) &&
-      Number.isFinite(parsed?.y)
-    ) {
-      return {
-        x: parsed.x,
-        y: parsed.y
-      };
-    }
-  } catch {}
-
-  const position = defaultPosition(shortcut);
-
-  storageSet(key, JSON.stringify(position));
-
-  return position;
-}
-
-function writePosition(shortcut, position) {
-  storageSet(POSITION_PREFIX + shortcut.dataset.appId, JSON.stringify(position));
+  const { maxX, maxY } = boundsFor(shortcut);
+  return publishedPosition("shortcut", shortcut.dataset.appId, maxX, maxY)
+    || defaultPosition(shortcut);
 }
 
 function overlaps(shortcut, position, other, otherPosition = other._desktopPosition) {
@@ -285,17 +178,12 @@ function findAvailablePosition(shortcut, position) {
   return closest || candidate;
 }
 
-/* GTC MOBILE SHORTCUT DRAG RESTORE V1
-   Touch shortcuts intentionally use the same freeform drag/collision system
-   as desktop. A tap still opens through the pointerup logic below.
-*/
 function renderShortcut(shortcut, position) {
   const { maxX, maxY } = boundsFor(shortcut);
 
   /*
-    Rendering only clamps to the current viewport. Collision repair happens
-    explicitly during initial recovery and after a completed desktop drop, so
-    passive browser resizing never overwrites a remembered position.
+    Rendering only clamps to the current viewport. The published coordinates
+    remain unchanged when a visitor resizes their browser.
   */
   const next = {
     x: snapWithinBounds(position.x, EDGE, maxX),
@@ -627,7 +515,6 @@ function installShortcut(shortcut, app) {
       );
       renderShortcut(shortcut, recoveredPosition);
       shortcut._savedDesktopPosition = { ...recoveredPosition };
-      writePosition(shortcut, recoveredPosition);
     }
   }
 
@@ -639,6 +526,7 @@ function installShortcut(shortcut, app) {
     if (event.button !== undefined && event.button !== 0) return;
 
     selectShortcut(shortcut);
+    if (!layoutEditing) return;
 
     dragging = {
       shortcut,
@@ -694,23 +582,23 @@ function installShortcut(shortcut, app) {
 
       renderShortcut(shortcut, settledPosition);
       shortcut._savedDesktopPosition = { ...settledPosition };
-      writePosition(shortcut, settledPosition);
     }
 
     dragging = null;
 
-    if (!moved && isTouch) {
-      openShortcut(shortcut, app);
-    }
   };
 
   shortcut.addEventListener("pointerup", finishPointer);
   shortcut.addEventListener("pointercancel", finishPointer);
 
+  shortcut.addEventListener("click", (event) => {
+    if (!layoutEditing && isTouch && event.detail > 0) openShortcut(shortcut, app);
+  });
+
   shortcut.addEventListener("dblclick", (event) => {
     event.preventDefault();
 
-    if (!isTouch && !dragging) {
+    if (!layoutEditing && !isTouch && !dragging) {
       openShortcut(shortcut, app);
     }
   });
@@ -718,7 +606,7 @@ function installShortcut(shortcut, app) {
   shortcut.addEventListener("keydown", (event) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      openShortcut(shortcut, app);
+      if (!layoutEditing) openShortcut(shortcut, app);
     }
   });
 }
@@ -1023,3 +911,5 @@ window.addEventListener("keydown", (event) => {
 });
 
 buildApps();
+// The layout config loads asynchronously, so pageshow may have already fired.
+syncAppRoute();

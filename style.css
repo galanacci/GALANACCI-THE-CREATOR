@@ -2416,3 +2416,63 @@ button {
   filter: none;
   box-shadow: var(--os-hard-shadow);
 }
+
+html:not(.layout-editing) .desktop-poster {
+  cursor: default;
+  touch-action: auto;
+}
+
+html:not(.layout-editing) .desktop-shortcut {
+  touch-action: manipulation;
+}
+
+.layout-editor {
+  position: fixed;
+  z-index: 80;
+  top: calc(12px + var(--safe-top));
+  left: calc(12px + var(--safe-left));
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  max-width: calc(100vw - 110px);
+  min-height: 44px;
+  padding: 4px;
+  border: 1px solid #000;
+  background: var(--bg);
+  box-shadow: var(--os-hard-shadow);
+  font-size: 11px;
+}
+
+.layout-editor__profile {
+  padding: 0 5px;
+  white-space: nowrap;
+}
+
+.layout-editor button {
+  min-height: 34px;
+  padding: 0 6px;
+  border: 1px solid #000;
+  background: transparent;
+  color: #000;
+  cursor: pointer;
+}
+
+.layout-editor button:hover,
+.layout-editor button:focus-visible {
+  background: #000;
+  color: var(--bg);
+}
+
+.layout-editor__status {
+  position: absolute;
+  top: 100%;
+  left: -1px;
+  max-width: min(320px, calc(100vw - 24px));
+  padding: 4px 6px;
+  background: var(--bg);
+  white-space: nowrap;
+}
+
+.layout-editor__status:empty {
+  display: none;
+}

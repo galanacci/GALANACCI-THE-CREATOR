@@ -323,7 +323,11 @@
   }
 
   function boot() {
-    enhanceFolders();
+    if (document.querySelector(".app-list__row")) {
+      enhanceFolders();
+    } else {
+      document.addEventListener("gtc:catalog-ready", enhanceFolders, { once: true });
+    }
     initNotice();
   }
 

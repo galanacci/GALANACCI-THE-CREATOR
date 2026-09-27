@@ -1,126 +1,106 @@
 import { test, expect } from "./fixtures/test.mjs";
-import {
-  STABLE_POSITIONS,
-  dragBy,
-  openDesktop,
-  seedDesktop,
-  shortcut,
-  storedPosition
-} from "./helpers/desktop.mjs";
+import { dragBy, openDesktop, shortcut } from "./helpers/desktop.mjs";
 
-const rectanglesOverlap = (first, second) =>
-  first.x < second.x + second.width
-  && first.x + first.width > second.x
-  && first.y < second.y + second.height
-  && first.y + first.height > second.y;
-
-test.beforeEach(async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "desktop-chromium", "Desktop persistence contract");
-  await seedDesktop(page);
+test("viewers cannot move shortcuts or the poster", async ({ page }) => {
   await openDesktop(page);
-});
-
-test("dragged desktop shortcut position survives a reload", async ({ page }) => {
   const icon = shortcut(page, "PoG.EXE");
-  await dragBy(page, icon, 96, 176);
+  const poster = page.locator("[data-desktop-poster]");
+  const iconBefore = await icon.getAttribute("style");
+  const posterBefore = await poster.getAttribute("style");
 
-  const saved = await storedPosition(page, "pog-exe");
-  expect(saved).not.toEqual(STABLE_POSITIONS["pog-exe"]);
+  await dragBy(page, icon, 96, -64);
+  await dragBy(page, poster, -80, 48);
 
-  await page.reload();
-  await expect(page.locator(".desktop-shortcut.is-ready")).toHaveCount(3);
-  expect(await storedPosition(page, "pog-exe")).toEqual(saved);
-
-  const transform = await icon.evaluate((element) => element.style.transform);
-  expect(transform).toContain(`${saved.x}px`);
-  expect(transform).toContain(`${saved.y}px`);
+  await expect(icon).toHaveAttribute("style", iconBefore);
+  await expect(poster).toHaveAttribute("style", posterBefore);
+  expect(await page.evaluate(() => localStorage.getItem("gtc:desktop-position:pog-exe"))).toBeNull();
+  expect(await page.evaluate(() => sessionStorage.getItem("gtc:desktop-poster-position"))).toBeNull();
 });
 
-test("passive browser resize does not permanently destroy stored positions", async ({ page }) => {
-  const original = { x: 1120, y: 640 };
-  await page.evaluate(({ key, value }) => {
-    localStorage.setItem(key, JSON.stringify(value));
-  }, { key: "gtc:desktop-position:pog-exe", value: original });
-  await page.reload();
-  await expect(page.locator(".desktop-shortcut.is-ready")).toHaveCount(3);
-
-  await page.setViewportSize({ width: 760, height: 600 });
-  expect(await storedPosition(page, "pog-exe")).toEqual(original);
-
-  await page.setViewportSize({ width: 1440, height: 900 });
-
-  expect(await storedPosition(page, "pog-exe")).toEqual(original);
+test("viewers see the published arrangement", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Desktop published profile");
+  await page.route("**/js/desktop-layout.json", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({
+      desktop: {
+        shortcuts: {
+          "pog-exe": { x: .45, y: .55 },
+          "experiments-folder": { x: .05, y: .25 },
+          "ss-folder": { x: .05, y: .75 }
+        },
+        poster: { x: .8, y: .08 }
+      },
+      mobile: {}
+    })
+  }));
+  await openDesktop(page);
+  const icon = await shortcut(page, "PoG.EXE").boundingBox();
+  expect(icon.x).toBeGreaterThan(page.viewportSize().width * .35);
+  expect(icon.y).toBeGreaterThan(page.viewportSize().height * .4);
 });
 
-test("desktop shortcuts settle on an unoccupied grid position", async ({ page }) => {
-  const pog = shortcut(page, "PoG.EXE");
-  const apps = shortcut(page, "APPS");
-  const pogBefore = await pog.boundingBox();
-  const appsBefore = await apps.boundingBox();
-
-  if (!pogBefore || !appsBefore) {
-    throw new Error("Desktop shortcuts must be visible before dragging");
-  }
-
-  const startX = pogBefore.x + pogBefore.width / 2;
-  const startY = pogBefore.y + pogBefore.height / 2;
-  const targetX = appsBefore.x + appsBefore.width / 2;
-  const targetY = appsBefore.y + appsBefore.height / 2;
-
-  await page.mouse.move(startX, startY);
-  await page.mouse.down();
-  await page.mouse.move(targetX, targetY, { steps: 8 });
-
-  const pogDuringDrag = await pog.boundingBox();
-  const appsDuringDrag = await apps.boundingBox();
-
-  if (!pogDuringDrag || !appsDuringDrag) {
-    throw new Error("Desktop shortcuts must remain visible while dragging");
-  }
-
-  expect(rectanglesOverlap(pogDuringDrag, appsDuringDrag)).toBe(false);
-
-  await page.mouse.up();
-
-  const pogAfter = await pog.boundingBox();
-  const appsAfter = await apps.boundingBox();
-
-  if (!pogAfter || !appsAfter) {
-    throw new Error("Desktop shortcuts must remain visible after dragging");
-  }
-
-  expect(rectanglesOverlap(pogAfter, appsAfter)).toBe(false);
-
-  const saved = await storedPosition(page, "pog-exe");
-  expect(saved.x % 16).toBe(0);
-  expect(saved.y % 16).toBe(0);
-
-  await page.reload();
+test("local editor can arrange and save a desktop layout", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Desktop editor gesture");
+  let savedPayload;
+  await page.route("**/__layout/status", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: '{"editor":true}' })
+  );
+  await page.route("**/__layout/save", async (route) => {
+    savedPayload = JSON.parse(route.request().postData());
+    await route.fulfill({ status: 200, contentType: "application/json", body: '{"saved":true}' });
+  });
+  await page.goto("/?entry=pog&layout=edit");
   await expect(page.locator(".desktop-shortcut.is-ready")).toHaveCount(3);
-  expect(await storedPosition(page, "pog-exe")).toEqual(saved);
+  await expect(page.getByRole("group", { name: "Local layout editor" })).toBeVisible();
+
+  const icon = shortcut(page, "PoG.EXE");
+  const poster = page.locator("[data-desktop-poster]");
+  const iconBefore = await icon.boundingBox();
+  const posterBefore = await poster.boundingBox();
+  await dragBy(page, icon, 96, -64);
+  await dragBy(page, poster, -80, 48);
+  expect((await icon.boundingBox()).x).toBeGreaterThan(iconBefore.x + 40);
+  expect((await poster.boundingBox()).x).toBeLessThan(posterBefore.x - 40);
+
+  await page.getByRole("button", { name: "SAVE" }).click();
+  await expect(page.getByRole("status")).toContainText("SAVED");
+  expect(savedPayload.profile).toBe("desktop");
+  expect(Object.keys(savedPayload.shortcuts)).toEqual([
+    "pog-exe", "experiments-folder", "ss-folder"
+  ]);
+  expect(savedPayload.poster.x).toBeGreaterThan(0);
+  expect(savedPayload.poster.x).toBeLessThan(1);
+  expect(await page.evaluate(() => localStorage.getItem("gtc:desktop-position:pog-exe"))).toBeNull();
 });
 
-test("overlapping legacy positions are repaired once on load", async ({ page }) => {
-  const collision = { x: 224, y: 32 };
+test("local editor saves the mobile layout separately", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "Mobile layout profile");
+  let savedPayload;
+  await page.route("**/__layout/status", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: '{"editor":true}' })
+  );
+  await page.route("**/__layout/save", async (route) => {
+    savedPayload = JSON.parse(route.request().postData());
+    await route.fulfill({ status: 200, contentType: "application/json", body: '{"saved":true}' });
+  });
 
-  await page.evaluate((position) => {
-    localStorage.setItem(
-      "gtc:desktop-position:pog-exe",
-      JSON.stringify(position)
-    );
-    localStorage.setItem(
-      "gtc:desktop-position:experiments-folder",
-      JSON.stringify(position)
-    );
-  }, collision);
-
-  await page.reload();
+  await page.goto("/?entry=pog&layout=edit");
   await expect(page.locator(".desktop-shortcut.is-ready")).toHaveCount(3);
+  await expect(page.locator(".layout-editor__profile")).toHaveText("EDIT MOBILE");
+  await page.getByRole("button", { name: "SAVE" }).click();
+  await expect(page.getByRole("status")).toContainText("MOBILE SAVED");
+  expect(savedPayload.profile).toBe("mobile");
+  expect(Object.keys(savedPayload.shortcuts)).toHaveLength(3);
+  expect(savedPayload.poster.x).toBeGreaterThan(0);
+});
 
-  const pogPosition = await storedPosition(page, "pog-exe");
-  const appsPosition = await storedPosition(page, "experiments-folder");
-
-  expect(pogPosition).not.toEqual(appsPosition);
-  expect(appsPosition.x % 16).toBe(0);
-  expect(appsPosition.y % 16).toBe(0);
+test("editor URL alone cannot unlock the live-style preview", async ({ page }) => {
+  await page.goto("/?entry=pog&layout=edit");
+  await expect(page.locator(".desktop-shortcut.is-ready")).toHaveCount(3);
+  await expect(page.locator(".layout-editor")).toHaveCount(0);
+  const icon = shortcut(page, "PoG.EXE");
+  const before = await icon.getAttribute("style");
+  await dragBy(page, icon, 96, -64);
+  await expect(icon).toHaveAttribute("style", before);
 });

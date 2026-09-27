@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "build:share": "node build-share-pages.mjs",
+    "layout:edit": "node scripts/layout-editor-server.mjs",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:update-screenshots": "playwright test tests/visual-regression.spec.mjs --update-snapshots"
