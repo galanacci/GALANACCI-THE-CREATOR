@@ -29,6 +29,8 @@ const experimentWindow = document.getElementById("experiment-window");
 const experimentFrame = document.getElementById("experiment-frame");
 const experimentTitle = document.getElementById("experiment-window-title");
 const shareExperiment = document.querySelector("[data-share-experiment]");
+const desktopInfoTrigger = document.getElementById("desktop-info-trigger");
+const desktopInfoLayer = document.getElementById("desktop-info-layer");
 const transition = document.getElementById("launch-transition");
 const launchLabel = document.getElementById("launch-label");
 
@@ -443,6 +445,7 @@ function closeExperimentWindow({ syncUrl = true } = {}) {
 
   experimentWindow.classList.remove("is-fibonacci-expanded");
   experimentWindow.classList.remove("is-open");
+  delete experimentWindow.dataset.theme;
   experimentWindow.hidden = true;
   experimentWindow.setAttribute("aria-hidden", "true");
 
@@ -454,6 +457,22 @@ function closeExperimentWindow({ syncUrl = true } = {}) {
   if (syncUrl && new URLSearchParams(window.location.search).has("app")) {
     updateAppUrl(null, "replaceState");
   }
+}
+
+function closeDesktopInfo({ restoreFocus = true } = {}) {
+  if (!desktopInfoLayer || desktopInfoLayer.hidden) return;
+  desktopInfoLayer.hidden = true;
+  desktopInfoLayer.setAttribute("aria-hidden", "true");
+  desktopInfoTrigger?.setAttribute("aria-expanded", "false");
+  if (restoreFocus) desktopInfoTrigger?.focus();
+}
+
+function openDesktopInfo() {
+  if (!desktopInfoLayer || !desktopInfoTrigger) return;
+  desktopInfoLayer.hidden = false;
+  desktopInfoLayer.setAttribute("aria-hidden", "false");
+  desktopInfoTrigger.setAttribute("aria-expanded", "true");
+  desktopInfoLayer.querySelector("[data-close-desktop-info]")?.focus();
 }
 
 window.addEventListener("message", (event) => {
@@ -479,6 +498,11 @@ function openExperimentWindow(url, label, { syncUrl = true } = {}) {
 
   experimentTitle.textContent = label;
   experimentFrame.title = label;
+  if (new URL(url, window.location.href).pathname.endsWith("/SS/GTHEFIGHTER/index.html")) {
+    experimentWindow.dataset.theme = "gthefighter";
+  } else {
+    delete experimentWindow.dataset.theme;
+  }
   if (experimentFrame.dataset.appUrl !== url || experimentWindow.hidden) {
     experimentFrame.contentWindow?.location.replace(url);
     experimentFrame.dataset.appUrl = url;
@@ -791,6 +815,7 @@ window.addEventListener("resize", () => {
 window.addEventListener("pageshow", () => {
   launchLocked = false;
   closeExperimentWindow({ syncUrl: false });
+  closeDesktopInfo({ restoreFocus: false });
 
   if (transition) {
     transition.classList.remove("is-open");
@@ -808,6 +833,26 @@ folderWindows.forEach(setupFolderWindow);
 experimentWindow
   ?.querySelector("[data-close-experiment]")
   ?.addEventListener("click", closeExperimentWindow);
+
+desktopInfoTrigger?.addEventListener("click", openDesktopInfo);
+desktopInfoLayer?.querySelector("[data-close-desktop-info]")
+  ?.addEventListener("click", () => closeDesktopInfo());
+desktopInfoLayer?.addEventListener("click", (event) => {
+  if (event.target === desktopInfoLayer) closeDesktopInfo();
+});
+desktopInfoLayer?.addEventListener("keydown", (event) => {
+  if (event.key !== "Tab") return;
+  const focusable = [...desktopInfoLayer.querySelectorAll("button, a[href]")];
+  const first = focusable[0];
+  const last = focusable.at(-1);
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last?.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first?.focus();
+  }
+});
 
 shareExperiment?.addEventListener("click", async () => {
   const slug = (experimentTitle.textContent || "")
@@ -946,6 +991,11 @@ window.addEventListener("pointercancel", finishResize);
 
 window.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") return;
+
+  if (desktopInfoLayer && !desktopInfoLayer.hidden) {
+    closeDesktopInfo();
+    return;
+  }
 
   if (experimentWindow && !experimentWindow.hidden) {
     closeExperimentWindow();

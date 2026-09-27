@@ -64,6 +64,7 @@ textarea,
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
   --font-brand: "Windows95", "Courier New", monospace;
+  --os-hard-shadow: 8px 8px 0 rgba(0, 0, 0, .18);
 }
 
 * {
@@ -451,6 +452,33 @@ button {
   height: 100%;
   border: 0;
   background: #000;
+}
+
+/* GTHEFIGHTER owns its palette; the rest of the OS keeps the cream chrome. */
+.experiment-window[data-theme="gthefighter"] {
+  background: #592924;
+}
+
+.experiment-window[data-theme="gthefighter"] .experiment-window__chrome {
+  border-bottom-color: #ead1b2;
+  background: #592924;
+  color: #ead1b2;
+}
+
+.experiment-window[data-theme="gthefighter"] .folder-window__close {
+  color: #ead1b2;
+}
+
+.experiment-window[data-theme="gthefighter"] .experiment-window__share:hover,
+.experiment-window[data-theme="gthefighter"] .experiment-window__share:focus-visible,
+.experiment-window[data-theme="gthefighter"] .folder-window__close:hover,
+.experiment-window[data-theme="gthefighter"] .folder-window__close:focus-visible {
+  background: #ead1b2;
+  color: #592924;
+}
+
+.experiment-window[data-theme="gthefighter"] .experiment-window__body iframe {
+  background: #592924;
 }
 
 .launch-transition {
@@ -1818,6 +1846,118 @@ button {
 }
 /* GTC FOLDER LINE HIERARCHY V2 STYLE END */
 
+/* Desktop information window */
+.desktop-info-trigger {
+  position: absolute;
+  z-index: 12;
+  top: calc(16px + var(--safe-top));
+  right: calc(16px + var(--safe-right));
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+}
+
+.desktop-info-trigger span {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.desktop-info-trigger:hover,
+.desktop-info-trigger:focus-visible {
+  border-color: var(--fg);
+  background: rgba(0, 0, 0, .12);
+  outline: 0;
+}
+
+.desktop-info-layer {
+  position: fixed;
+  z-index: 85;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, .35);
+}
+
+.desktop-info-layer[hidden] {
+  display: none;
+}
+
+.desktop-info-window {
+  width: min(500px, 100%);
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  border: 1px solid var(--fg);
+  background: #fff;
+  color: var(--fg);
+  box-shadow: var(--os-hard-shadow);
+}
+
+.desktop-info-window__chrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding-left: 16px;
+  border-bottom: 1px solid var(--fg);
+  background: var(--bg);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+
+.desktop-info-window__body {
+  display: grid;
+  gap: 8px;
+  padding: clamp(24px, 5vw, 36px);
+}
+
+.desktop-info-window__body h2 {
+  margin: 0 0 16px;
+  font-size: clamp(20px, 3vw, 28px);
+  line-height: 1.2;
+}
+
+.desktop-info-window__body p {
+  margin: 0;
+  font-size: clamp(14px, 2vw, 16px);
+  line-height: 1.5;
+}
+
+.desktop-info-window__body a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+.desktop-info-window__body a:hover,
+.desktop-info-window__body a:focus-visible {
+  background: var(--fg);
+  color: #fff;
+  outline: 1px solid var(--fg);
+}
+
+.desktop-info-window__email {
+  justify-self: start;
+  margin-top: 16px;
+  font-size: clamp(14px, 2vw, 16px);
+  line-height: 1.5;
+}
+
 
 /* GTC WELCOME ORIENTATION V1 START */
 
@@ -2254,3 +2394,15 @@ button {
 }
 
 /* GTC WELCOME MOBILE CENTER V6 END */
+
+/* One hard-edged shadow language for the desktop's movable surfaces. */
+.folder-window,
+.portfolio-notice {
+  box-shadow: var(--os-hard-shadow) !important;
+}
+
+.desktop-poster,
+.desktop-poster.is-dragging {
+  filter: none;
+  box-shadow: var(--os-hard-shadow);
+}

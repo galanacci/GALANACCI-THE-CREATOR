@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
+const FIGHTER_BACKGROUND = 0x592924;
 
 /* GTC GTHEFIGHTER UI FIX V1 START */
 const __gtcGthefighterUiFix = (() => {
@@ -150,7 +151,7 @@ const __gtcGthefighterUiFix = (() => {
 
     try {
       if ('background' in scene) {
-        scene.background = new THREE.Color(0x000000);
+        scene.background = new THREE.Color(FIGHTER_BACKGROUND);
       }
     } catch (_error) {}
 
@@ -902,7 +903,7 @@ function addEnvironment() {
 
   /*
     No floor and no background geometry.
-    The renderer clear colour remains pure black.
+    The renderer clear colour carries the GTHEFIGHTER palette.
   */
 }
 function resize() {
@@ -934,7 +935,7 @@ async function initialise() {
     return;
   }
 
-  renderer.setClearColor(0x050505, 1);
+  renderer.setClearColor(FIGHTER_BACKGROUND, 1);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = coarsePointer ? 1.15 : 1.55;

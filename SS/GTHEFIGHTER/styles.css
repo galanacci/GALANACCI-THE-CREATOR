@@ -1,12 +1,14 @@
 :root {
   color-scheme: dark;
-  --black: #050505;
-  --environment: #050505;
-  --white: #f3f3f0;
+  --black: #2b1513;
+  --environment: #592924;
+  --fighter: #592924;
+  --fighter-deep: #2b1513;
+  --fighter-highlight: #8b4b40;
+  --white: #ead1b2;
   --cream: #ead1b2;
-  --muted: rgba(243, 243, 240, .58);
-  --line: rgba(243, 243, 240, .24);
-  --purple: #9b70df;
+  --muted: rgba(234, 209, 178, .72);
+  --line: rgba(234, 209, 178, .35);
   font-family: "Times New Roman", Times, serif;
 }
 
@@ -63,7 +65,7 @@ canvas {
 }
 
 #frame-viewer:focus-visible {
-  outline: 1px solid var(--purple);
+  outline: 1px solid var(--cream);
   outline-offset: -4px;
 }
 
@@ -173,9 +175,9 @@ canvas {
   gap: 18px;
   min-height: 40px;
   padding: 0 12px;
-  border: 1px solid #000;
-  background: var(--cream);
-  color: #000;
+  border: 1px solid var(--cream);
+  background: var(--fighter-deep);
+  color: var(--cream);
   font-family: Arial, Helvetica, sans-serif;
   opacity: 0;
   pointer-events: none;
@@ -201,12 +203,12 @@ canvas {
 
 .artwork-scrubber__range::-webkit-slider-runnable-track {
   height: 1px;
-  background: #000;
+  background: var(--cream);
 }
 
 .artwork-scrubber__range::-moz-range-track {
   height: 1px;
-  background: #000;
+  background: var(--cream);
 }
 
 .artwork-scrubber__range::-webkit-slider-thumb {
@@ -217,7 +219,7 @@ canvas {
   border-radius: 50%;
   appearance: none;
   -webkit-appearance: none;
-  background: #000;
+  background: var(--cream);
 }
 
 .artwork-scrubber__range::-moz-range-thumb {
@@ -225,11 +227,11 @@ canvas {
   height: 16.5px;
   border: 0;
   border-radius: 50%;
-  background: #000;
+  background: var(--cream);
 }
 
 .artwork-scrubber__range:focus-visible {
-  outline: 1px solid #000;
+  outline: 1px solid var(--cream);
   outline-offset: 3px;
 }
 
@@ -239,7 +241,7 @@ canvas {
   justify-content: flex-end;
   gap: 7px;
   min-width: 78px;
-  color: #000;
+  color: var(--cream);
   font-size: 9px;
   font-weight: 600;
   letter-spacing: .11em;
@@ -290,7 +292,7 @@ canvas {
 .loading-state__track {
   width: 100%;
   height: 1px;
-  background: rgba(255, 255, 255, .18);
+  background: rgba(234, 209, 178, .3);
 }
 
 .loading-state__track span {
@@ -459,7 +461,7 @@ canvas {
 html,
 body,
 .experience {
-  background: #000 !important;
+  background: var(--environment) !important;
 }
 
 .experience {
@@ -482,7 +484,7 @@ body,
 }
 
 .interaction-hint {
-  color: rgba(243, 243, 240, .72) !important;
+  color: rgba(234, 209, 178, .85) !important;
 }
 
 .loading-state p,
@@ -493,7 +495,7 @@ body,
 html,
 body,
 .experience {
-  background: #000 !important;
+  background: var(--environment) !important;
 }
 
 .experience {
@@ -513,7 +515,7 @@ body,
   min-height: 34px;
   padding: 7px 10px;
   border: 1px solid rgba(234, 209, 178, .68);
-  background: rgba(5, 5, 5, .64);
+  background: rgba(43, 21, 19, .86);
   color: var(--cream);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 9px;
@@ -554,7 +556,7 @@ body,
   margin: 0;
   padding: 0;
   border: 0;
-  background: rgba(0, 0, 0, .78);
+  background: rgba(23, 9, 8, .84);
   cursor: default;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -567,7 +569,7 @@ body,
   max-height: min(660px, calc(100dvh - 40px));
   overflow: auto;
   border: 1px solid var(--cream);
-  background: #050505;
+  background: var(--fighter-deep);
   color: var(--cream);
   box-shadow: 0 18px 60px rgba(0, 0, 0, .48);
 }
@@ -839,7 +841,7 @@ body,
   padding: 12px 16px;
 
   border-bottom: 1px solid rgba(234, 209, 178, .3);
-  background: #050505;
+  background: var(--fighter-deep);
   color: var(--cream);
 }
 
@@ -860,10 +862,9 @@ body,
 .social-archive__instagram-shell {
   width: 100%;
   min-height: 520px;
-
+  isolation: isolate;
   overflow: hidden;
-
-  background: #fff;
+  background: var(--fighter);
 }
 
 .social-archive__instagram-embed {
@@ -877,7 +878,9 @@ body,
   padding: 0;
   border: 0;
 
+  /* Instagram owns the cross-origin page; blend its white surface into ours. */
   background: #fff;
+  mix-blend-mode: multiply;
 }
 
 @media (max-width: 680px), (hover: none), (pointer: coarse) {

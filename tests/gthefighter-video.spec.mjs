@@ -171,6 +171,40 @@ test("iframe playback starts again after closing and reopening the app", async (
   expect(after.currentTime).toBeGreaterThan(before + .05);
 });
 
+test("GTHEFIGHTER uses its own palette without changing the OS chrome", async ({ page }, testInfo) => {
+  const isMobile = testInfo.project.name === "mobile-chromium";
+  await seedDesktop(page);
+  await openDesktop(page);
+  const folder = await openFolder(page, "SS", isMobile);
+  const row = folder.locator('[data-label="GTHEFIGHTER.EXE"]');
+  if (isMobile) await row.dispatchEvent("click");
+  else await row.dblclick();
+
+  const appWindow = page.locator("#experiment-window");
+  await expect(appWindow).toHaveAttribute("data-theme", "gthefighter");
+  await expect(appWindow.locator(".experiment-window__chrome")).toHaveCSS("background-color", "rgb(89, 41, 36)");
+  await expect(appWindow.locator(".experiment-window__chrome")).toHaveCSS("color", "rgb(234, 209, 178)");
+  await expect(page.frameLocator("#experiment-frame").locator(".experience")).toHaveCSS("background-color", "rgb(89, 41, 36)");
+
+  await appWindow.getByRole("button", { name: "Close app" }).click();
+  await expect(appWindow).not.toHaveAttribute("data-theme", /.+/);
+  await expect(folder).toBeVisible();
+});
+
+test("social archive keeps the Instagram embed inside the burgundy palette", async ({ page }) => {
+  await openFighter(page);
+  await page.locator("#social-archive-trigger").click();
+  const dialog = page.locator("#social-archive-dialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator(".social-archive__archive-status p")).toHaveText("2021-2025");
+  await expect(dialog.locator(".social-archive__instagram-shell")).toHaveCSS("background-color", "rgb(89, 41, 36)");
+  const embed = dialog.locator(".social-archive__instagram-embed");
+  await expect(embed).toHaveCSS("mix-blend-mode", "multiply");
+  await expect(embed).toHaveAttribute("src", "https://www.instagram.com/gthefighter/embed/");
+  await dialog.locator(".social-archive__close").click();
+  await expect(dialog).toBeHidden();
+});
+
 test("history restoration resumes rendering and video playback", async ({ page }) => {
   await openFighter(page);
   await page.goto("/?entry=pog");

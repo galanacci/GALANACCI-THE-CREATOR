@@ -2,7 +2,7 @@
    Keeps the scene clean and removes non-essential text blocks. */
 
 html, body {
-  background: #000 !important;
+  background: var(--environment) !important;
 }
 
 .gtc-ui-fix-hidden {
@@ -10,7 +10,7 @@ html, body {
 }
 
 canvas {
-  background: #000 !important;
+  background: var(--environment) !important;
 }
 
 button,

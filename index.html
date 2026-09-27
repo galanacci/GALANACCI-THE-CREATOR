@@ -21,7 +21,7 @@
   </script>
   <!-- GTC ENTRY RETURN V4.1 END -->
 
-<link rel="stylesheet" href="style.css?v=welcome-mobile-center-v6">
+<link rel="stylesheet" href="style.css?v=desktop-info-shadow-v1">
   <link rel="stylesheet" href="styles/app-folder-list.css?v=mobile-folder-type-v1">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=ui-favicon-v2">
   <link rel="stylesheet" href="styles/gtc-os-boot.css?v=boot-word-hard-cut-js-v2">
@@ -71,6 +71,14 @@
     />
   </figure>
   <!-- GTC DESKTOP POSTER V3 END -->
+    <button
+      id="desktop-info-trigger"
+      class="desktop-info-trigger"
+      type="button"
+      aria-label="About GALANACCI THE CREATOR"
+      aria-controls="desktop-info-layer"
+      aria-expanded="false"
+    ><span aria-hidden="true">i</span></button>
     <div id="desktop-apps" class="desktop-apps" aria-label="Desktop applications"></div>
     <p id="desktop-hint" class="desktop-hint" aria-hidden="true"></p>
     <div class="desktop-meta" aria-hidden="true">
@@ -78,6 +86,21 @@
       <span>VERSION_075</span>
     </div>
   </main>
+
+  <div id="desktop-info-layer" class="desktop-info-layer" hidden aria-hidden="true">
+    <section class="desktop-info-window" role="dialog" aria-modal="true" aria-labelledby="desktop-info-title">
+      <header class="desktop-info-window__chrome">
+        <span id="desktop-info-title">INFORMATION</span>
+        <button type="button" class="folder-window__close" data-close-desktop-info aria-label="Close information">&times;</button>
+      </header>
+      <div class="desktop-info-window__body">
+        <h2>REPS IN DA GYM, REPS IN DA STUDIO</h2>
+        <p>BUILDING <a href="https://www.instagram.com/pioneersofgreatness/" target="_blank" rel="noopener noreferrer">@PIONEERSOFGREATNESS</a></p>
+        <p>MANILA-BORN, LONDON-BASED</p>
+        <a class="desktop-info-window__email" href="mailto:enquiries@galanacci.com">ENQUIRIES@GALANACCI.COM</a>
+      </div>
+    </section>
+  </div>
 
   <section
     id="apps-folder-window"
@@ -275,7 +298,7 @@
   <!-- GTC PORTFOLIO NOTICE V1 END -->
 
   <script type="module" src="js/apps.js?v=20260919-ss-folder-v3"></script>
-  <script type="module" src="js/desktop.js?v=uncut-v1"></script>
+  <script type="module" src="js/desktop.js?v=desktop-info-v1"></script>
 
   <script src="js/gtc-ui-enhancements.js?v=folder-catalog-v1"></script>
   <script src="js/gtc-os-boot.js?v=os-session-login-v1"></script>
