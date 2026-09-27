@@ -20,7 +20,6 @@ textarea,
 .desktop,
 .desktop-shortcut,
 .desktop-hint,
-.desktop-meta,
 .folder-window,
 .folder-window__chrome,
 .folder-window__close,
@@ -197,21 +196,6 @@ button {
   opacity: 1;
   visibility: visible;
   transition-delay: 0s;
-}
-
-.desktop-meta {
-  position: fixed;
-  left: calc(18px + var(--safe-left));
-  right: calc(18px + var(--safe-right));
-  bottom: calc(15px + var(--safe-bottom));
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  color: var(--fg);
-  font-size: 8px;
-  font-weight: 600;
-  letter-spacing: .13em;
-  pointer-events: none;
 }
 
 .folder-window {
@@ -552,12 +536,6 @@ button {
 
   .desktop-hint {
     font-size: 10px;
-  }
-
-  .desktop-meta {
-    left: calc(14px + var(--safe-left));
-    right: calc(14px + var(--safe-right));
-    bottom: calc(13px + var(--safe-bottom));
   }
 
   .folder-item img {
@@ -1593,8 +1571,7 @@ body {
 .app-list__description,
 .app-list__meta,
 .app-list__empty,
-.portfolio-notice__body,
-.desktop-meta {
+.portfolio-notice__body {
   font-weight: var(--os-type-regular) !important;
   -webkit-text-stroke: 0 transparent !important;
 }
@@ -1696,7 +1673,6 @@ button {
 /* GTC OS LEGIBLE TYPE SCALE V2 START */
 :root {
   --os-font-shortcut: 14px;
-  --os-font-desktop-meta: 10px;
   --os-font-window-chrome: 13px;
   --os-font-notice: 15px;
   --os-font-launch: 13px;
@@ -1707,11 +1683,6 @@ button {
 .desktop-shortcut span {
   font-size: var(--os-font-shortcut) !important;
   line-height: 1.2 !important;
-}
-
-.desktop-meta {
-  font-size: var(--os-font-desktop-meta) !important;
-  line-height: 1.25 !important;
 }
 
 .desktop-hint {
@@ -1745,11 +1716,6 @@ button {
   .desktop-shortcut span {
     font-size: 14px !important;
     line-height: 1.2 !important;
-  }
-
-  .desktop-meta {
-    font-size: 11px !important;
-    line-height: 1.25 !important;
   }
 
   .desktop-hint {
@@ -1947,6 +1913,30 @@ button {
   line-height: 1.5;
 }
 
+.desktop-info-window__bio {
+  margin-bottom: 12px !important;
+}
+
+.desktop-info-window__socials {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.desktop-info-window__socials a {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--fg);
+  text-decoration: none;
+}
+
+.desktop-info-window__socials svg {
+  width: 23px;
+  height: 23px;
+}
+
 .desktop-info-window__body a {
   color: inherit;
   text-decoration-thickness: 1px;
@@ -1960,14 +1950,6 @@ button {
   color: #fff;
   outline: 1px solid var(--fg);
 }
-
-.desktop-info-window__email {
-  justify-self: start;
-  margin-top: 16px;
-  font-size: clamp(14px, 2vw, 16px);
-  line-height: 1.5;
-}
-
 
 /* GTC WELCOME ORIENTATION V1 START */
 

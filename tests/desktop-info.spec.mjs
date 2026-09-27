@@ -5,7 +5,7 @@ test("desktop info opens with the exact copy and usable links", async ({ page })
   await seedDesktop(page);
   await openDesktop(page);
 
-  const trigger = page.getByRole("button", { name: "About GALANACCI THE CREATOR" });
+  const trigger = page.getByRole("button", { name: "Open information and contact details" });
   const dialog = page.getByRole("dialog", { name: "INFORMATION" });
   await expect(trigger).toBeVisible();
   await expect(dialog).toBeHidden();
@@ -14,11 +14,17 @@ test("desktop info opens with the exact copy and usable links", async ({ page })
   await expect(trigger).toHaveAttribute("aria-expanded", "true");
   await expect(dialog).toBeVisible();
   await expect(dialog.getByRole("heading", { name: "REPS IN DA GYM, REPS IN DA STUDIO" })).toBeVisible();
+  await expect(dialog.locator(".desktop-info-window__bio")).toHaveText("I’m GALANACCI. I come from architecture, but my work now moves across fashion, art, storytelling and world-building. I’m building PIONEERS OF GREATNESS; a fashion brand rooted in boxing culture and the pursuit of greatness. GALANACCI THE CREATOR is the identity behind the work, and this OS documents the process, experiments and evolution behind the journey.");
   await expect(dialog.getByText("MANILA-BORN, LONDON-BASED")).toBeVisible();
   await expect(dialog.getByRole("link", { name: "@PIONEERSOFGREATNESS" }))
     .toHaveAttribute("href", "https://www.instagram.com/pioneersofgreatness/");
-  await expect(dialog.getByRole("link", { name: "enquiries@galanacci.com" }))
+  await expect(dialog.getByRole("link", { name: "Email enquiries@galanacci.com" }))
     .toHaveAttribute("href", "mailto:enquiries@galanacci.com");
+  await expect(dialog.getByRole("link", { name: "Instagram @galanacci" }))
+    .toHaveAttribute("href", "https://www.instagram.com/galanacci/");
+  await expect(dialog.getByRole("link", { name: "TikTok @galanacci" }))
+    .toHaveAttribute("href", "https://www.tiktok.com/@galanacci");
+  await expect(dialog.locator(".desktop-info-window__socials svg")).toHaveCount(3);
 
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
