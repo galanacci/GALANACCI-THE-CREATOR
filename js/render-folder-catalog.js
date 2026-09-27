@@ -1,4 +1,4 @@
-import { FOLDER_CATALOG } from "./folder-catalog.js?v=uncut-v1";
+import { FOLDER_CATALOG } from "./folder-catalog.js?v=multi-category-v1";
 
 function cell(className, text) {
   const span = document.createElement("span");
@@ -19,6 +19,7 @@ export function renderFolderCatalogs() {
       link.className = "app-list__row";
       link.setAttribute("data-app-link", "");
       link.dataset.appType = entry.type;
+      if (entry.filterTypes) link.dataset.filterTypes = entry.filterTypes.join(" ");
       link.dataset.label = entry.label;
       link.setAttribute("href", entry.href);
       link.setAttribute("aria-label", entry.ariaLabel);

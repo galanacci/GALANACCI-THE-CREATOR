@@ -996,3 +996,48 @@
     text-align: right;
   }
 }
+
+/* Keep the same touch card layout in landscape, but give the list room to read. */
+@media (orientation: landscape) and (hover: none),
+       (orientation: landscape) and (pointer: coarse) {
+  :is(#ss-folder-window, #apps-folder-window) {
+    width: min(600px, calc(100vw - 40px)) !important;
+    height: min(560px, calc(100dvh - 24px)) !important;
+    max-width: calc(100vw - 40px) !important;
+    max-height: calc(100dvh - 24px) !important;
+  }
+
+  :is(#ss-folder-window, #apps-folder-window) .app-folder-toolbar {
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) minmax(100px, 145px) minmax(80px, 96px) 58px auto;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  :is(#ss-folder-window, #apps-folder-window) .app-folder-toolbar input,
+  :is(#ss-folder-window, #apps-folder-window) .app-folder-toolbar select,
+  :is(#ss-folder-window, #apps-folder-window) .app-folder-toolbar button {
+    grid-column: auto;
+    grid-row: auto;
+    width: 100%;
+    height: 44px;
+    min-width: 0;
+  }
+
+  :is(#ss-folder-window, #apps-folder-window) .app-folder-toolbar output {
+    grid-column: auto;
+    grid-row: auto;
+    justify-self: end;
+    margin: 0;
+    font-size: 9px;
+    text-align: right;
+  }
+}
+
+@media screen and (max-width: 760px), (hover: none) and (pointer: coarse) {
+  :is(#ss-folder-window, #apps-folder-window) .app-list__row > span {
+    border-right: 0 !important;
+  }
+}

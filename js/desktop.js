@@ -1,5 +1,5 @@
 import { APPS } from "./apps.js";
-import { renderFolderCatalogs } from "./render-folder-catalog.js?v=uncut-v1";
+import { renderFolderCatalogs } from "./render-folder-catalog.js?v=multi-category-v1";
 
 // The folder rows must exist before route lookup and launch listeners bind.
 renderFolderCatalogs();
@@ -809,6 +809,17 @@ window.addEventListener("resize", () => {
       the saved coordinate and never overwrite that saved coordinate.
     */
     renderShortcut(shortcut, readPosition(shortcut));
+  });
+
+  // A dragged window has pixel coordinates. Rotation changes the viewport,
+  // so keep that window reachable without changing its position otherwise.
+  folderWindows.forEach((folderWindow) => {
+    if (folderWindow.hidden || folderWindow.style.transform !== "none") return;
+    const rect = folderWindow.getBoundingClientRect();
+    const maxLeft = Math.max(8, window.innerWidth - rect.width - 8);
+    const maxTop = Math.max(8, window.innerHeight - rect.height - 8);
+    folderWindow.style.left = `${clamp(rect.left, 8, maxLeft)}px`;
+    folderWindow.style.top = `${clamp(rect.top, 8, maxTop)}px`;
   });
 });
 

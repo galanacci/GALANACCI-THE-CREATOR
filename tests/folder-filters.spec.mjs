@@ -95,6 +95,19 @@ test("SS search and type combine, show an empty state, and clear", async ({ page
   await expect(type).toHaveValue("all");
 });
 
+test("365LOOKS stays in Visual Art and joins GALANACCI in Fashion & Brand", async ({ page }, testInfo) => {
+  const folder = await openFolder(page, "SS", testInfo.project.name === "mobile-chromium");
+  const type = folder.locator("[data-folder-type]");
+  const visibleNames = folder.locator(".app-list__row:visible .app-list__name");
+
+  await type.selectOption("brand");
+  await expect(visibleNames).toHaveCount(2);
+  await expect(visibleNames).toContainText(["365LOOKS.EXE", "GALANACCI.EXE"]);
+
+  await type.selectOption("art");
+  await expect(folder.locator('.app-list__row[data-label="365LOOKS.EXE"]')).toBeVisible();
+});
+
 test("APPS filters and sort preserve its default order on reopen", async ({ page }, testInfo) => {
   const mobile = testInfo.project.name === "mobile-chromium";
   const folder = await openFolder(page, "APPS", mobile);

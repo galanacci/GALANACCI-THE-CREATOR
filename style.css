@@ -1852,22 +1852,32 @@ button {
   z-index: 12;
   top: calc(16px + var(--safe-top));
   right: calc(16px + var(--safe-right));
-  display: grid;
-  place-items: center;
-  width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: auto;
   height: 44px;
-  padding: 0;
+  padding: 0 4px;
   border: 1px solid transparent;
   background: transparent;
   color: var(--fg);
   cursor: pointer;
 }
 
-.desktop-info-trigger span {
+.desktop-info-trigger__label {
+  color: #5b554e;
+  font-size: 11px;
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+
+.desktop-info-trigger__icon {
   display: grid;
   place-items: center;
   width: 24px;
   height: 24px;
+  flex: none;
   border: 1px solid currentColor;
   border-radius: 50%;
   font-size: 17px;

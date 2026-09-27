@@ -224,7 +224,8 @@
         const name = row.dataset.label || row.querySelector(".app-list__name")?.textContent || "";
         const description = row.querySelector(".app-list__description")?.textContent || "";
         const matchesText = `${name} ${description}`.toLowerCase().includes(query);
-        const matchesType = category === "all" || row.dataset.appType === category;
+        const filterTypes = (row.dataset.filterTypes || row.dataset.appType || "").split(" ");
+        const matchesType = category === "all" || filterTypes.includes(category);
         row.hidden = !(matchesText && matchesType);
         if (row.hidden) {
           row.classList.remove("is-selected");
