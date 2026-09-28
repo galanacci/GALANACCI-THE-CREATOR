@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#12080c">
+  <title>JUPITER.EXE</title>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="viewer" aria-label="JUPITER colour visualiser">
+    <video id="source-video" src="./assets/coral-burn.mp4?v=1080-clean" muted autoplay playsinline webkit-playsinline loop preload="auto" aria-hidden="true"></video>
+    <canvas id="visual" aria-hidden="true"></canvas>
+    <div class="viewer__top">
+      <button id="colour-toggle" class="control-button" type="button" aria-expanded="false" aria-controls="colour-panel">CONTROLS</button>
+    </div>
+    <section id="colour-panel" class="colour-panel" aria-label="Visual controls" hidden>
+      <label for="visual-source">VISUAL</label>
+      <select id="visual-source" aria-label="Visual">
+        <option value="coral-burn">CORAL BURN</option>
+        <option value="vessel-red">VESSEL RED</option>
+      </select>
+      <label for="palette">COMBINATION</label>
+      <select id="palette" aria-label="Colour combination">
+        <option value="original">ORIGINAL COLOURS</option>
+        <option value="jupiter">JUPITER</option>
+        <option value="electric">ELECTRIC</option>
+        <option value="monochrome">MONOCHROME</option>
+        <option value="custom">CUSTOM</option>
+      </select>
+      <div class="colour-panel__stops" id="colour-stops" hidden>
+        <label>DARK <input type="color" value="#180711" data-stop="0" aria-label="Dark colour"></label>
+        <label>SHADOW <input type="color" value="#782d56" data-stop="1" aria-label="Shadow colour"></label>
+        <label>BODY <input type="color" value="#d88782" data-stop="2" aria-label="Body colour"></label>
+        <label>EDGE <input type="color" value="#ffb64c" data-stop="3" aria-label="Edge colour"></label>
+        <label>LIGHT <input type="color" value="#fff1a6" data-stop="4" aria-label="Light colour"></label>
+      </div>
+      <div class="scale-control">
+        <div class="scale-control__heading">
+          <label for="effect-scale">CLOUD DETAIL</label>
+          <output id="scale-value" for="effect-scale">100%</output>
+        </div>
+        <input id="effect-scale" type="range" min="50" max="200" step="5" value="100" aria-label="Cloud detail">
+        <button id="scale-reset" type="button">RESET DETAIL</button>
+      </div>
+      <p>50% SOFT / 100% ORIGINAL / 200% DEFINED.</p>
+    </section>
+    <div class="viewer__bottom">
+      <span id="playback-status" class="sr-only" role="status" aria-live="polite">LOADING VISUAL</span>
+      <button id="fullscreen" class="fullscreen-button" type="button" aria-label="Enter fullscreen" aria-pressed="false" title="Enter fullscreen">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path class="icon-enter" d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6" />
+          <path class="icon-exit" d="M3 9h6V3m12 6h-6V3M3 15h6v6m12-6h-6v6" />
+        </svg>
+      </button>
+    </div>
+  </main>
+  <script src="./app.js" defer></script>
+</body>
+</html>

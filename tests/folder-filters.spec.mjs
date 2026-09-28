@@ -112,20 +112,21 @@ test("APPS filters and sort preserve its default order on reopen", async ({ page
   const mobile = testInfo.project.name === "mobile-chromium";
   const folder = await openFolder(page, "APPS", mobile);
   const rows = folder.locator(".app-list__row:visible");
-  await expect(rows).toHaveCount(2);
+  await expect(rows).toHaveCount(3);
   const firstDefault = await rows.first().getAttribute("data-label");
 
   await folder.locator("[data-folder-sort]").selectOption("oldest");
   await expect(rows.first()).toHaveAttribute("data-label", "FIBONACCI.EXE");
   await folder.locator("[data-folder-type]").selectOption("visual");
-  await expect(rows).toHaveCount(1);
-  await expect(rows.first()).toHaveAttribute("data-label", "2(XY+T).EXE");
+  await expect(rows).toHaveCount(2);
+  await expect(folder.locator('.app-list__row[data-label="2(XY+T).EXE"]')).toBeVisible();
+  await expect(folder.locator('.app-list__row[data-label="JUPITER.EXE"]')).toBeVisible();
   await folder.locator("[data-folder-search]").fill("fibonacci");
   await expect(rows).toHaveCount(0);
 
   await folder.getByRole("button", { name: "Close APPS folder" }).click();
   const reopened = await openFolder(page, "APPS", mobile);
-  await expect(reopened.locator(".app-list__row:visible")).toHaveCount(2);
+  await expect(reopened.locator(".app-list__row:visible")).toHaveCount(3);
   await expect(reopened.locator(".app-list__row:visible").first()).toHaveAttribute("data-label", firstDefault);
   await expect(reopened.locator("[data-folder-search]")).toHaveValue("");
   await expect(reopened.locator("[data-folder-sort]")).toHaveValue("newest");

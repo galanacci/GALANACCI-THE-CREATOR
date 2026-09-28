@@ -2,6 +2,7 @@
 // share-page builder all use this catalogue as their source of truth.
 export const FOLDER_CATALOG = Object.freeze({
   apps: Object.freeze([
+    { label: "JUPITER.EXE", type: "visual", href: "./experiments/JUPITER/index.html", year: "2026", description: "A looping, colour-shifting visual experiment.", ariaLabel: "Open JUPITER.EXE visualiser", shareSlug: "jupiter", preview: "experiments/JUPITER/assets/preview.jpg" },
     { label: "2(XY+T).EXE", type: "visual", href: "./experiments/2(XY-T)/index.html", year: "2026", description: "An iteration of Bradley Tangonan's XY - T project.", ariaLabel: "Open 2(XY+T).EXE experiment", shareSlug: "2(xy+t)", preview: "experiments/2(XY-T)/assets/frames/frame-0030.jpg", shareDescription: "An interactive visual experiment." },
     { label: "FIBONACCI.EXE", type: "audio", href: "./experiments/FIBONACCI/index.html", year: "2024", description: "An audio visualiser inspired by Fibonacci.", ariaLabel: "Open FIBONACCI.EXE audio visualiser", shareSlug: "fibonacci", preview: "assets/fibonacci-preview.png" }
   ]),
