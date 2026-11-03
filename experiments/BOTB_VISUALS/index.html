@@ -78,7 +78,7 @@
     let width = 0, height = 0;
     function resize() {
       width = innerWidth; height = innerHeight;
-      const ratio = Math.min(devicePixelRatio || 1, 2);
+      const ratio = visual === 'ring' ? Math.min(1, 1280 / width) : Math.min(devicePixelRatio || 1, 2);
       canvas.width = Math.round(width * ratio);
       canvas.height = Math.round(height * ratio);
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -235,6 +235,7 @@
     }
     selector.addEventListener('change', () => {
       visual = selector.value;
+      resize();
       const label = {sun:'Animated gradient sun with travelling heat ripples', gradient:'Soft randomly shifting violet, blue, pink and peach gradient', ring:'HD boxing ring with a full bank of moving spotlights'}[visual];
       canvas.setAttribute('aria-label', label);
       document.querySelector('#stage').setAttribute('aria-label', label);
