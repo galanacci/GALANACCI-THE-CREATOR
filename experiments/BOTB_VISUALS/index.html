@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#000000">
   <title>BOTB_VISUALS.EXE — GALANACCI</title>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <script>
+    if (window.self === window.top) location.replace('../../?app=botb_visuals');
+  </script>
   <style>
     * { box-sizing: border-box; }
     html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
@@ -31,14 +35,17 @@
       .sun, .sun::before { animation: none; }
       .sun { filter: blur(.12vmin); }
     }
-    .toolbar { position: fixed; left: 20px; right: 20px; bottom: 20px; display: flex; align-items: center;
-      justify-content: space-between; gap: 16px; transition: opacity .25s; }
+    .toolbar { position: fixed; right: 16px; bottom: 16px; display: flex; align-items: center;
+      justify-content: flex-end; transition: opacity .25s; }
     .toolbar.hidden { opacity: 0; pointer-events: none; }
     .name { letter-spacing: .09em; color: #aaa; }
     .name span { display: block; color: #666; font-size: 10px; margin-top: 3px; }
-    button { color: #ddd; border: 1px solid #444; background: #111; padding: 10px 14px;
-      font: inherit; cursor: pointer; }
-    button:hover, button:focus-visible { border-color: #ddd; }
+    button { display: grid; place-items: center; width: 48px; height: 48px; padding: 0;
+      border: 0; background: transparent; color: #ead1b2b8; cursor: pointer; }
+    button svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+    button[aria-pressed="true"] .icon-enter, button[aria-pressed="false"] .icon-exit { display: none; }
+    button:hover, button:focus-visible { color: #f2d8b7; }
+    button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
     body.presenting { cursor: none; }
     @media (max-width: 450px) { .toolbar { left: 12px; right: 12px; bottom: 12px; } }
   </style>
@@ -58,8 +65,12 @@
     <div class="sun" role="img" aria-label="Gradient sun"></div>
   </main>
   <nav class="toolbar" aria-label="Visual controls">
-    <div class="name">BOTB_VISUALS.EXE<span>01 / GRADIENT SUN</span></div>
-    <button id="present" type="button">FULLSCREEN ↗</button>
+    <button id="present" type="button" aria-label="Enter fullscreen" aria-pressed="false" title="Enter fullscreen">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path class="icon-enter" d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6" />
+        <path class="icon-exit" d="M3 9h6V3m12 6h-6V3M3 15h6v6m12-6h-6v6" />
+      </svg>
+    </button>
   </nav>
   <script>
     const toolbar = document.querySelector('.toolbar');
@@ -81,14 +92,18 @@
         if (document.fullscreenElement) await document.exitFullscreen();
         else await document.documentElement.requestFullscreen();
       } catch {
-        window.open(location.href, '_blank', 'noopener');
+        reveal();
       }
       button.blur();
       reveal();
     }
     button.addEventListener('click', fullscreen);
     document.addEventListener('fullscreenchange', () => {
-      button.textContent = document.fullscreenElement ? 'EXIT FULLSCREEN ↙' : 'FULLSCREEN ↗';
+      const expanded = !!document.fullscreenElement;
+      const label = expanded ? 'Exit fullscreen' : 'Enter fullscreen';
+      button.setAttribute('aria-label', label);
+      button.setAttribute('aria-pressed', String(expanded));
+      button.title = label;
     });
     document.addEventListener('pointermove', reveal);
     document.addEventListener('pointerdown', reveal);
