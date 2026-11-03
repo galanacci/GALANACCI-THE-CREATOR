@@ -27,8 +27,8 @@
       animation: graffiti-breathe var(--duration) ease-in-out infinite alternate;
       animation-delay: var(--delay); }
     @keyframes graffiti-breathe {
-      from { transform: translate(-50%,-50%) rotate(var(--angle)) scaleX(var(--mirror)) scale(.92); }
-      to { transform: translate(-50%,-50%) rotate(var(--angle)) scaleX(var(--mirror)) scale(1.12); }
+      from { transform: translate(-50%,-50%) rotate(var(--angle)) scale(.92); }
+      to { transform: translate(-50%,-50%) rotate(var(--angle)) scale(1.12); }
     }
     .visual-picker { position: fixed; top: 16px; right: 16px; transition: opacity .25s; }
     .visual-picker select { min-height: 44px; max-width: calc(100vw - 32px); padding: 0 34px 0 14px;
@@ -97,7 +97,6 @@
         piece.style.top=((Math.floor(i/cols)+.5+(Math.random()-.5)*.26)*cellH)+'px';
         piece.style.setProperty('--size',(Math.max(cellW*1.4,cellH*1.5)*(.9+Math.random()*.2))+'px');
         piece.style.setProperty('--angle',(-18+Math.random()*36)+'deg');
-        piece.style.setProperty('--mirror',Math.random()<.35 ? '-1' : '1');
         piece.style.setProperty('--duration',(3.5+Math.random()*3)+'s');
         piece.style.setProperty('--delay',(-Math.random()*14)+'s');
         fragment.append(piece);
