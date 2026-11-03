@@ -15,6 +15,21 @@
     body { color: #fff; font: 11px/1.5 monospace; }
     #stage { position: fixed; inset: 0; display: grid; place-items: center; background: #000; }
     .sun { display: block; width: 100%; height: 100%; }
+    .sun[hidden] { display: none; }
+    .graffiti-wall { position: fixed; inset: 0; overflow: hidden;
+      background: radial-gradient(ellipse at 10% 15%,#42bcb1 0,transparent 50%),
+        radial-gradient(ellipse at 90% 85%,#ed67a7 0,transparent 50%),
+        radial-gradient(ellipse at 65% 20%,#dcdf72 0,transparent 55%),#e8dfd0; }
+    .graffiti-wall[hidden] { display: none; }
+    .graffiti-piece { position: absolute; width: max(46vw,46vh); aspect-ratio: 1;
+      background-image: url('./assets/a-side-graffiti-atlas.png'); background-size: 300% 300%;
+      background-repeat: no-repeat; will-change: transform;
+      animation: graffiti-breathe var(--duration) ease-in-out infinite alternate;
+      animation-delay: var(--delay); }
+    @keyframes graffiti-breathe {
+      from { transform: translate(-50%,-50%) rotate(var(--angle)) scale(.98); }
+      to { transform: translate(-50%,-50%) rotate(var(--angle)) scale(1.035); }
+    }
     .visual-picker { position: fixed; top: 16px; right: 16px; transition: opacity .25s; }
     .visual-picker select { min-height: 44px; max-width: calc(100vw - 32px); padding: 0 34px 0 14px;
       border: 1px solid #ead1b2b8; border-radius: 0; background: #12080ce6; color: #ead1b2;
@@ -40,11 +55,13 @@
   <main id="stage" aria-label="Visual 01: a yellow to red gradient sun against black">
     <canvas class="sun" role="img" aria-label="Animated gradient sun with travelling heat ripples"></canvas>
   </main>
+  <div id="graffiti-wall" class="graffiti-wall" role="img" aria-label="A-Side graffiti collage with independently breathing painted pieces" hidden></div>
   <nav class="visual-picker" aria-label="Choose performance visual">
     <select id="visual-select" aria-label="Visual">
       <option value="sun">01 / GRADIENT SUN</option>
       <option value="gradient">02 / SOFT GRADIENT</option>
       <option value="ring">03 / BOXING RING</option>
+      <option value="graffiti">04 / A-SIDE WALL</option>
     </select>
   </nav>
   <nav class="toolbar" aria-label="Visual controls">
@@ -59,6 +76,18 @@
     const canvas = document.querySelector('.sun');
     const ctx = canvas.getContext('2d');
     const selector = document.querySelector('#visual-select');
+    const graffitiWall = document.querySelector('#graffiti-wall');
+    const graffitiPositions = [[.08,.05],[.44,.02],[.84,.06],[.17,.48],[.53,.49],[.90,.5],[.05,.93],[.44,.91],[.83,.93]];
+    const graffitiPieces = graffitiPositions.map((_,i) => {
+      const piece=document.createElement('div');
+      piece.className='graffiti-piece';
+      piece.style.backgroundPosition=(i%3*50)+'% '+(Math.floor(i/3)*50)+'%';
+      piece.style.setProperty('--angle',[-8,7,-6,5,-7,9,-5,6,-8][i]+'deg');
+      piece.style.setProperty('--duration',(7+i*.73)+'s');
+      piece.style.setProperty('--delay',(-i*1.31)+'s');
+      graffitiWall.append(piece);
+      return piece;
+    });
     let visual = 'sun';
     const ringImage = new Image();
     ringImage.src = './assets/boxing-ring-moving-lights.png';
@@ -85,6 +114,10 @@
       field.width = 180;
       field.height = Math.min(260, Math.max(80, Math.round(180 * height / width)));
       fieldImage = fieldCtx.createImageData(field.width, field.height);
+      graffitiPieces.forEach((piece,i) => {
+        const [x,y] = width < height ? [i%2 ? .77 : .23, .04+Math.floor(i/2)*.23] : graffitiPositions[i];
+        piece.style.left=x*100+'%';piece.style.top=y*100+'%';
+      });
     }
     function drawSun(now) {
       const t = now / 1000;
@@ -235,8 +268,10 @@
     }
     selector.addEventListener('change', () => {
       visual = selector.value;
+      graffitiWall.hidden = visual !== 'graffiti';
+      canvas.hidden = visual === 'graffiti';
       resize();
-      const label = {sun:'Animated gradient sun with travelling heat ripples', gradient:'Soft randomly shifting violet, blue, pink and peach gradient', ring:'HD boxing ring with a full bank of moving spotlights'}[visual];
+      const label = {sun:'Animated gradient sun with travelling heat ripples', gradient:'Soft randomly shifting violet, blue, pink and peach gradient', ring:'HD boxing ring with a full bank of moving spotlights', graffiti:'A-Side graffiti wall with individually breathing artwork'}[visual];
       canvas.setAttribute('aria-label', label);
       document.querySelector('#stage').setAttribute('aria-label', label);
       selector.blur();
@@ -246,7 +281,7 @@
     function drawFrame(now) {
       if (visual === 'sun') drawSun(now);
       else if (visual === 'ring') drawRing(now);
-      else if (now - previousGradientFrame >= 33) {
+      else if (visual === 'gradient' && now - previousGradientFrame >= 33) {
         drawGradient(now); previousGradientFrame = now;
       }
       requestAnimationFrame(drawFrame);
