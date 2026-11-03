@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <title>BOTB_VISUALS.EXE — GALANACCI</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+    body { color: #fff; font: 11px/1.5 monospace; }
+    #stage { position: fixed; inset: 0; display: grid; place-items: center; background: #000; }
+    .sun { width: 76vmin; aspect-ratio: 1; border-radius: 50%;
+      background: linear-gradient(180deg, #ddce58 0%, #e6ce73 30%, #e6b46a 51%, #e76b42 74%, #df2433 100%);
+      box-shadow: 0 0 3vmin .5vmin #ba741915, 0 0 10vmin 1vmin #b9471410;
+      filter: blur(.12vmin); }
+    .toolbar { position: fixed; left: 20px; right: 20px; bottom: 20px; display: flex; align-items: center;
+      justify-content: space-between; gap: 16px; transition: opacity .25s; }
+    .toolbar.hidden { opacity: 0; pointer-events: none; }
+    .name { letter-spacing: .09em; color: #aaa; }
+    .name span { display: block; color: #666; font-size: 10px; margin-top: 3px; }
+    button { color: #ddd; border: 1px solid #444; background: #111; padding: 10px 14px;
+      font: inherit; cursor: pointer; }
+    button:hover, button:focus-visible { border-color: #ddd; }
+    body.presenting { cursor: none; }
+    @media (max-width: 450px) { .toolbar { left: 12px; right: 12px; bottom: 12px; } }
+  </style>
+</head>
+<body>
+  <main id="stage" aria-label="Visual 01: a yellow to red gradient sun against black">
+    <div class="sun" role="img" aria-label="Gradient sun"></div>
+  </main>
+  <nav class="toolbar" aria-label="Visual controls">
+    <div class="name">BOTB_VISUALS.EXE<span>01 / GRADIENT SUN</span></div>
+    <button id="present" type="button">FULLSCREEN ↗</button>
+  </nav>
+  <script>
+    const toolbar = document.querySelector('.toolbar');
+    const button = document.querySelector('#present');
+    let timer;
+    function reveal() {
+      document.body.classList.remove('presenting');
+      toolbar.classList.remove('hidden');
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (!toolbar.contains(document.activeElement)) {
+          toolbar.classList.add('hidden');
+          document.body.classList.add('presenting');
+        }
+      }, 2500);
+    }
+    async function fullscreen() {
+      try {
+        if (document.fullscreenElement) await document.exitFullscreen();
+        else await document.documentElement.requestFullscreen();
+      } catch {
+        window.open(location.href, '_blank', 'noopener');
+      }
+      button.blur();
+      reveal();
+    }
+    button.addEventListener('click', fullscreen);
+    document.addEventListener('fullscreenchange', () => {
+      button.textContent = document.fullscreenElement ? 'EXIT FULLSCREEN ↙' : 'FULLSCREEN ↗';
+    });
+    document.addEventListener('pointermove', reveal);
+    document.addEventListener('pointerdown', reveal);
+    document.addEventListener('keydown', event => {
+      reveal();
+      if (event.key.toLowerCase() === 'f' && event.target.tagName !== 'BUTTON') fullscreen();
+    });
+    reveal();
+  </script>
+</body>
+</html>
