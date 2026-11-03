@@ -1,4 +1,4 @@
-import { currentLayoutProfile, layoutEditing } from "./layout-config.js?v=owner-layout-v1";
+import { currentLayoutProfile, layoutEditing } from "./layout-config.js?v=desktop-first-paint-v1";
 
 if (layoutEditing) {
   const toolbar = document.createElement("div");

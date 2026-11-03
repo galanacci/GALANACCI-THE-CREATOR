@@ -2,10 +2,15 @@ const localHost = ["127.0.0.1", "localhost"].includes(window.location.hostname);
 const requestedEditor = localHost && new URLSearchParams(window.location.search).get("layout") === "edit";
 
 async function readJson(url) {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 2500);
   try {
-    const response = await fetch(url, { cache: "no-store" });
+    const response = await fetch(url, { cache: "no-store", signal: controller.signal });
     if (response.ok) return await response.json();
-  } catch {}
+  } catch {
+  } finally {
+    window.clearTimeout(timeout);
+  }
   return null;
 }
 

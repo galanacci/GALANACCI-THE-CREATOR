@@ -46,3 +46,35 @@ test("old visitor positions cannot override the published layout", async ({ page
   expect(await page.evaluate(() => localStorage.getItem("gtc:desktop-position:pog-exe")))
     .toBe(JSON.stringify({ x: 32, y: 32 }));
 });
+
+for (const delayedModule of ["desktop.js", "desktop-poster.js"]) {
+  test(`desktop remains composed when ${delayedModule} does not load`, async ({ page }) => {
+    await page.route(`**/js/${delayedModule}?*`, (route) => route.fulfill({
+      status: 200,
+      contentType: "text/javascript",
+      body: ""
+    }));
+    await page.goto("/?entry=pog");
+
+    await expect(page.locator(".desktop-shortcut:visible")).toHaveCount(3);
+    const poster = await page.locator("[data-desktop-poster]").boundingBox();
+    const icons = await page.locator(".desktop-shortcut").evaluateAll((elements) =>
+      elements.map((element) => element.getBoundingClientRect().toJSON())
+    );
+    const viewport = page.viewportSize();
+
+    expect(poster.x + poster.width / 2).toBeGreaterThan(viewport.width * .6);
+    for (const icon of icons) {
+      expect(icon.left).toBeGreaterThanOrEqual(0);
+      expect(icon.right).toBeLessThanOrEqual(viewport.width);
+      expect(icon.top).toBeGreaterThanOrEqual(0);
+      expect(icon.bottom).toBeLessThanOrEqual(viewport.height);
+      expect(
+        icon.right <= poster.x ||
+        icon.left >= poster.x + poster.width ||
+        icon.bottom <= poster.y ||
+        icon.top >= poster.y + poster.height
+      ).toBe(true);
+    }
+  });
+}
