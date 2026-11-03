@@ -135,6 +135,18 @@
       const t = now / 1000;
       const radius = Math.min(width, height) * .38 * (1 + .018 * Math.sin(t * .52));
       ctx.clearRect(0, 0, width, height);
+      const glowPulse = .5 + .5 * Math.sin(t * .52);
+      const glowRadius = radius * (1.42 + .12 * glowPulse);
+      const glowX = width / 2 + radius * .012 * Math.sin(t * .8);
+      const glowY = height / 2 + radius * .012 * Math.cos(t * .65);
+      const halo = ctx.createRadialGradient(glowX,glowY,radius*.88,glowX,glowY,glowRadius);
+      halo.addColorStop(0,'rgba(255,153,45,'+(.48+.15*glowPulse)+')');
+      halo.addColorStop(.18,'rgba(249,111,23,'+(.3+.12*glowPulse)+')');
+      halo.addColorStop(.48,'rgba(219,66,12,'+(.12+.06*glowPulse)+')');
+      halo.addColorStop(.78,'rgba(167,39,5,.035)');
+      halo.addColorStop(1,'rgba(125,24,0,0)');
+      ctx.fillStyle = halo;
+      ctx.fillRect(0,0,width,height);
       const gradient = ctx.createLinearGradient(0, height / 2 - radius, 0, height / 2 + radius);
       [[0,'#ddce58'],[.3,'#e6ce73'],[.51,'#e6b46a'],[.74,'#e76b42'],[1,'#df2433']].forEach(([stop,color]) => gradient.addColorStop(stop,color));
       ctx.beginPath();
