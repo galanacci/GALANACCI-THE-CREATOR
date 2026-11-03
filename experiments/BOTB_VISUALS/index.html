@@ -184,9 +184,13 @@
       ctx.save();
       ctx.translate(left, top);
       ctx.scale(w, h);
+      // Confine the show lighting to the arena behind the ropes.
+      ctx.beginPath();
+      ctx.rect(0, 0, 1, .48);
+      ctx.clip();
       const spots = ringFixtures.map(([sourceX, sourceY], i) => ({
         x: .5 + .4*Math.sin(t*(.22+(i%4)*.018)+i*2.399),
-        y: .79 + .12*Math.cos(t*.19+i*1.37),
+        y: .43 + .025*Math.cos(t*.19+i*1.37),
         sourceX, sourceY
       }));
       ctx.globalCompositeOperation = 'screen';
@@ -204,15 +208,6 @@
         ctx.quadraticCurveTo(spot.x,spot.y+.035,spot.x+.065,spot.y);
         ctx.lineTo(spot.sourceX+.003,spot.sourceY);
         ctx.closePath(); ctx.fill();
-        ctx.restore();
-        ctx.save();
-        ctx.translate(spot.x,spot.y); ctx.scale(.11,.04);
-        const pool = ctx.createRadialGradient(0,0,0,0,0,1);
-        pool.addColorStop(0,'rgba(205,242,255,.17)');
-        pool.addColorStop(.35,'rgba(165,227,250,.075)');
-        pool.addColorStop(1,'rgba(120,205,240,0)');
-        ctx.fillStyle = pool;
-        ctx.fillRect(-1,-1,2,2);
         ctx.restore();
       }
       ctx.restore();
