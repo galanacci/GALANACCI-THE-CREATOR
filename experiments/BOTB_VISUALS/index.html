@@ -62,9 +62,9 @@
       ctx.beginPath();
       for (let i = 0; i <= 512; i++) {
         const angle = i / 512 * Math.PI * 2;
-        const wave = .018 * Math.sin(angle * 13 - t * 3.8)
-          + .009 * Math.sin(angle * 23 + t * 5.2)
-          + .004 * Math.sin(angle * 41 - t * 6.5);
+        const wave = .009 * Math.sin(angle * 13 - t * 3.8)
+          + .0045 * Math.sin(angle * 23 + t * 5.2)
+          + .002 * Math.sin(angle * 41 - t * 6.5);
         const r = radius * (1 + wave);
         const x = width / 2 + Math.cos(angle) * r;
         const y = height / 2 + Math.sin(angle) * r;
