@@ -14,27 +14,7 @@
     html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
     body { color: #fff; font: 11px/1.5 monospace; }
     #stage { position: fixed; inset: 0; display: grid; place-items: center; background: #000; }
-    .sun { position: relative; overflow: hidden; width: 76vmin; aspect-ratio: 1; border-radius: 50%;
-      background: linear-gradient(180deg, #ddce58 0%, #e6ce73 30%, #e6b46a 51%, #e76b42 74%, #df2433 100%);
-      box-shadow: 0 0 3vmin .5vmin #ba741915, 0 0 10vmin 1vmin #b9471410;
-      filter: url(#heat-shimmer) blur(.08vmin); animation: breathe 12s ease-in-out infinite; }
-    .sun::before { content: ''; position: absolute; inset: -30%;
-      background: radial-gradient(ellipse at 35% 30%, #fff3a680, transparent 55%),
-        radial-gradient(ellipse at 65% 75%, #ef1b3555, transparent 55%);
-      animation: solar-flow 18s ease-in-out infinite alternate; }
-    @keyframes breathe {
-      0%, 100% { transform: scale(.97); opacity: .91; }
-      50% { transform: scale(1.035); opacity: 1; }
-    }
-    @keyframes solar-flow {
-      0% { transform: translate(-4%, -5%) rotate(-12deg); opacity: .4; }
-      50% { opacity: .85; }
-      100% { transform: translate(4%, 5%) rotate(12deg); opacity: .55; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .sun, .sun::before { animation: none; }
-      .sun { filter: blur(.12vmin); }
-    }
+    .sun { display: block; width: 100%; height: 100%; }
     .toolbar { position: fixed; right: 16px; bottom: 16px; display: flex; align-items: center;
       justify-content: flex-end; transition: opacity .25s; }
     .toolbar.hidden { opacity: 0; pointer-events: none; }
@@ -51,20 +31,8 @@
   </style>
 </head>
 <body>
-  <svg width="0" height="0" aria-hidden="true" style="position:absolute;pointer-events:none">
-    <defs>
-      <filter id="heat-shimmer" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
-        <feTurbulence type="fractalNoise" baseFrequency=".012 .028" numOctaves="2" seed="8" result="heat">
-          <animate attributeName="baseFrequency" values=".012 .028;.019 .046;.014 .036;.012 .028" dur="2.4s" repeatCount="indefinite" />
-        </feTurbulence>
-        <feDisplacementMap in="SourceGraphic" in2="heat" scale="46" xChannelSelector="R" yChannelSelector="G">
-          <animate attributeName="scale" values="38;56;44;38" dur="3.2s" repeatCount="indefinite" />
-        </feDisplacementMap>
-      </filter>
-    </defs>
-  </svg>
   <main id="stage" aria-label="Visual 01: a yellow to red gradient sun against black">
-    <div class="sun" role="img" aria-label="Gradient sun"></div>
+    <canvas class="sun" role="img" aria-label="Animated gradient sun with travelling heat ripples"></canvas>
   </main>
   <nav class="toolbar" aria-label="Visual controls">
     <button id="present" type="button" aria-label="Enter fullscreen" aria-pressed="false" title="Enter fullscreen">
@@ -75,6 +43,44 @@
     </button>
   </nav>
   <script>
+    const canvas = document.querySelector('.sun');
+    const ctx = canvas.getContext('2d');
+    let width = 0, height = 0;
+    function resize() {
+      width = innerWidth; height = innerHeight;
+      const ratio = Math.min(devicePixelRatio || 1, 2);
+      canvas.width = Math.round(width * ratio);
+      canvas.height = Math.round(height * ratio);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    function drawSun(now) {
+      const t = now / 1000;
+      const radius = Math.min(width, height) * .38 * (1 + .018 * Math.sin(t * .52));
+      ctx.clearRect(0, 0, width, height);
+      const gradient = ctx.createLinearGradient(0, height / 2 - radius, 0, height / 2 + radius);
+      [[0,'#ddce58'],[.3,'#e6ce73'],[.51,'#e6b46a'],[.74,'#e76b42'],[1,'#df2433']].forEach(([stop,color]) => gradient.addColorStop(stop,color));
+      ctx.beginPath();
+      for (let i = 0; i <= 512; i++) {
+        const angle = i / 512 * Math.PI * 2;
+        const wave = .018 * Math.sin(angle * 13 - t * 3.8)
+          + .009 * Math.sin(angle * 23 + t * 5.2)
+          + .004 * Math.sin(angle * 41 - t * 6.5);
+        const r = radius * (1 + wave);
+        const x = width / 2 + Math.cos(angle) * r;
+        const y = height / 2 + Math.sin(angle) * r;
+        if (i === 0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = gradient;
+      ctx.shadowColor = '#d5733955';
+      ctx.shadowBlur = radius * .045;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      requestAnimationFrame(drawSun);
+    }
+    addEventListener('resize', resize);
+    resize();
+    requestAnimationFrame(drawSun);
     const toolbar = document.querySelector('.toolbar');
     const button = document.querySelector('#present');
     let timer;
