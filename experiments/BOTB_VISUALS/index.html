@@ -44,6 +44,7 @@
     <select id="visual-select" aria-label="Visual">
       <option value="sun">01 / GRADIENT SUN</option>
       <option value="gradient">02 / SOFT GRADIENT</option>
+      <option value="ring">03 / BOXING RING</option>
     </select>
   </nav>
   <nav class="toolbar" aria-label="Visual controls">
@@ -59,6 +60,11 @@
     const ctx = canvas.getContext('2d');
     const selector = document.querySelector('#visual-select');
     let visual = 'sun';
+    const ringImage = new Image();
+    ringImage.src = './assets/boxing-ring.png';
+    const lights = [[.025,.447],[.298,.484],[.374,.485],[.448,.486],
+      [.56,.486],[.648,.484],[.727,.486],[.973,.445]].map(([x,y]) =>
+        ({x,y,level:1,from:1,target:.5+Math.random()*.5,start:0,duration:650+Math.random()*1200}));
     const field = document.createElement('canvas');
     const fieldCtx = field.getContext('2d');
     let fieldImage;
@@ -161,9 +167,51 @@
       ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(field, 0, 0, width, height);
     }
+    function drawRing(now) {
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, width, height);
+      if (!ringImage.complete || !ringImage.naturalWidth) return;
+      const scale = Math.max(width / ringImage.naturalWidth, height / ringImage.naturalHeight);
+      const w = ringImage.naturalWidth * scale, h = ringImage.naturalHeight * scale;
+      const left = (width-w)/2;
+      const top = Math.min(0, Math.max(height-h, height/2-h*.59));
+      let total = 0;
+      for (const light of lights) {
+        const p = Math.min(1, (now-light.start)/light.duration);
+        light.level = light.from + (light.target-light.from) * p*p*(3-2*p);
+        if (p === 1) {
+          light.from = light.level;
+          light.target = Math.random() < .28 ? .12 + Math.random()*.2 : .65 + Math.random()*.35;
+          light.start = now; light.duration = 450 + Math.random()*1500;
+        }
+        total += light.level;
+      }
+      ctx.save();
+      ctx.filter = 'brightness(' + (.57 + total/lights.length*.38) + ')';
+      ctx.drawImage(ringImage, left, top, w, h);
+      ctx.restore();
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      for (const light of lights) {
+        const x = left + light.x*w, y = top + light.y*h;
+        const glow = ctx.createRadialGradient(x,y,0,x,y,w*.055);
+        glow.addColorStop(0,'rgba(230,255,255,'+light.level*.65+')');
+        glow.addColorStop(.15,'rgba(160,232,255,'+light.level*.28+')');
+        glow.addColorStop(1,'rgba(80,190,230,0)');
+        ctx.fillStyle = glow;
+        ctx.fillRect(x-w*.055,y-w*.055,w*.11,w*.11);
+      }
+      // A broad reflection links the canvas illumination to the lamps.
+      const reflection = ctx.createRadialGradient(width*.5,top+h*.77,0,width*.5,top+h*.77,w*.48);
+      reflection.addColorStop(0,'rgba(130,215,240,'+(total/lights.length*.13)+')');
+      reflection.addColorStop(1,'rgba(60,150,190,0)');
+      ctx.fillStyle = reflection;
+      ctx.fillRect(0,top+h*.66,width,h*.34);
+      ctx.restore();
+    }
     selector.addEventListener('change', () => {
       visual = selector.value;
-      const label = visual === 'sun' ? 'Animated gradient sun with travelling heat ripples' : 'Soft randomly shifting violet, blue, pink and peach gradient';
+      const label = {sun:'Animated gradient sun with travelling heat ripples', gradient:'Soft randomly shifting violet, blue, pink and peach gradient', ring:'Boxing ring with independently flickering arena lights'}[visual];
       canvas.setAttribute('aria-label', label);
       document.querySelector('#stage').setAttribute('aria-label', label);
       selector.blur();
@@ -172,6 +220,7 @@
     let previousGradientFrame = -Infinity;
     function drawFrame(now) {
       if (visual === 'sun') drawSun(now);
+      else if (visual === 'ring') drawRing(now);
       else if (now - previousGradientFrame >= 33) {
         drawGradient(now); previousGradientFrame = now;
       }
