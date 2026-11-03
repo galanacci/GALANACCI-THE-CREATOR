@@ -61,7 +61,7 @@
     const selector = document.querySelector('#visual-select');
     let visual = 'sun';
     const ringImage = new Image();
-    ringImage.src = './assets/boxing-ring-hd.png';
+    ringImage.src = './assets/boxing-ring-moving-lights.png';
     const field = document.createElement('canvas');
     const fieldCtx = field.getContext('2d');
     let fieldImage;
@@ -164,7 +164,7 @@
       ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(field, 0, 0, width, height);
     }
-    function drawRing() {
+    function drawRing(now) {
       ctx.fillStyle = '#000';
       ctx.fillRect(0, 0, width, height);
       if (!ringImage.complete || !ringImage.naturalWidth) return;
@@ -173,10 +173,80 @@
       const left = (width-w)/2;
       const top = (height-h)/2;
       ctx.drawImage(ringImage, left, top, w, h);
+      const t = now / 1000;
+      // Work in the photograph's coordinates so beams and shadows stay
+      // registered to the ring at every viewport size.
+      ctx.save();
+      ctx.translate(left, top);
+      ctx.scale(w, h);
+      const spots = [0, 2.6].map((phase, i) => ({
+        x: .5 + .28*Math.sin(t*.3+phase),
+        y: .81 + .075*Math.cos(t*.24+phase),
+        sourceX: i === 0 ? .39 : .61,
+        worldX: -3.5*Math.sin(t*.3+phase),
+        worldZ: 1.5 + Math.cos(t*.24+phase)
+      }));
+      ctx.globalCompositeOperation = 'screen';
+      for (const spot of spots) {
+        ctx.save();
+        ctx.filter = 'blur(8px)';
+        const beam = ctx.createLinearGradient(spot.sourceX,.23,spot.x,spot.y);
+        beam.addColorStop(0,'rgba(195,237,255,.3)');
+        beam.addColorStop(.4,'rgba(145,214,245,.12)');
+        beam.addColorStop(1,'rgba(150,220,250,.015)');
+        ctx.fillStyle = beam;
+        ctx.beginPath();
+        ctx.moveTo(spot.sourceX-.007,.23);
+        ctx.lineTo(spot.x-.15,spot.y);
+        ctx.quadraticCurveTo(spot.x,spot.y+.065,spot.x+.15,spot.y);
+        ctx.lineTo(spot.sourceX+.007,.23);
+        ctx.closePath(); ctx.fill();
+        ctx.restore();
+        ctx.save();
+        ctx.translate(spot.x,spot.y); ctx.scale(.23,.075);
+        const pool = ctx.createRadialGradient(0,0,0,0,0,1);
+        pool.addColorStop(0,'rgba(205,242,255,.48)');
+        pool.addColorStop(.35,'rgba(165,227,250,.25)');
+        pool.addColorStop(1,'rgba(120,205,240,0)');
+        ctx.fillStyle = pool;
+        ctx.fillRect(-1,-1,2,2);
+        ctx.restore();
+      }
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.beginPath();
+      [[0,.70],[.25,.625],[.75,.625],[1,.70],[1,1],[0,1]].forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));
+      ctx.closePath(); ctx.clip();
+      const project = (x,z) => [.5+x*.56/Math.max(.3,z+1.5), .58+.2025/Math.max(.3,z+1.5)];
+      for (const spot of spots) {
+        // Intersect rays from the moving light through elevated ropes
+        // and rigging with the floor, then project into the photograph.
+        const shadow = (x,z,elevation) => {
+          const k = 4.8/(4.8-elevation);
+          return project(spot.worldX+(x-spot.worldX)*k, spot.worldZ+(z-spot.worldZ)*k);
+        };
+        const line = (a,b,elevation,thickness) => {
+          const p=shadow(a[0],a[1],elevation), q=shadow(b[0],b[1],elevation);
+          ctx.beginPath();ctx.moveTo(...p);ctx.lineTo(...q);
+          ctx.lineWidth=thickness;ctx.stroke();
+        };
+        ctx.strokeStyle='rgba(0,9,18,.24)';
+        ctx.lineCap='round';
+        ctx.filter='blur(1.5px)';
+        for (const elevation of [.25,.52,.81]) {
+          line([-2,3],[2,3],elevation,.003);
+          line([-2,-.8],[-2,3],elevation,.004);
+          line([2,-.8],[2,3],elevation,.004);
+        }
+        ctx.strokeStyle='rgba(0,9,18,.17)';
+        for (const z of [-.5,.7,1.9]) line([-3,z],[3,z],2.2,.008);
+        for (const x of [-1.7,0,1.7]) line([x,-1],[x,3.5],2.2,.007);
+        ctx.filter='none';
+      }
+      ctx.restore();
     }
     selector.addEventListener('change', () => {
       visual = selector.value;
-      const label = {sun:'Animated gradient sun with travelling heat ripples', gradient:'Soft randomly shifting violet, blue, pink and peach gradient', ring:'HD boxing ring with steady arena lighting'}[visual];
+      const label = {sun:'Animated gradient sun with travelling heat ripples', gradient:'Soft randomly shifting violet, blue, pink and peach gradient', ring:'HD boxing ring with sweeping spotlights and moving cast shadows'}[visual];
       canvas.setAttribute('aria-label', label);
       document.querySelector('#stage').setAttribute('aria-label', label);
       selector.blur();
