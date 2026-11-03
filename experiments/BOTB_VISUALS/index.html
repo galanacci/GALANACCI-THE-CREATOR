@@ -54,10 +54,12 @@
   <svg width="0" height="0" aria-hidden="true" style="position:absolute;pointer-events:none">
     <defs>
       <filter id="heat-shimmer" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
-        <feTurbulence type="fractalNoise" baseFrequency=".018 .035" numOctaves="2" seed="8" result="heat">
-          <animate attributeName="baseFrequency" values=".018 .035;.022 .043;.016 .038;.018 .035" dur="9s" repeatCount="indefinite" />
+        <feTurbulence type="fractalNoise" baseFrequency=".012 .028" numOctaves="2" seed="8" result="heat">
+          <animate attributeName="baseFrequency" values=".012 .028;.019 .046;.014 .036;.012 .028" dur="2.4s" repeatCount="indefinite" />
         </feTurbulence>
-        <feDisplacementMap in="SourceGraphic" in2="heat" scale="12" xChannelSelector="R" yChannelSelector="G" />
+        <feDisplacementMap in="SourceGraphic" in2="heat" scale="46" xChannelSelector="R" yChannelSelector="G">
+          <animate attributeName="scale" values="38;56;44;38" dur="3.2s" repeatCount="indefinite" />
+        </feDisplacementMap>
       </filter>
     </defs>
   </svg>
