@@ -21,14 +21,14 @@
         radial-gradient(ellipse at 90% 85%,#ed67a7 0,transparent 50%),
         radial-gradient(ellipse at 65% 20%,#dcdf72 0,transparent 55%),#e8dfd0; }
     .graffiti-wall[hidden] { display: none; }
-    .graffiti-piece { position: absolute; width: max(46vw,46vh); aspect-ratio: 1;
+    .graffiti-piece { position: absolute; width: var(--size); aspect-ratio: 1;
       background-image: url('./assets/a-side-graffiti-atlas.png'); background-size: 300% 300%;
       background-repeat: no-repeat; will-change: transform;
       animation: graffiti-breathe var(--duration) ease-in-out infinite alternate;
       animation-delay: var(--delay); }
     @keyframes graffiti-breathe {
-      from { transform: translate(-50%,-50%) rotate(var(--angle)) scale(.98); }
-      to { transform: translate(-50%,-50%) rotate(var(--angle)) scale(1.035); }
+      from { transform: translate(-50%,-50%) rotate(var(--angle)) scaleX(var(--mirror)) scale(.98); }
+      to { transform: translate(-50%,-50%) rotate(var(--angle)) scaleX(var(--mirror)) scale(1.035); }
     }
     .visual-picker { position: fixed; top: 16px; right: 16px; transition: opacity .25s; }
     .visual-picker select { min-height: 44px; max-width: calc(100vw - 32px); padding: 0 34px 0 14px;
@@ -77,17 +77,33 @@
     const ctx = canvas.getContext('2d');
     const selector = document.querySelector('#visual-select');
     const graffitiWall = document.querySelector('#graffiti-wall');
-    const graffitiPositions = [[.08,.05],[.44,.02],[.84,.06],[.17,.48],[.53,.49],[.90,.5],[.05,.93],[.44,.91],[.83,.93]];
-    const graffitiPieces = graffitiPositions.map((_,i) => {
-      const piece=document.createElement('div');
-      piece.className='graffiti-piece';
-      piece.style.backgroundPosition=(i%3*50)+'% '+(Math.floor(i/3)*50)+'%';
-      piece.style.setProperty('--angle',[-8,7,-6,5,-7,9,-5,6,-8][i]+'deg');
-      piece.style.setProperty('--duration',(7+i*.73)+'s');
-      piece.style.setProperty('--delay',(-i*1.31)+'s');
-      graffitiWall.append(piece);
-      return piece;
-    });
+    let graffitiLayoutKey = '';
+    function layoutGraffiti(width, height) {
+      const key = width+'x'+height;
+      if (key === graffitiLayoutKey) return;
+      graffitiLayoutKey = key;
+      const target = Math.max(145, Math.min(340, width*.18));
+      const cols = Math.ceil(width/target), rows = Math.ceil(height/(target*.7));
+      const cellW = width/cols, cellH = height/rows;
+      const fragment = document.createDocumentFragment();
+      let choices = [];
+      for (let i=0;i<cols*rows;i++) {
+        if (!choices.length) choices = Array.from({length:9},(_,n)=>({n,order:Math.random()})).sort((a,b)=>a.order-b.order).map(v=>v.n);
+        const sprite = choices.pop();
+        const piece=document.createElement('div');
+        piece.className='graffiti-piece';
+        piece.style.backgroundPosition=(sprite%3*50)+'% '+(Math.floor(sprite/3)*50)+'%';
+        piece.style.left=((i%cols+.5+(Math.random()-.5)*.26)*cellW)+'px';
+        piece.style.top=((Math.floor(i/cols)+.5+(Math.random()-.5)*.26)*cellH)+'px';
+        piece.style.setProperty('--size',(Math.max(cellW*1.4,cellH*1.5)*(.9+Math.random()*.2))+'px');
+        piece.style.setProperty('--angle',(-18+Math.random()*36)+'deg');
+        piece.style.setProperty('--mirror',Math.random()<.35 ? '-1' : '1');
+        piece.style.setProperty('--duration',(7+Math.random()*7)+'s');
+        piece.style.setProperty('--delay',(-Math.random()*14)+'s');
+        fragment.append(piece);
+      }
+      graffitiWall.replaceChildren(fragment);
+    }
     let visual = 'sun';
     const ringImage = new Image();
     ringImage.src = './assets/boxing-ring-moving-lights.png';
@@ -114,10 +130,7 @@
       field.width = 180;
       field.height = Math.min(260, Math.max(80, Math.round(180 * height / width)));
       fieldImage = fieldCtx.createImageData(field.width, field.height);
-      graffitiPieces.forEach((piece,i) => {
-        const [x,y] = width < height ? [i%2 ? .77 : .23, .04+Math.floor(i/2)*.23] : graffitiPositions[i];
-        piece.style.left=x*100+'%';piece.style.top=y*100+'%';
-      });
+      layoutGraffiti(width, height);
     }
     function drawSun(now) {
       const t = now / 1000;
