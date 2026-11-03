@@ -184,13 +184,9 @@
       ctx.save();
       ctx.translate(left, top);
       ctx.scale(w, h);
-      // Confine the show lighting to the arena behind the ropes.
-      ctx.beginPath();
-      ctx.rect(0, 0, 1, .48);
-      ctx.clip();
       const spots = ringFixtures.map(([sourceX, sourceY], i) => ({
         x: .5 + .4*Math.sin(t*(.22+(i%4)*.018)+i*2.399),
-        y: .43 + .025*Math.cos(t*.19+i*1.37),
+        y: 1.12 + .12*Math.cos(t*.19+i*1.37),
         sourceX, sourceY
       }));
       ctx.globalCompositeOperation = 'screen';
@@ -210,6 +206,30 @@
         ctx.closePath(); ctx.fill();
         ctx.restore();
       }
+      // Composite the foreground ring back over the full-length beams.
+      // The ropes are individually masked, leaving their gaps transparent
+      // so the spotlights remain visible in the arena behind them.
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.beginPath();
+      const polygon = points => {
+        points.forEach(([x,y],i) => i ? ctx.lineTo(x,y) : ctx.moveTo(x,y));
+        ctx.closePath();
+      };
+      polygon([[0,.69],[.25,.625],[.75,.625],[1,.69],[1,1],[0,1]]);
+      for (const rope of [
+        [[0,.413],[.117,.456],[.25,.491],[.75,.491],[.883,.456],[1,.413]],
+        [[0,.5],[.117,.514],[.25,.533],[.75,.533],[.883,.514],[1,.5]],
+        [[0,.589],[.117,.586],[.25,.579],[.75,.579],[.883,.586],[1,.589]]
+      ]) {
+        polygon([...rope.map(([x,y])=>[x,y-.005]), ...rope.slice().reverse().map(([x,y])=>[x,y+.005])]);
+      }
+      ctx.rect(.244,.48,.028,.151);
+      ctx.rect(.733,.48,.028,.151);
+      ctx.rect(.11,.445,.015,.153);
+      ctx.rect(.876,.445,.015,.153);
+      ctx.rect(.498,.487,.009,.1);
+      ctx.clip();
+      ctx.drawImage(ringImage,0,0,1,1);
       ctx.restore();
     }
     selector.addEventListener('change', () => {
