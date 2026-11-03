@@ -136,7 +136,7 @@
       const radius = Math.min(width, height) * .38 * (1 + .018 * Math.sin(t * .52));
       ctx.clearRect(0, 0, width, height);
       const glowPulse = .5 + .5 * Math.sin(t * .52);
-      const glowRadius = radius * (1.42 + .12 * glowPulse);
+      const glowRadius = radius * (1.42 + .12 * glowPulse) * 1.5;
       const glowX = width / 2 + radius * .012 * Math.sin(t * .8);
       const glowY = height / 2 + radius * .012 * Math.cos(t * .65);
       const halo = ctx.createRadialGradient(glowX,glowY,radius*.88,glowX,glowY,glowRadius);
