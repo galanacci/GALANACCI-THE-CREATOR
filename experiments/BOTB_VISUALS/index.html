@@ -62,10 +62,8 @@
     let visual = 'sun';
     const ringImage = new Image();
     ringImage.src = './assets/boxing-ring-moving-lights.png';
-    const ringFixtures = [[.09,.162],[.17,.22],[.326,.235],
-      [.39,.235],[.455,.232],[.543,.234],
-      [.613,.234],[.672,.235],[.83,.22],[.91,.16],
-      [.25,.296],[.421,.28],[.529,.28],[.634,.28],[.749,.296]];
+    const ringFixtures = [[.09,.162],[.17,.22],[.326,.235],[.455,.232],
+      [.543,.234],[.672,.235],[.83,.22],[.91,.16]];
     const field = document.createElement('canvas');
     const fieldCtx = field.getContext('2d');
     let fieldImage;
@@ -191,18 +189,22 @@
       ctx.globalCompositeOperation = 'screen';
       for (const spot of spots) {
         ctx.save();
-        ctx.filter = 'blur(3px)';
         const beam = ctx.createLinearGradient(spot.sourceX,spot.sourceY,spot.x,spot.y);
         beam.addColorStop(0,'rgba(195,237,255,.19)');
         beam.addColorStop(.4,'rgba(145,214,245,.055)');
         beam.addColorStop(1,'rgba(150,220,250,.006)');
         ctx.fillStyle = beam;
-        ctx.beginPath();
-        ctx.moveTo(spot.sourceX-.003,spot.sourceY);
-        ctx.lineTo(spot.x-.065,spot.y);
-        ctx.quadraticCurveTo(spot.x,spot.y+.035,spot.x+.065,spot.y);
-        ctx.lineTo(spot.sourceX+.003,spot.sourceY);
-        ctx.closePath(); ctx.fill();
+        // Layered translucent cones soften the edges without expensive
+        // full-height blur filters on every lamp and animation frame.
+        ctx.globalAlpha = .34;
+        for (const spread of [.076,.065,.054]) {
+          ctx.beginPath();
+          ctx.moveTo(spot.sourceX-.003,spot.sourceY);
+          ctx.lineTo(spot.x-spread,spot.y);
+          ctx.quadraticCurveTo(spot.x,spot.y+.035,spot.x+spread,spot.y);
+          ctx.lineTo(spot.sourceX+.003,spot.sourceY);
+          ctx.closePath(); ctx.fill();
+        }
         ctx.restore();
       }
       // Composite the foreground ring back over the full-length beams.
