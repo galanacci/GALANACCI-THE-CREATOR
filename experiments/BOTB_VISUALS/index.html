@@ -118,7 +118,7 @@
       {color: [248,148,206], x: .42, y: .7},
       {color: [255,218,158], x: 1.05, y: .4},
       {color: [251,176,199], x: .7, y: 1.05}
-    ].map(c => ({...c, from: {x:c.x,y:c.y}, to: randomTarget(), start: performance.now(), duration: (9000 + Math.random()*7000) / 1.4}));
+    ].map(c => ({...c, from: {x:c.x,y:c.y}, to: randomTarget(), start: performance.now(), duration: (9000 + Math.random()*7000) / 1.68}));
     let width = 0, height = 0;
     function resize() {
       width = innerWidth; height = innerHeight;
@@ -200,7 +200,7 @@
         c.y = c.from.y + (c.to.y - c.from.y) * eased;
         if (progress === 1) {
           c.from = {x:c.x, y:c.y}; c.to = randomTarget();
-          c.start = now; c.duration = (9000 + Math.random() * 7000) / 1.4;
+          c.start = now; c.duration = (9000 + Math.random() * 7000) / 1.68;
         }
       }
       const pixels = fieldImage.data;
