@@ -13,7 +13,7 @@
     .sun { position: relative; overflow: hidden; width: 76vmin; aspect-ratio: 1; border-radius: 50%;
       background: linear-gradient(180deg, #ddce58 0%, #e6ce73 30%, #e6b46a 51%, #e76b42 74%, #df2433 100%);
       box-shadow: 0 0 3vmin .5vmin #ba741915, 0 0 10vmin 1vmin #b9471410;
-      filter: blur(.12vmin); animation: breathe 12s ease-in-out infinite; }
+      filter: url(#heat-shimmer) blur(.08vmin); animation: breathe 12s ease-in-out infinite; }
     .sun::before { content: ''; position: absolute; inset: -30%;
       background: radial-gradient(ellipse at 35% 30%, #fff3a680, transparent 55%),
         radial-gradient(ellipse at 65% 75%, #ef1b3555, transparent 55%);
@@ -29,6 +29,7 @@
     }
     @media (prefers-reduced-motion: reduce) {
       .sun, .sun::before { animation: none; }
+      .sun { filter: blur(.12vmin); }
     }
     .toolbar { position: fixed; left: 20px; right: 20px; bottom: 20px; display: flex; align-items: center;
       justify-content: space-between; gap: 16px; transition: opacity .25s; }
@@ -43,6 +44,16 @@
   </style>
 </head>
 <body>
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute;pointer-events:none">
+    <defs>
+      <filter id="heat-shimmer" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency=".018 .035" numOctaves="2" seed="8" result="heat">
+          <animate attributeName="baseFrequency" values=".018 .035;.022 .043;.016 .038;.018 .035" dur="9s" repeatCount="indefinite" />
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="heat" scale="12" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
   <main id="stage" aria-label="Visual 01: a yellow to red gradient sun against black">
     <div class="sun" role="img" aria-label="Gradient sun"></div>
   </main>
