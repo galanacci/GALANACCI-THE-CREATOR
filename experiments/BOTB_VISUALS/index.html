@@ -76,6 +76,31 @@
       ctx.shadowBlur = radius * .045;
       ctx.fill();
       ctx.shadowBlur = 0;
+      // Thin, translucent rims shear independently around the solid disc.
+      // Their upward-moving interference gives the edge a refracted heat haze.
+      ctx.save();
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = Math.max(1, radius * .007);
+      ctx.filter = 'blur(' + Math.max(.6, radius * .003) + 'px)';
+      for (let layer = -2; layer <= 2; layer++) {
+        ctx.globalAlpha = .13 - Math.abs(layer) * .025;
+        ctx.beginPath();
+        for (let i = 0; i <= 512; i++) {
+          const a = i / 512 * Math.PI * 2;
+          const base = .0045 * Math.sin(a * 13 - t * 3.8)
+            + .00225 * Math.sin(a * 23 + t * 5.2)
+            + .001 * Math.sin(a * 41 - t * 6.5);
+          const shimmer = Math.sin(a * 29 + Math.sin(a * 7 - t * 1.8) * 2 + t * 7 + layer * .8)
+            * Math.sin(a * 9 - t * 2.6 + layer * .4);
+          const r = radius * (1 + base + layer * .003 + shimmer * .006);
+          const x = width / 2 + Math.cos(a) * r + Math.sin(a * 17 + t * 5) * radius * .002;
+          const y = height / 2 + Math.sin(a) * r;
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+      ctx.restore();
       requestAnimationFrame(drawSun);
     }
     addEventListener('resize', resize);
