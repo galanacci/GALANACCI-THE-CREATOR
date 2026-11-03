@@ -92,8 +92,8 @@
             + .001 * Math.sin(a * 41 - t * 6.5);
           const shimmer = Math.sin(a * 29 + Math.sin(a * 7 - t * 1.8) * 2 + t * 7 + layer * .8)
             * Math.sin(a * 9 - t * 2.6 + layer * .4);
-          const r = radius * (1 + base + layer * .00225 + shimmer * .0045);
-          const x = width / 2 + Math.cos(a) * r + Math.sin(a * 17 + t * 5) * radius * .0015;
+          const r = radius * (1 + base + layer * .00675 + shimmer * .0135);
+          const x = width / 2 + Math.cos(a) * r + Math.sin(a * 17 + t * 5) * radius * .0045;
           const y = height / 2 + Math.sin(a) * r;
           if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
