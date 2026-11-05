@@ -31,6 +31,21 @@
       to { transform: translate(-50%,-50%) rotate(var(--angle)) scale(1.12); }
     }
     .visual-picker { position: fixed; top: 16px; right: 16px; transition: opacity .25s; }
+    .visual-picker { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; max-width: calc(100vw - 32px); }
+    #export-open { width: auto; height: 44px; padding: 0 14px; background: #12080ce6;
+      border: 1px solid #ead1b2b8; color: #ead1b2; font: 700 11px Arial,sans-serif; }
+    .export-panel { width: min(420px,calc(100vw - 32px)); padding: 24px; border: 1px solid #ead1b2;
+      background: #120f0e; color: #ead1b2; font: 13px/1.6 Arial,sans-serif; }
+    .export-panel::backdrop { background: #000b; }
+    .export-panel h2 { font-size: 16px; margin: 0 0 12px; }
+    .export-panel p { margin: 10px 0; }
+    .export-panel progress { width: 100%; accent-color: #ead1b2; }
+    .export-actions { display: flex; gap: 10px; margin-top: 18px; }
+    .export-actions button, #export-download { display: inline-block; width: auto; height: auto;
+      padding: 10px 14px; border: 1px solid #ead1b2; color: #ead1b2; background: #211b18;
+      font: 700 11px Arial,sans-serif; text-decoration: none; }
+    .export-panel [hidden] { display: none !important; }
+    button:disabled { opacity: .45; cursor: default; }
     .visual-picker select { min-height: 44px; max-width: calc(100vw - 32px); padding: 0 34px 0 14px;
       border: 1px solid #ead1b2b8; border-radius: 0; background: #12080ce6; color: #ead1b2;
       font: 700 11px Arial, sans-serif; letter-spacing: .08em; cursor: pointer; }
@@ -63,7 +78,21 @@
       <option value="ring">03 / BOXING RING</option>
       <option value="graffiti">04 / A-SIDE WALL</option>
     </select>
+    <button id="export-open" type="button">EXPORT VIDEO ↓</button>
   </nav>
+  <dialog id="export-panel" class="export-panel" aria-labelledby="export-title">
+    <h2 id="export-title">EXPORT VISUAL</h2>
+    <p id="export-name"></p>
+    <p>1920 × 1080 · 16:9 landscape · 30 fps<br>5 minutes · MP4 · seamless 60-second cycle repeated</p>
+    <p>Exports only the artwork, without controls. Rendering may take several minutes. Keep this tab open.</p>
+    <progress id="export-progress" max="1" value="0" hidden></progress>
+    <p id="export-status" role="status" aria-live="polite"></p>
+    <a id="export-download" hidden>DOWNLOAD MP4</a>
+    <div class="export-actions">
+      <button id="export-start" type="button">EXPORT 5-MINUTE VIDEO</button>
+      <button id="export-cancel" type="button">CLOSE</button>
+    </div>
+  </dialog>
   <nav class="toolbar" aria-label="Visual controls">
     <button id="present" type="button" aria-label="Enter fullscreen" aria-pressed="false" title="Enter fullscreen">
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -74,7 +103,7 @@
   </nav>
   <script>
     const canvas = document.querySelector('.sun');
-    const ctx = canvas.getContext('2d');
+    let ctx = canvas.getContext('2d');
     const selector = document.querySelector('#visual-select');
     const graffitiWall = document.querySelector('#graffiti-wall');
     let graffitiLayoutKey = '';
@@ -203,12 +232,15 @@
           c.start = now; c.duration = (9000 + Math.random() * 7000) / 1.68;
         }
       }
+      drawGradientField(clouds);
+    }
+    function drawGradientField(points) {
       const pixels = fieldImage.data;
       let index = 0;
       for (let y = 0; y < field.height; y++) {
         for (let x = 0; x < field.width; x++) {
           let total = 0, r = 0, g = 0, b = 0;
-          for (const c of clouds) {
+          for (const c of points) {
             const dx = x / field.width - c.x, dy = y / field.height - c.y;
             const weight = Math.exp(-(dx * dx + dy * dy) / .19);
             total += weight;
@@ -302,7 +334,9 @@
       reveal();
     });
     let previousGradientFrame = -Infinity;
+    let exporting = false;
     function drawFrame(now) {
+      if (exporting) { requestAnimationFrame(drawFrame); return; }
       if (visual === 'sun') drawSun(now);
       else if (visual === 'ring') drawRing(now);
       else if (visual === 'gradient' && now - previousGradientFrame >= 33) {
@@ -352,6 +386,76 @@
       if (event.key.toLowerCase() === 'f' && event.target.tagName !== 'BUTTON') fullscreen();
     });
     reveal();
+    // A dedicated fixed-size renderer is used by the offline video encoder.
+    // It does not capture the screen, header, controls or DOM animations.
+    window.botbVideo = {
+      async createRenderer(kind, target) {
+        await Promise.all([ringImage.decode(), (async () => {
+          if (!window.botbAtlas) {
+            const image = new Image(); image.src = './assets/a-side-graffiti-atlas.png';
+            await image.decode(); window.botbAtlas = image;
+          }
+        })()]);
+        let seed = 314159;
+        const random = () => { seed = (Math.imul(seed,1664525)+1013904223)>>>0; return seed/4294967296; };
+        const palette = clouds.map(c=>c.color);
+        const routes = palette.map((_,i) => Array.from({length:9},(_,j)=>j===0 ?
+          [{x:-.05,y:.5},{x:.42,y:-.1},{x:.42,y:.7},{x:1.05,y:.4},{x:.7,y:1.05}][i] :
+          {x:random()*1.3-.15,y:random()*1.3-.15}));
+        const pieces = [];
+        const cols=6, rows=5, cellW=1920/cols, cellH=1080/rows;
+        let choices=[];
+        for(let i=0;i<cols*rows;i++) {
+          if(!choices.length) choices=Array.from({length:9},(_,n)=>({n,order:random()})).sort((a,b)=>a.order-b.order).map(v=>v.n);
+          pieces.push({sprite:choices.pop(),x:(i%cols+.5+(random()-.5)*.26)*cellW,
+            y:(Math.floor(i/cols)+.5+(random()-.5)*.26)*cellH,
+            size:Math.max(cellW*1.4,cellH*1.5)*(.9+random()*.2),angle:(-18+random()*36)*Math.PI/180,
+            cycles:5+Math.floor(random()*5),phase:random()*Math.PI*2});
+        }
+        const exportCtx=target.getContext('2d',{alpha:false});
+        const blend=document.createElement('canvas');blend.width=1920;blend.height=1080;
+        const blendCtx=blend.getContext('2d',{alpha:false});
+        const draw = (seconds, context) => {
+          const saved={ctx,width,height};
+          ctx=context;width=1920;height=1080;
+          try {
+            ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
+            ctx.fillStyle='#000';ctx.fillRect(0,0,width,height);
+            if(kind==='sun') drawSun(seconds*1000);
+            else if(kind==='ring') drawRing(seconds*1000);
+            else if(kind==='gradient') {
+              const step=seconds/60*9, index=Math.floor(step)%9, p=step-Math.floor(step), eased=p*p*(3-2*p);
+              drawGradientField(routes.map((route,i)=>({color:palette[i],
+                x:route[index].x+(route[(index+1)%9].x-route[index].x)*eased,
+                y:route[index].y+(route[(index+1)%9].y-route[index].y)*eased})));
+            } else {
+              ctx.fillStyle='#e8dfd0';ctx.fillRect(0,0,width,height);
+              for(const [x,y,color] of [[.65,.2,'#dcdf72'],[.9,.85,'#ed67a7'],[.1,.15,'#42bcb1']]) {
+                const g=ctx.createRadialGradient(x*width,y*height,0,x*width,y*height,width*.65);
+                g.addColorStop(0,color);g.addColorStop(1,color+'00');ctx.fillStyle=g;ctx.fillRect(0,0,width,height);
+              }
+              const image=window.botbAtlas, sw=image.naturalWidth/3, sh=image.naturalHeight/3;
+              for(const piece of pieces) {
+                const zoom=1.02-.1*Math.cos(seconds/60*Math.PI*2*piece.cycles+piece.phase);
+                ctx.save();ctx.translate(piece.x,piece.y);ctx.rotate(piece.angle);ctx.scale(zoom,zoom);
+                ctx.drawImage(image,piece.sprite%3*sw,Math.floor(piece.sprite/3)*sh,sw,sh,-piece.size/2,-piece.size/2,piece.size,piece.size);ctx.restore();
+              }
+            }
+          } finally {ctx=saved.ctx;width=saved.width;height=saved.height;}
+        };
+        return seconds => {
+          const time=((seconds%60)+60)%60;
+          draw(time,exportCtx);
+          if((kind==='sun'||kind==='ring') && time>58) {
+            draw(time-60,blendCtx);
+            const p=(time-58)/2;
+            exportCtx.globalAlpha=p*p*(3-2*p);exportCtx.drawImage(blend,0,0);exportCtx.globalAlpha=1;
+          }
+        };
+      },
+      setExporting(value) { exporting=value; selector.disabled=value; }
+    };
   </script>
+  <script type="module" src="./video-export.js"></script>
 </body>
 </html>
