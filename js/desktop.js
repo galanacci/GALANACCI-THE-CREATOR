@@ -1,6 +1,6 @@
 import { APPS } from "./apps.js";
 import { renderFolderCatalogs } from "./render-folder-catalog.js?v=preview-cards-v1";
-import { layoutEditing, publishedPosition } from "./layout-config.js?v=owner-layout-v1";
+import { layoutEditing, publishedPosition } from "./layout-config.js?v=desktop-first-paint-v1";
 
 // The folder rows must exist before route lookup and launch listeners bind.
 renderFolderCatalogs();
@@ -57,9 +57,12 @@ document.addEventListener("contextmenu", (event) => {
 
 function buildApps() {
   for (const app of APPS) {
-    const shortcut = document.createElement("button");
-    shortcut.type = "button";
-    shortcut.className = "desktop-shortcut";
+    const shortcut = appsHost.querySelector(`[data-app-id="${app.id}"]`)
+      || document.createElement("button");
+    const isStaticShortcut = shortcut.isConnected;
+    if (shortcut.tagName === "BUTTON") shortcut.type = "button";
+    shortcut.draggable = false;
+    shortcut.classList.add("desktop-shortcut");
     shortcut.dataset.appId = app.id;
     shortcut.dataset.launchUrl = app.url || "";
     shortcut.dataset.label = app.label;
@@ -70,16 +73,18 @@ function buildApps() {
 
     if (!app.enabled) shortcut.setAttribute("aria-disabled", "true");
 
-    const icon = document.createElement("img");
+    const icon = shortcut.querySelector("img") || document.createElement("img");
     icon.src = app.icon;
     icon.alt = "";
     icon.draggable = false;
 
-    const label = document.createElement("span");
+    const label = shortcut.querySelector("span") || document.createElement("span");
     label.textContent = app.label;
 
-    shortcut.append(icon, label);
-    appsHost.appendChild(shortcut);
+    if (!isStaticShortcut) {
+      shortcut.append(icon, label);
+      appsHost.appendChild(shortcut);
+    }
     installShortcut(shortcut, app);
   }
 }
@@ -592,6 +597,9 @@ function installShortcut(shortcut, app) {
   shortcut.addEventListener("pointercancel", finishPointer);
 
   shortcut.addEventListener("click", (event) => {
+    // The static PoG link remains usable if this module fails to load, but
+    // once enhanced it follows the same activation rules as the other icons.
+    if (shortcut.tagName === "A") event.preventDefault();
     if (!layoutEditing && isTouch && event.detail > 0) openShortcut(shortcut, app);
   });
 
@@ -712,6 +720,9 @@ window.addEventListener("resize", () => {
 });
 
 window.addEventListener("pageshow", () => {
+  // A browser back/forward return can restore this page from memory rather
+  // than rerunning the boot script. The departure marker is no longer valid.
+  try { sessionStorage.removeItem("gtc:pog-return-pending"); } catch {}
   launchLocked = false;
   closeExperimentWindow({ syncUrl: false });
   closeDesktopInfo({ restoreFocus: false });
@@ -912,4 +923,5 @@ window.addEventListener("keydown", (event) => {
 
 buildApps();
 // The layout config loads asynchronously, so pageshow may have already fired.
+try { sessionStorage.removeItem("gtc:pog-return-pending"); } catch {}
 syncAppRoute();

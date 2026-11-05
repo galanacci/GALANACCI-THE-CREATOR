@@ -40,7 +40,7 @@
   </script>
   <!-- GTC ENTRY RETURN V4.1 END -->
 
-<link rel="stylesheet" href="style.css?v=desktop-grid-layer-v1">
+<link rel="stylesheet" href="style.css?v=desktop-first-paint-v1">
   <link rel="stylesheet" href="styles/app-folder-list.css?v=touch-landscape-v3">
   <link rel="stylesheet" href="styles/app-folder-gallery.css?v=preview-cards-v1">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=ui-favicon-v2">
@@ -64,7 +64,7 @@
 
       <div class="gtc-os-boot__identity">
         <div class="gtc-os-boot__title">GALANACCI OS</div>
-        <div class="gtc-os-boot__version">VERSION_110</div>
+        <div class="gtc-os-boot__version">VERSION_112</div>
       </div>
       <div class="gtc-os-boot__meta" aria-label="World building. Experiments. Archives.">
         <span class="gtc-os-boot__word gtc-os-boot__word--world">WORLD BUILDING</span>
@@ -108,7 +108,20 @@
       aria-controls="desktop-info-layer"
       aria-expanded="false"
     ><span class="desktop-info-trigger__label" aria-hidden="true">INFO/CONTACT</span><span class="desktop-info-trigger__icon" aria-hidden="true">i</span></button>
-    <div id="desktop-apps" class="desktop-apps" aria-label="Desktop applications"></div>
+    <div id="desktop-apps" class="desktop-apps" aria-label="Desktop applications">
+      <a class="desktop-shortcut" data-app-id="pog-exe" href="https://pioneersofgreatness.com/?entry=galanacci" aria-label="PoG.EXE. Open Pioneers of Greatness." draggable="false">
+        <img src="assets/icons/PoG.EXE.svg" alt="" draggable="false">
+        <span>PoG.EXE</span>
+      </a>
+      <button class="desktop-shortcut" data-app-id="experiments-folder" type="button" aria-label="APPS folder">
+        <img src="assets/icons/Experiments.FOLDER.svg" alt="" draggable="false">
+        <span>APPS</span>
+      </button>
+      <button class="desktop-shortcut" data-app-id="ss-folder" type="button" aria-label="SS folder">
+        <img src="assets/icons/Experiments.FOLDER.svg" alt="" draggable="false">
+        <span>SS</span>
+      </button>
+    </div>
     <p id="desktop-hint" class="desktop-hint" aria-hidden="true"></p>
   </main>
 
@@ -346,11 +359,11 @@
   <!-- GTC PORTFOLIO NOTICE V1 END -->
 
   <script type="module" src="js/apps.js?v=20260919-ss-folder-v3"></script>
-  <script type="module" src="js/desktop.js?v=preview-cards-v1"></script>
+  <script type="module" src="js/desktop.js?v=desktop-first-paint-v1"></script>
 
   <script src="js/gtc-ui-enhancements.js?v=catalog-ready-v2"></script>
   <script src="js/gtc-os-boot.js?v=os-session-login-v1"></script>
-  <script type="module" src="js/desktop-poster.js?v=owner-layout-v1"></script>
-  <script type="module" src="js/layout-editor.js?v=owner-layout-v1"></script>
+  <script type="module" src="js/desktop-poster.js?v=desktop-first-paint-v1"></script>
+  <script type="module" src="js/layout-editor.js?v=desktop-first-paint-v1"></script>
 </body>
 </html>

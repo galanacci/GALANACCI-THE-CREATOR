@@ -1,4 +1,4 @@
-import { layoutEditing, publishedPosition } from "./layout-config.js?v=owner-layout-v1";
+import { layoutEditing, publishedPosition } from "./layout-config.js?v=desktop-first-paint-v1";
 
 (() => {
   "use strict";

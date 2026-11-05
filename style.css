@@ -2413,6 +2413,59 @@ html:not(.layout-editing) .desktop-shortcut {
   touch-action: manipulation;
 }
 
+/* The desktop must have a usable first paint even if an in-app browser delays
+   either JavaScript module. Inline transforms from the layout editor override
+   these fallback positions once the modules are ready. */
+.desktop-shortcut {
+  text-decoration: none;
+}
+
+.desktop-apps > .desktop-shortcut {
+  visibility: visible;
+}
+
+.desktop-shortcut[data-app-id="pog-exe"] {
+  transform: translate3d(clamp(32px, 9vw, 128px), 40vh, 0);
+}
+
+.desktop-shortcut[data-app-id="ss-folder"] {
+  transform: translate3d(clamp(32px, 9vw, 128px), 62vh, 0);
+}
+
+.desktop-shortcut[data-app-id="experiments-folder"] {
+  transform: translate3d(clamp(32px, 9vw, 128px), 80vh, 0);
+}
+
+.desktop-poster {
+  transform: translate3d(
+    calc(100vw - clamp(207px, 27vw, 368px) - 64px),
+    max(72px, 10vh),
+    0
+  ) rotate(-1.2deg);
+}
+
+@media (max-width: 700px) {
+  .desktop-shortcut[data-app-id="pog-exe"] {
+    transform: translate3d(48px, max(120px, calc(100dvh - 480px)), 0);
+  }
+
+  .desktop-shortcut[data-app-id="experiments-folder"] {
+    transform: translate3d(48px, max(255px, calc(100dvh - 345px)), 0);
+  }
+
+  .desktop-shortcut[data-app-id="ss-folder"] {
+    transform: translate3d(48px, max(390px, calc(100dvh - 210px)), 0);
+  }
+
+  .desktop-poster {
+    transform: translate3d(
+      calc(100vw - clamp(168px, 48vw, 225px) - 32px),
+      max(72px, 10vh),
+      0
+    ) rotate(-1.2deg);
+  }
+}
+
 .layout-editor {
   position: fixed;
   z-index: 80;
