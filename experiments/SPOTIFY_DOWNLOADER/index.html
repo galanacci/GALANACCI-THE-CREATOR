@@ -1,24 +1,67 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SPOTIFY_DOWNLOADER.EXE</title><link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
 <style>
-*{box-sizing:border-box}body{margin:0;background:#171613;color:#ead1b2;font:14px/1.65 monospace}main{max-width:900px;margin:auto;padding:32px 24px}h1{font-size:24px;line-height:1.3}h2{font-size:16px;margin-top:28px}p{max-width:740px}a{color:inherit}button,.download{display:inline-block;background:#ead1b2;color:#171613;border:1px solid #ead1b2;padding:12px 16px;font:700 12px monospace;cursor:pointer;text-decoration:none;margin:6px 8px 6px 0}pre{background:#0c0c0b;border:1px solid #5b5144;padding:18px;overflow:auto;font:12px/1.6 monospace}summary{cursor:pointer;margin:20px 0}small{color:#c4b295}#status{min-height:22px}
-</style></head><body><main>
-<small>GALANACCI / LOCAL TOOLS</small><h1>SPOTIFY_DOWNLOADER.EXE</h1>
-<p>A local Python script that downloads playlist matches as MP3 files, with metadata, album artwork and available lyrics. This page provides the script; the download runs on your computer.</p>
+*{box-sizing:border-box}body{margin:0;background:#171613;color:#ead1b2;font:14px/1.7 monospace}
+main{max-width:820px;margin:auto;padding:36px 24px 48px}
+h1{font-size:clamp(19px,4vw,28px);line-height:1.3;overflow-wrap:anywhere;margin:10px 0 14px}
+h2{font-size:14px;margin:0 0 6px}p{margin:0 0 14px}small,.note{color:#bdad98}a{color:inherit}
+button,.download{display:inline-block;padding:12px 16px;border:1px solid #ead1b2;background:#ead1b2;color:#171613;font:700 12px/1.5 monospace;text-decoration:none;cursor:pointer}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid #fff;outline-offset:4px}
+.steps{list-style:none;margin:28px 0 20px;padding:0;counter-reset:step}
+.steps li{position:relative;padding:18px 0 18px 44px;border-top:1px solid #51483c;counter-increment:step}
+.steps li::before{content:'0' counter(step);position:absolute;left:0;top:18px;color:#bdad98}
+.steps p{margin:0}.note{font-size:12px}
+details{border-top:1px solid #51483c;margin-top:24px;padding-top:16px}
+summary{cursor:pointer;font-size:12px;font-weight:bold;margin-bottom:14px}
+pre{background:#0c0c0b;border:1px solid #51483c;padding:16px;overflow:auto;font:12px/1.6 monospace}
+.secondary{background:transparent;color:#ead1b2;margin:4px 6px 10px 0}#status{font-size:12px}
+</style>
+</head>
+<body><main>
+<small>GALANACCI / WINDOWS TOOL</small>
+<h1>SPOTIFY_DOWNLOADER.EXE</h1>
+<p>Save playlist matches as MP3 files, with track information, cover art and available lyrics.</p>
 <a class="download" href="./SPOTIFY_DOWNLOADER_WINDOWS.zip" download>DOWNLOAD WINDOWS LAUNCHER ↓</a>
-<p>Extract the ZIP, then double-click <strong>START_DOWNLOADER.bat</strong>. Paste your playlist URL, choose a folder and click Download playlist. Python and FFmpeg are required; spotDL is installed automatically into a local virtual environment.</p>
-<a class="download" href="./download_playlist.py" download>DOWNLOAD PYTHON SCRIPT ↓</a><button id="copy" type="button">COPY SCRIPT</button><p id="status" role="status"></p>
-<h2>1 / PREPARE</h2><p>Install Python and FFmpeg. Confirm <code>ffmpeg -version</code> works in your terminal. A virtual environment keeps spotDL separate from other projects:</p>
-<pre>py -3.12 -m venv .venv
-.\.venv\Scripts\python.exe download_playlist.py</pre>
-<h2>2 / SET YOUR PLAYLIST</h2><p>Open the downloaded script and replace the placeholder at the top:</p><pre>PLAYLIST_URL = "YOUR_SPOTIFY_PLAYLIST_URL_HERE"</pre>
-<h2>3 / RUN</h2><p>Run the Python command above from the folder containing the script. It installs spotDL via pip if missing. Files go directly into <code>Downloaded_Music</code> alongside the script.</p>
-<p>spotDL matches Spotify metadata to audio providers such as YouTube; it does not extract Spotify's audio stream. Artwork and lyrics depend on availability. Some providers also need Deno; see the official setup guide.</p>
-<p><a href="https://spotdl.github.io/spotify-downloader/installation/" target="_blank" rel="noopener">Official installation guide ↗</a> · <a href="https://spotdl.github.io/spotify-downloader/usage/" target="_blank" rel="noopener">Usage guide ↗</a></p>
-<details><summary>VIEW COMPLETE SCRIPT</summary><pre id="source">Loading…</pre></details>
-</main><script>
-let script='';const status=document.querySelector('#status');
-fetch('./download_playlist.py').then(r=>{if(!r.ok)throw Error('Could not load the script.');return r.text()}).then(text=>{script=text;document.querySelector('#source').textContent=text}).catch(e=>{status.textContent=e.message});
-document.querySelector('#copy').addEventListener('click',async()=>{try{if(!script)throw Error('The script is still loading.');await navigator.clipboard.writeText(script);status.textContent='Script copied.'}catch(e){status.textContent='Use Download Python Script or select the script text below.';document.querySelector('details').open=true}});
-</script></body></html>
+<ol class="steps">
+<li><h2>DOWNLOAD &amp; EXTRACT</h2><p>Download the ZIP above. Right-click it, choose <strong>Extract All</strong>, then open the extracted folder.</p></li>
+<li><h2>OPEN THE LAUNCHER</h2><p>Double-click <strong>START_DOWNLOADER.bat</strong>. Keep the files together in the extracted folder.</p></li>
+<li><h2>PASTE &amp; DOWNLOAD</h2><p>Paste your Spotify playlist link, choose where to save the files, then click <strong>Download playlist</strong>. Use <strong>Open music folder</strong> to find your MP3s.</p></li>
+</ol>
+<p class="note">Already downloaded it? Open START_DOWNLOADER.bat whenever you need it. No script editing or terminal commands required.</p>
+<p class="note">The first download sets up spotDL automatically and may take longer. By default, music is saved in Downloaded_Music beside the launcher. Cancelling keeps completed downloads.</p>
+<details>
+<summary>FIRST-TIME SETUP &amp; HELP</summary>
+<p>You need Python 3.12 with Tcl/Tk and FFmpeg installed on Windows. FFmpeg must be available on PATH. If the launcher is already working, no further setup is needed.</p>
+<p>For a playlist link, open the playlist in Spotify and choose <strong>Share → Copy link to playlist</strong>. If a track fails, check the launcher's log for the reason.</p>
+<p class="note">spotDL matches Spotify metadata to external audio providers. Track matches, artwork and lyrics depend on availability. Some audio providers also need Deno.</p>
+<a href="https://spotdl.github.io/spotify-downloader/installation/" target="_blank" rel="noopener">Official setup &amp; troubleshooting ↗</a>
+</details>
+<details id="advanced">
+<summary>ADVANCED / PYTHON SCRIPT</summary>
+<p>The standalone script remains available if you prefer the command line.</p>
+<a class="download secondary" href="./download_playlist.py" download>DOWNLOAD SCRIPT ↓</a>
+<button class="secondary" id="copy" type="button">COPY SCRIPT</button>
+<p id="status" role="status"></p><pre id="source">Open this section to load the script.</pre>
+</details>
+</main>
+<script>
+let script='';
+const status=document.querySelector('#status');
+async function loadScript(){
+  if(script)return script;
+  const response=await fetch('./download_playlist.py');
+  if(!response.ok)throw Error('Could not load the script. Please use Download Script.');
+  script=await response.text();document.querySelector('#source').textContent=script;return script;
+}
+document.querySelector('#advanced').addEventListener('toggle',async event=>{
+  if(event.target.open){try{await loadScript()}catch(error){status.textContent=error.message}}
+});
+document.querySelector('#copy').addEventListener('click',async()=>{
+  try{await navigator.clipboard.writeText(await loadScript());status.textContent='Script copied.'}
+  catch{status.textContent='Use Download Script or select the script text below.'}
+});
+</script>
+</body></html>
