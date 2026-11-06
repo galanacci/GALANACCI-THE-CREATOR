@@ -167,7 +167,10 @@ def main(playlist_url: str | None = None, output_dir: Path | None = None) -> int
             output_template = str(output_dir / "{artists} - {title} [{track-id}].{output-ext}")
             command = [sys.executable, "-m", "spotdl", "download", url,
                        "--format", "mp3", "--output", output_template,
-                       "--overwrite", "skip", "--scan-for-songs",
+                       # Our local scan already populated the archive. spotDL's
+                       # recursive scan searches Spotify for untagged files,
+                       # including recovery copies, and can abort the entire run.
+                       "--overwrite", "skip",
                        "--archive", str(archive),
                        "--save-errors", str(output_dir / "spotify-failed-tracks.txt"),
                        "--print-errors", "--simple-tui", "--log-level", "DEBUG",
