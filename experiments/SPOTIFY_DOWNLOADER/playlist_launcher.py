@@ -42,7 +42,7 @@ class Launcher:
         self.browse.pack(side="left", padx=(8, 0))
         actions = ttk.Frame(frame)
         actions.pack(fill="x", pady=14)
-        self.start = ttk.Button(actions, text="Download audio", command=self.download)
+        self.start = ttk.Button(actions, text="Download / Resume audio", command=self.download)
         self.start.pack(side="left")
         self.cancel = ttk.Button(actions, text="Cancel", command=self.stop, state="disabled")
         self.cancel.pack(side="left", padx=8)
@@ -52,7 +52,7 @@ class Launcher:
         ttk.Label(frame, textvariable=self.status, wraplength=700).pack(anchor="w", pady=8)
         self.log = scrolledtext.ScrolledText(frame, height=12, state="disabled", font=("Consolas", 10))
         self.log.pack(fill="both", expand=True)
-        ttk.Label(frame, text="Exact YouTube versions preserved. Tools set up automatically. FFmpeg required.").pack(anchor="w", pady=(8, 0))
+        ttk.Label(frame, text="Resume: choose the same music folder. Completed tracks are skipped. FFmpeg required.").pack(anchor="w", pady=(8, 0))
         root.protocol("WM_DELETE_WINDOW", self.close)
         root.after(100, self.poll)
         self.entry.focus_set()
@@ -116,7 +116,7 @@ class Launcher:
             self.run_command([str(VENV_PYTHON), "-u", str(ROOT / "download_playlist.py"), url, "--output-dir", folder])
             self.events.put(("status", "Finished. Review the log for any unavailable tracks, then open your music folder."))
         except (OSError, subprocess.CalledProcessError) as error:
-            self.events.put(("status", "Download stopped. Check the log for details."))
+            self.events.put(("status", "Stopped. Completed files kept. Use the same folder and Download / Resume to retry."))
             self.events.put(("log", str(error)))
         finally:
             if self.cancelled.is_set():

@@ -5,6 +5,7 @@ PLAYLIST_URL = "YOUR_SPOTIFY_PLAYLIST_URL_HERE"
 import importlib.util
 import argparse
 import logging
+import os
 from pathlib import Path
 import re
 import shutil
@@ -13,6 +14,47 @@ import sys
 from urllib.parse import parse_qs, urlparse
 
 OUTPUT_DIR = Path(__file__).resolve().parent / "Downloaded_Music"
+
+
+def prepare_spotify_archive(output_dir: Path) -> Path:
+    """Rebuild from actual audio files, including successes before a hard cancel.
+
+    Never infer completion from playlist order or an old archive: missing files
+    must remain eligible for download. Existing MP3s are only read here.
+    """
+    from mutagen.mp3 import MP3
+    from mutagen import MutagenError
+
+    urls = set()
+    for path in output_dir.glob("*.mp3"):
+        match = re.search(r"\[([A-Za-z0-9]{22})\]$", path.stem)
+        if not match:
+            continue
+        try:
+            audio = MP3(path)
+            if audio.info.length <= 0:
+                continue
+        except (MutagenError, OSError, ValueError):
+            logging.warning("Could not read audio in %s; not marking it completed.", path.name)
+            continue
+        urls.add("https://open.spotify.com/track/" + match.group(1))
+    archive = output_dir / ".galanacci-spotify-completed.txt"
+    temporary = archive.with_suffix(".tmp")
+    temporary.write_text("".join(url + "\n" for url in sorted(urls)), encoding="utf-8")
+    os.replace(temporary, archive)
+    logging.info("Resume check: %s existing Spotify tracks will be skipped.", len(urls))
+    return archive
+
+
+def ensure_spotify_deno() -> None:
+    """Use spotDL's private Deno install; no system-wide PATH changes."""
+    from spotdl.utils.deno import get_deno_path
+
+    if get_deno_path() is None:
+        logging.info("Setting up Deno for YouTube audio providers (one-time setup)...")
+        subprocess.run([sys.executable, "-m", "spotdl", "--download-deno"], check=True)
+        if get_deno_path() is None:
+            raise FileNotFoundError("Deno setup did not finish. Retry with an internet connection.")
 
 
 def get_source(url: str) -> str:
@@ -74,9 +116,17 @@ def main(playlist_url: str | None = None, output_dir: Path | None = None) -> int
 
         output_dir.mkdir(parents=True, exist_ok=True)
         if source == "spotify":
+            action = "setting up Deno"
+            ensure_spotify_deno()
+            action = "checking completed downloads"
+            archive = prepare_spotify_archive(output_dir)
             output_template = str(output_dir / "{artists} - {title} [{track-id}].{output-ext}")
             command = [sys.executable, "-m", "spotdl", "download", url,
-                       "--format", "mp3", "--output", output_template]
+                       "--format", "mp3", "--output", output_template,
+                       "--overwrite", "skip", "--scan-for-songs",
+                       "--archive", str(archive),
+                       "--save-errors", str(output_dir / "spotify-failed-tracks.txt"),
+                       "--print-errors"]
             # Keep default metadata, album-art and available-lyrics embedding enabled.
         else:
             output_template = str(output_dir / "%(title).180B [%(id)s].%(ext)s")
@@ -84,6 +134,7 @@ def main(playlist_url: str | None = None, output_dir: Path | None = None) -> int
                        "--extract-audio", "--audio-format", "mp3", "--audio-quality", "0",
                        "--embed-metadata", "--embed-thumbnail", "--convert-thumbnails", "jpg",
                        "--windows-filenames", "--no-overwrites", "--newline",
+                       "--download-archive", str(output_dir / ".galanacci-youtube-completed.txt"),
                        "--yes-playlist" if source == "youtube-playlist" else "--no-playlist",
                        "--output", output_template, "--", url]
             logging.info("Using the exact YouTube source; no Spotify/studio-version matching.")
@@ -96,6 +147,7 @@ def main(playlist_url: str | None = None, output_dir: Path | None = None) -> int
         return 0
     except subprocess.CalledProcessError as exc:
         logging.error("Failed while %s (exit code %s). See the output above.", action, exc.returncode)
+        logging.info("Completed files are kept. Run again with the same folder to resume.")
         return 1
     except FileNotFoundError as exc:
         logging.error("A required program could not be found: %s", exc)
