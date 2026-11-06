@@ -112,7 +112,7 @@ class Launcher:
                 self.run_command([sys.executable, "-m", "venv", str(ROOT / ".venv")])
             if self.cancelled.is_set():
                 return
-            self.events.put(("status", "Downloading audio — see the log below."))
+            self.events.put(("status", "Scanning existing music, then downloading missing tracks — see the log below."))
             self.run_command([str(VENV_PYTHON), "-u", str(ROOT / "download_playlist.py"), url, "--output-dir", folder])
             self.events.put(("status", "Finished. Review the log for any unavailable tracks, then open your music folder."))
         except (OSError, subprocess.CalledProcessError) as error:

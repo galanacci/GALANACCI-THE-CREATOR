@@ -26,10 +26,10 @@ def prepare_spotify_archive(output_dir: Path) -> Path:
     from mutagen import MutagenError
 
     urls = set()
+    checked = 0
+    logging.info("Scanning music folder before downloading: %s", output_dir)
     for path in output_dir.glob("*.mp3"):
-        match = re.search(r"\[([A-Za-z0-9]{22})\]$", path.stem)
-        if not match:
-            continue
+        checked += 1
         try:
             audio = MP3(path)
             if audio.info.length <= 0:
@@ -37,13 +37,42 @@ def prepare_spotify_archive(output_dir: Path) -> Path:
         except (MutagenError, OSError, ValueError):
             logging.warning("Could not read audio in %s; not marking it completed.", path.name)
             continue
-        urls.add("https://open.spotify.com/track/" + match.group(1))
+        # WOAS is written by spotDL. Prefer it so renamed files still match.
+        stored_url = str((audio.tags or {}).get("WOAS", ""))
+        match = re.fullmatch(r"https://open\.spotify\.com/track/([A-Za-z0-9]{22})(?:\?.*)?", stored_url)
+        if not match:
+            match = re.search(r"\[([A-Za-z0-9]{22})\]$", path.stem)
+        if match:
+            urls.add("https://open.spotify.com/track/" + match.group(1))
     archive = output_dir / ".galanacci-spotify-completed.txt"
     temporary = archive.with_suffix(".tmp")
     temporary.write_text("".join(url + "\n" for url in sorted(urls)), encoding="utf-8")
     os.replace(temporary, archive)
-    logging.info("Resume check: %s existing Spotify tracks will be skipped.", len(urls))
+    logging.info("Scan complete: %s MP3 files checked; %s existing Spotify tracks will be skipped.", checked, len(urls))
     return archive
+
+
+def run_spotify(command: list[str], output_dir: Path) -> int:
+    """Keep provider diagnostics across failures/cancellation, without flooding UI."""
+    log_path = output_dir / "spotify-download-details.log"
+    logging.info("Detailed provider log: %s", log_path)
+    env = dict(os.environ, PYTHONIOENCODING="utf-8", NO_COLOR="1", TERM="dumb")
+    with log_path.open("a", encoding="utf-8") as log:
+        log.write("\n--- New download / resume run ---\n")
+        log.flush()
+        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                              text=True, encoding="utf-8", errors="replace", env=env) as process:
+            try:
+                for line in process.stdout:
+                    log.write(line)
+                    log.flush()
+                    if not line.lstrip().startswith("DEBUG:"):
+                        print(line, end="", flush=True)
+                return process.wait()
+            except BaseException:
+                process.terminate()
+                process.wait()
+                raise
 
 
 def ensure_spotify_deno() -> None:
@@ -116,17 +145,18 @@ def main(playlist_url: str | None = None, output_dir: Path | None = None) -> int
 
         output_dir.mkdir(parents=True, exist_ok=True)
         if source == "spotify":
-            action = "setting up Deno"
-            ensure_spotify_deno()
             action = "checking completed downloads"
             archive = prepare_spotify_archive(output_dir)
+            action = "setting up Deno"
+            ensure_spotify_deno()
             output_template = str(output_dir / "{artists} - {title} [{track-id}].{output-ext}")
             command = [sys.executable, "-m", "spotdl", "download", url,
                        "--format", "mp3", "--output", output_template,
                        "--overwrite", "skip", "--scan-for-songs",
                        "--archive", str(archive),
                        "--save-errors", str(output_dir / "spotify-failed-tracks.txt"),
-                       "--print-errors"]
+                       "--print-errors", "--simple-tui", "--log-level", "DEBUG",
+                       "--log-format", "%(levelname)s: %(message)s"]
             # Keep default metadata, album-art and available-lyrics embedding enabled.
         else:
             output_template = str(output_dir / "%(title).180B [%(id)s].%(ext)s")
@@ -141,7 +171,15 @@ def main(playlist_url: str | None = None, output_dir: Path | None = None) -> int
         action = "downloading audio"
         logging.info("Starting %s download...", source)
         logging.info("Saving MP3 files directly to: %s", output_dir)
-        subprocess.run(command, check=True)
+        if source == "spotify":
+            code = run_spotify(command, output_dir)
+            # spotDL can return zero even when individual tracks failed.
+            # Recheck actual files regardless of its exit code.
+            prepare_spotify_archive(output_dir)
+            if code:
+                raise subprocess.CalledProcessError(code, command)
+        else:
+            subprocess.run(command, check=True)
         logging.info("Download finished. Files are saved in: %s", output_dir)
         logging.info("Review the output above for any unavailable or failed tracks.")
         return 0

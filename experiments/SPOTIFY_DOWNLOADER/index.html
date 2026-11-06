@@ -31,7 +31,7 @@ pre{background:#0c0c0b;border:1px solid #51483c;padding:16px;overflow:auto;font:
 <li><h2>PASTE &amp; DOWNLOAD</h2><p>Paste a Spotify playlist or YouTube video/playlist link, choose where to save the files, then click <strong>Download / Resume audio</strong>. Use <strong>Open music folder</strong> to find your MP3s.</p></li>
 </ol>
 <p class="note">Already downloaded it? Open START_DOWNLOADER.bat whenever you need it. No script editing or terminal commands required.</p>
-<p class="note"><strong>Interrupted playlist?</strong> Use the same link and music folder, then click Download / Resume audio. Existing Spotify tracks are indexed and skipped, including downloads from the original launcher. Keep the [track ID] in Spotify filenames.</p>
+<p class="note"><strong>Interrupted playlist?</strong> Use the same link and music folder, then click Download / Resume audio. Every Spotify run scans existing MP3 metadata and filename track IDs first, then skips completed tracks. Failed tracks remain eligible next time. Detailed provider errors are saved in spotify-download-details.log in your music folder.</p>
 <p class="note">YouTube links keep the exact performance you chose. A video link downloads that video only; use a YouTube playlist link to download the whole playlist.</p>
 <p class="note">The first download sets up the required tools automatically and may take longer. By default, music is saved in Downloaded_Music beside the launcher. Cancelling keeps completed downloads.</p>
 <details>

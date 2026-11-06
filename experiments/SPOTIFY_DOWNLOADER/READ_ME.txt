@@ -7,14 +7,18 @@ GALANACCI PLAYLIST DOWNLOADER — WINDOWS
 RESUMING AN INTERRUPTED PLAYLIST
 Use the same playlist link AND the same music folder as before (for example D:\MUSIC).
 Click Download / Resume audio. You do not need to start at a particular song.
-Spotify MP3s with track IDs in their filenames are checked and indexed before downloading.
+Every Spotify run scans the folder first, checking MP3 metadata and filename track IDs.
 Completed tracks are skipped, including files made by the original launcher.
 An interrupted run is checked again next time, even after a forced cancellation.
-Do not rename or remove the [track ID] at the end of Spotify filenames.
+Renamed files are recognised if their embedded Spotify source metadata is retained.
+Keep the [track ID] in filenames as a fallback when editing metadata.
 Existing files are never overwritten. Unreadable files are logged for manual review.
 If one is damaged, move it out of the music folder before retrying that track.
 YouTube downloads also keep a completion archive and preserve completed files.
 Failed Spotify tracks are listed in spotify-failed-tracks.txt after a run finishes.
+Detailed provider errors are saved continuously to spotify-download-details.log,
+including when the run is cancelled. Failed tracks stay eligible on the next run.
+Scanning prevents repeat downloads; it cannot make unavailable sources downloadable.
 
 YouTube links preserve the exact video/performance, including live versions.
 A video link downloads only that video, even when it contains a playlist parameter.
