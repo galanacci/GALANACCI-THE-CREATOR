@@ -12,15 +12,17 @@ import shutil
 import subprocess
 import sys
 from urllib.parse import parse_qs, urlparse
+from uuid import uuid4
 
 OUTPUT_DIR = Path(__file__).resolve().parent / "Downloaded_Music"
 
 
-def prepare_spotify_archive(output_dir: Path) -> Path:
+def prepare_spotify_archive(output_dir: Path, quarantine_incomplete: bool = False) -> Path:
     """Rebuild from actual audio files, including successes before a hard cancel.
 
     Never infer completion from playlist order or an old archive: missing files
-    must remain eligible for download. Existing MP3s are only read here.
+    must remain eligible for download. Completed audio is only read; optionally
+    preserve unfinished files separately so overwrite=skip cannot block a retry.
     """
     from mutagen.mp3 import MP3
     from mutagen import MutagenError
@@ -30,18 +32,31 @@ def prepare_spotify_archive(output_dir: Path) -> Path:
     logging.info("Scanning music folder before downloading: %s", output_dir)
     for path in output_dir.glob("*.mp3"):
         checked += 1
+        filename_id = re.search(r"\[([A-Za-z0-9]{22})\]$", path.stem)
         try:
             audio = MP3(path)
             if audio.info.length <= 0:
-                continue
-        except (MutagenError, OSError, ValueError):
-            logging.warning("Could not read audio in %s; not marking it completed.", path.name)
+                raise ValueError("Unfinished MP3 header")
+        except (MutagenError, ValueError):
+            if quarantine_incomplete and filename_id:
+                incomplete = output_dir / "Incomplete_Downloads"
+                incomplete.mkdir(exist_ok=True)
+                destination = incomplete / path.name
+                if destination.exists():
+                    destination = incomplete / (path.stem + "-" + uuid4().hex + path.suffix)
+                path.rename(destination)
+                logging.warning("Incomplete MP3 preserved in %s; track will be retried.", destination)
+            else:
+                logging.warning("Could not read completed audio in %s; not marking it completed.", path.name)
+            continue
+        except OSError as error:
+            logging.warning("Could not read %s: %s", path.name, error)
             continue
         # WOAS is written by spotDL. Prefer it so renamed files still match.
         stored_url = str((audio.tags or {}).get("WOAS", ""))
         match = re.fullmatch(r"https://open\.spotify\.com/track/([A-Za-z0-9]{22})(?:\?.*)?", stored_url)
         if not match:
-            match = re.search(r"\[([A-Za-z0-9]{22})\]$", path.stem)
+            match = filename_id
         if match:
             urls.add("https://open.spotify.com/track/" + match.group(1))
     archive = output_dir / ".galanacci-spotify-completed.txt"
@@ -146,7 +161,7 @@ def main(playlist_url: str | None = None, output_dir: Path | None = None) -> int
         output_dir.mkdir(parents=True, exist_ok=True)
         if source == "spotify":
             action = "checking completed downloads"
-            archive = prepare_spotify_archive(output_dir)
+            archive = prepare_spotify_archive(output_dir, quarantine_incomplete=True)
             action = "setting up Deno"
             ensure_spotify_deno()
             output_template = str(output_dir / "{artists} - {title} [{track-id}].{output-ext}")
@@ -175,7 +190,7 @@ def main(playlist_url: str | None = None, output_dir: Path | None = None) -> int
             code = run_spotify(command, output_dir)
             # spotDL can return zero even when individual tracks failed.
             # Recheck actual files regardless of its exit code.
-            prepare_spotify_archive(output_dir)
+            prepare_spotify_archive(output_dir, quarantine_incomplete=True)
             if code:
                 raise subprocess.CalledProcessError(code, command)
         else:

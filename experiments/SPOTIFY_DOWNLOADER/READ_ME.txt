@@ -12,8 +12,9 @@ Completed tracks are skipped, including files made by the original launcher.
 An interrupted run is checked again next time, even after a forced cancellation.
 Renamed files are recognised if their embedded Spotify source metadata is retained.
 Keep the [track ID] in filenames as a fallback when editing metadata.
-Existing files are never overwritten. Unreadable files are logged for manual review.
-If one is damaged, move it out of the music folder before retrying that track.
+Completed files are never overwritten. Spotify files with invalid or unfinished MP3
+headers are preserved in Incomplete_Downloads so they can be downloaded again.
+Files that cannot be accessed are logged for manual review.
 YouTube downloads also keep a completion archive and preserve completed files.
 Failed Spotify tracks are listed in spotify-failed-tracks.txt after a run finishes.
 Detailed provider errors are saved continuously to spotify-download-details.log,
