@@ -2,6 +2,7 @@
 // share-page builder all use this catalogue as their source of truth.
 export const FOLDER_CATALOG = Object.freeze({
   apps: Object.freeze([
+    { label: "SPOTIFY_DOWNLOADER.EXE", type: "audio", href: "./experiments/SPOTIFY_DOWNLOADER/index.html", year: "2026", description: "Download the local Python playlist-to-MP3 tool and run instructions.", ariaLabel: "Open SPOTIFY_DOWNLOADER.EXE", shareSlug: "spotify_downloader", preview: "experiments/SPOTIFY_DOWNLOADER/preview.svg" },
     { label: "BOTB_VISUALS.EXE", type: "visual", href: "./experiments/BOTB_VISUALS/index.html", year: "2026", description: "A series of visual backdrops for performance. 01: Gradient Sun.", ariaLabel: "Open BOTB_VISUALS.EXE performance backdrops", shareSlug: "botb-visuals", preview: "experiments/BOTB_VISUALS/preview.svg" },
     { label: "JUPITER.EXE", type: "visual", href: "./experiments/JUPITER/index.html", year: "2026", description: "A looping, colour-shifting visual experiment.", ariaLabel: "Open JUPITER.EXE visualiser", shareSlug: "jupiter", preview: "experiments/JUPITER/assets/preview.jpg" },
     { label: "2(XY+T).EXE", type: "visual", href: "./experiments/2(XY-T)/index.html", year: "2026", description: "An iteration of Bradley Tangonan's XY - T project.", ariaLabel: "Open 2(XY+T).EXE experiment", shareSlug: "2(xy+t)", preview: "experiments/2(XY-T)/assets/frames/frame-0030.jpg", shareDescription: "An interactive visual experiment." },

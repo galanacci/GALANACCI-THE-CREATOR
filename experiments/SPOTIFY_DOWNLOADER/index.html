@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SPOTIFY_DOWNLOADER.EXE</title><link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#171613;color:#ead1b2;font:14px/1.65 monospace}main{max-width:900px;margin:auto;padding:32px 24px}h1{font-size:24px;line-height:1.3}h2{font-size:16px;margin-top:28px}p{max-width:740px}a{color:inherit}button,.download{display:inline-block;background:#ead1b2;color:#171613;border:1px solid #ead1b2;padding:12px 16px;font:700 12px monospace;cursor:pointer;text-decoration:none;margin:6px 8px 6px 0}pre{background:#0c0c0b;border:1px solid #5b5144;padding:18px;overflow:auto;font:12px/1.6 monospace}summary{cursor:pointer;margin:20px 0}small{color:#c4b295}#status{min-height:22px}
+</style></head><body><main>
+<small>GALANACCI / LOCAL TOOLS</small><h1>SPOTIFY_DOWNLOADER.EXE</h1>
+<p>A local Python script that downloads playlist matches as MP3 files, with metadata, album artwork and available lyrics. This page provides the script; the download runs on your computer.</p>
+<a class="download" href="./download_playlist.py" download>DOWNLOAD PYTHON SCRIPT ↓</a><button id="copy" type="button">COPY SCRIPT</button><p id="status" role="status"></p>
+<h2>1 / PREPARE</h2><p>Install Python and FFmpeg. Confirm <code>ffmpeg -version</code> works in your terminal. A virtual environment keeps spotDL separate from other projects:</p>
+<pre>py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe download_playlist.py</pre>
+<h2>2 / SET YOUR PLAYLIST</h2><p>Open the downloaded script and replace the placeholder at the top:</p><pre>PLAYLIST_URL = "YOUR_SPOTIFY_PLAYLIST_URL_HERE"</pre>
+<h2>3 / RUN</h2><p>Run the Python command above from the folder containing the script. It installs spotDL via pip if missing. Files go directly into <code>Downloaded_Music</code> alongside the script.</p>
+<p>spotDL matches Spotify metadata to audio providers such as YouTube; it does not extract Spotify's audio stream. Artwork and lyrics depend on availability. Some providers also need Deno; see the official setup guide.</p>
+<p><a href="https://spotdl.github.io/spotify-downloader/installation/" target="_blank" rel="noopener">Official installation guide ↗</a> · <a href="https://spotdl.github.io/spotify-downloader/usage/" target="_blank" rel="noopener">Usage guide ↗</a></p>
+<details><summary>VIEW COMPLETE SCRIPT</summary><pre id="source">Loading…</pre></details>
+</main><script>
+let script='';const status=document.querySelector('#status');
+fetch('./download_playlist.py').then(r=>{if(!r.ok)throw Error('Could not load the script.');return r.text()}).then(text=>{script=text;document.querySelector('#source').textContent=text}).catch(e=>{status.textContent=e.message});
+document.querySelector('#copy').addEventListener('click',async()=>{try{if(!script)throw Error('The script is still loading.');await navigator.clipboard.writeText(script);status.textContent='Script copied.'}catch(e){status.textContent='Use Download Python Script or select the script text below.';document.querySelector('details').open=true}});
+</script></body></html>
