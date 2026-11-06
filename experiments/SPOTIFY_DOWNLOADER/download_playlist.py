@@ -1,4 +1,4 @@
-"""Download a Spotify playlist as tagged MP3 files using spotDL."""
+"""Download Spotify playlists or exact YouTube videos/playlists as MP3 files."""
 
 PLAYLIST_URL = "YOUR_SPOTIFY_PLAYLIST_URL_HERE"
 
@@ -10,9 +10,38 @@ import re
 import shutil
 import subprocess
 import sys
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 OUTPUT_DIR = Path(__file__).resolve().parent / "Downloaded_Music"
+
+
+def get_source(url: str) -> str:
+    """Validate supported links and distinguish a video from its playlist context."""
+    try:
+        parsed = urlparse(url)
+        host = parsed.hostname
+        query = parse_qs(parsed.query)
+    except ValueError:
+        raise ValueError("Invalid URL. Paste a Spotify playlist or YouTube link.") from None
+    if parsed.scheme != "https" or parsed.username or parsed.password:
+        raise ValueError("Use an HTTPS Spotify playlist or YouTube link.")
+    if host == "open.spotify.com" and re.fullmatch(r"/playlist/[A-Za-z0-9]{22}/?", parsed.path):
+        return "spotify"
+    if host in {"youtube.com", "www.youtube.com", "m.youtube.com", "music.youtube.com", "youtu.be", "www.youtu.be"}:
+        if parsed.path.rstrip("/") == "/playlist" and re.fullmatch(r"[A-Za-z0-9_-]{10,100}", query.get("list", [""])[0]):
+            return "youtube-playlist"
+        video_id = ""
+        if host in {"youtu.be", "www.youtu.be"}:
+            video_id = parsed.path.strip("/")
+        elif parsed.path.rstrip("/") == "/watch":
+            video_id = query.get("v", [""])[0]
+        else:
+            match = re.fullmatch(r"/(?:shorts|live)/([A-Za-z0-9_-]{11})/?", parsed.path)
+            if match:
+                video_id = match.group(1)
+        if re.fullmatch(r"[A-Za-z0-9_-]{11}", video_id):
+            return "youtube-video"
+    raise ValueError("Paste a Spotify playlist, YouTube video, or YouTube playlist link.")
 
 
 def main(playlist_url: str | None = None, output_dir: Path | None = None) -> int:
@@ -22,10 +51,10 @@ def main(playlist_url: str | None = None, output_dir: Path | None = None) -> int
     if not url or url == "YOUR_SPOTIFY_PLAYLIST_URL_HERE":
         logging.error("Set PLAYLIST_URL at the top of this script, then run it again.")
         return 2
-    parsed = urlparse(url)
-    if (parsed.scheme != "https" or parsed.hostname != "open.spotify.com"
-            or not re.fullmatch(r"/playlist/[A-Za-z0-9]{22}/?", parsed.path)):
-        logging.error("Use a Spotify playlist link: https://open.spotify.com/playlist/...")
+    try:
+        source = get_source(url)
+    except ValueError as error:
+        logging.error("%s", error)
         return 2
 
     # FFmpeg must be installed and on your local system PATH for audio conversion.
@@ -37,22 +66,33 @@ def main(playlist_url: str | None = None, output_dir: Path | None = None) -> int
     try:
         subprocess.run(["ffmpeg", "-version"], check=True,
                        stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
-        if importlib.util.find_spec("spotdl") is None:
-            action = "installing spotDL"
-            logging.info("spotDL is missing; installing it for this Python interpreter...")
-            subprocess.run([sys.executable, "-m", "pip", "install", "spotdl"], check=True)
+        module, package = ("spotdl", "spotdl") if source == "spotify" else ("yt_dlp", "yt-dlp[default]")
+        if importlib.util.find_spec(module) is None:
+            action = f"installing {package}"
+            logging.info("Installing %s for this Python interpreter...", package)
+            subprocess.run([sys.executable, "-m", "pip", "install", package], check=True)
 
         output_dir.mkdir(parents=True, exist_ok=True)
-        output_template = str(output_dir / "{artists} - {title} [{track-id}].{output-ext}")
-        command = [sys.executable, "-m", "spotdl", "download", url,
-                   "--format", "mp3", "--output", output_template]
-        # Keep default metadata, album-art and available-lyrics embedding enabled.
-        action = "downloading the playlist"
-        logging.info("Starting playlist download...")
+        if source == "spotify":
+            output_template = str(output_dir / "{artists} - {title} [{track-id}].{output-ext}")
+            command = [sys.executable, "-m", "spotdl", "download", url,
+                       "--format", "mp3", "--output", output_template]
+            # Keep default metadata, album-art and available-lyrics embedding enabled.
+        else:
+            output_template = str(output_dir / "%(title).180B [%(id)s].%(ext)s")
+            command = [sys.executable, "-m", "yt_dlp", "--ignore-config",
+                       "--extract-audio", "--audio-format", "mp3", "--audio-quality", "0",
+                       "--embed-metadata", "--embed-thumbnail", "--convert-thumbnails", "jpg",
+                       "--windows-filenames", "--no-overwrites", "--newline",
+                       "--yes-playlist" if source == "youtube-playlist" else "--no-playlist",
+                       "--output", output_template, "--", url]
+            logging.info("Using the exact YouTube source; no Spotify/studio-version matching.")
+        action = "downloading audio"
+        logging.info("Starting %s download...", source)
         logging.info("Saving MP3 files directly to: %s", output_dir)
         subprocess.run(command, check=True)
-        logging.info("spotDL finished. Files are saved in: %s", output_dir)
-        logging.info("Review spotDL's output above for any unavailable or failed tracks.")
+        logging.info("Download finished. Files are saved in: %s", output_dir)
+        logging.info("Review the output above for any unavailable or failed tracks.")
         return 0
     except subprocess.CalledProcessError as exc:
         logging.error("Failed while %s (exit code %s). See the output above.", action, exc.returncode)

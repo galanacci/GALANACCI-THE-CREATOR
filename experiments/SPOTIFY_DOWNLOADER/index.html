@@ -23,20 +23,21 @@ pre{background:#0c0c0b;border:1px solid #51483c;padding:16px;overflow:auto;font:
 <body><main>
 <small>GALANACCI / WINDOWS TOOL</small>
 <h1>SPOTIFY_DOWNLOADER.EXE</h1>
-<p>Save playlist matches as MP3 files, with track information, cover art and available lyrics.</p>
+<p>Save Spotify playlists or exact YouTube videos and playlists as MP3 files—including your favourite live performances.</p>
 <a class="download" href="./SPOTIFY_DOWNLOADER_WINDOWS.zip" download>DOWNLOAD WINDOWS LAUNCHER ↓</a>
 <ol class="steps">
 <li><h2>DOWNLOAD &amp; EXTRACT</h2><p>Download the ZIP above. Right-click it, choose <strong>Extract All</strong>, then open the extracted folder.</p></li>
 <li><h2>OPEN THE LAUNCHER</h2><p>Double-click <strong>START_DOWNLOADER.bat</strong>. Keep the files together in the extracted folder.</p></li>
-<li><h2>PASTE &amp; DOWNLOAD</h2><p>Paste your Spotify playlist link, choose where to save the files, then click <strong>Download playlist</strong>. Use <strong>Open music folder</strong> to find your MP3s.</p></li>
+<li><h2>PASTE &amp; DOWNLOAD</h2><p>Paste a Spotify playlist or YouTube video/playlist link, choose where to save the files, then click <strong>Download audio</strong>. Use <strong>Open music folder</strong> to find your MP3s.</p></li>
 </ol>
 <p class="note">Already downloaded it? Open START_DOWNLOADER.bat whenever you need it. No script editing or terminal commands required.</p>
-<p class="note">The first download sets up spotDL automatically and may take longer. By default, music is saved in Downloaded_Music beside the launcher. Cancelling keeps completed downloads.</p>
+<p class="note">YouTube links keep the exact performance you chose. A video link downloads that video only; use a YouTube playlist link to download the whole playlist.</p>
+<p class="note">The first download sets up the required tools automatically and may take longer. By default, music is saved in Downloaded_Music beside the launcher. Cancelling keeps completed downloads.</p>
 <details>
 <summary>FIRST-TIME SETUP &amp; HELP</summary>
 <p>You need Python 3.12 with Tcl/Tk and FFmpeg installed on Windows. FFmpeg must be available on PATH. If the launcher is already working, no further setup is needed.</p>
-<p>For a playlist link, open the playlist in Spotify and choose <strong>Share → Copy link to playlist</strong>. If a track fails, check the launcher's log for the reason.</p>
-<p class="note">spotDL matches Spotify metadata to external audio providers. Track matches, artwork and lyrics depend on availability. Some audio providers also need Deno.</p>
+<p>In Spotify, use <strong>Share → Copy link to playlist</strong>. On YouTube, copy the video's Share link or the playlist's own link. If a download fails, check the launcher's log.</p>
+<p class="note">Spotify uses spotDL to match tracks, with artwork and available lyrics. YouTube uses yt-dlp directly, preserving the selected version and embedding available video metadata and its thumbnail. Some downloads also need Deno.</p>
 <a href="https://spotdl.github.io/spotify-downloader/installation/" target="_blank" rel="noopener">Official setup &amp; troubleshooting ↗</a>
 </details>
 <details id="advanced">

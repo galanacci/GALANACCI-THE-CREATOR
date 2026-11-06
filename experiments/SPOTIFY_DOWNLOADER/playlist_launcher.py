@@ -2,14 +2,13 @@
 from pathlib import Path
 import os
 import queue
-import re
 import shutil
 import subprocess
 import sys
 import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext, ttk
-from urllib.parse import urlparse
+from download_playlist import get_source
 
 ROOT = Path(__file__).resolve().parent
 VENV_PYTHON = ROOT / ".venv" / "Scripts" / "python.exe"
@@ -24,14 +23,14 @@ class Launcher:
         self.cancelled = threading.Event()
         self.url = tk.StringVar()
         self.folder = tk.StringVar(value=str(ROOT / "Downloaded_Music"))
-        self.status = tk.StringVar(value="Paste a Spotify playlist link to begin.")
+        self.status = tk.StringVar(value="Paste a Spotify playlist or YouTube video/playlist link.")
         root.title("GALANACCI — Playlist Downloader")
         root.geometry("780x540")
         root.minsize(600, 430)
         frame = ttk.Frame(root, padding=20)
         frame.pack(fill="both", expand=True)
-        ttk.Label(frame, text="SPOTIFY PLAYLIST → MP3", font=("Segoe UI", 17, "bold")).pack(anchor="w")
-        ttk.Label(frame, text="Spotify playlist URL").pack(anchor="w", pady=(18, 4))
+        ttk.Label(frame, text="SPOTIFY + YOUTUBE → MP3", font=("Segoe UI", 17, "bold")).pack(anchor="w")
+        ttk.Label(frame, text="Spotify playlist or YouTube video / playlist URL").pack(anchor="w", pady=(18, 4))
         self.entry = ttk.Entry(frame, textvariable=self.url)
         self.entry.pack(fill="x")
         ttk.Label(frame, text="Save music to").pack(anchor="w", pady=(12, 4))
@@ -43,7 +42,7 @@ class Launcher:
         self.browse.pack(side="left", padx=(8, 0))
         actions = ttk.Frame(frame)
         actions.pack(fill="x", pady=14)
-        self.start = ttk.Button(actions, text="Download playlist", command=self.download)
+        self.start = ttk.Button(actions, text="Download audio", command=self.download)
         self.start.pack(side="left")
         self.cancel = ttk.Button(actions, text="Cancel", command=self.stop, state="disabled")
         self.cancel.pack(side="left", padx=8)
@@ -53,7 +52,7 @@ class Launcher:
         ttk.Label(frame, textvariable=self.status, wraplength=700).pack(anchor="w", pady=8)
         self.log = scrolledtext.ScrolledText(frame, height=12, state="disabled", font=("Consolas", 10))
         self.log.pack(fill="both", expand=True)
-        ttk.Label(frame, text="First download sets up spotDL in a private .venv. FFmpeg must be on PATH.").pack(anchor="w", pady=(8, 0))
+        ttk.Label(frame, text="Exact YouTube versions preserved. Tools set up automatically. FFmpeg required.").pack(anchor="w", pady=(8, 0))
         root.protocol("WM_DELETE_WINDOW", self.close)
         root.after(100, self.poll)
         self.entry.focus_set()
@@ -73,9 +72,10 @@ class Launcher:
 
     def download(self):
         url = self.url.get().strip()
-        parsed = urlparse(url)
-        if parsed.scheme != "https" or parsed.hostname != "open.spotify.com" or not re.fullmatch(r"/playlist/[A-Za-z0-9]{22}/?", parsed.path):
-            messagebox.showerror("Playlist link needed", "Paste a Spotify playlist link from Share → Copy link.")
+        try:
+            source = get_source(url)
+        except ValueError as error:
+            messagebox.showerror("Supported link needed", str(error))
             return
         if not shutil.which("ffmpeg"):
             messagebox.showerror("FFmpeg required", "Install FFmpeg and add it to PATH, then close and reopen this launcher.")
@@ -87,7 +87,7 @@ class Launcher:
         self.cancelled.clear()
         self.set_controls()
         self.progress.start()
-        self.status.set("Preparing downloader…")
+        self.status.set("Preparing " + ("Spotify playlist" if source == "spotify" else "exact YouTube audio") + "…")
         threading.Thread(target=self.worker, args=(url, str(Path(self.folder.get()).expanduser().resolve())), daemon=True).start()
 
     def run_command(self, command):
@@ -112,7 +112,7 @@ class Launcher:
                 self.run_command([sys.executable, "-m", "venv", str(ROOT / ".venv")])
             if self.cancelled.is_set():
                 return
-            self.events.put(("status", "Downloading playlist — see the log below."))
+            self.events.put(("status", "Downloading audio — see the log below."))
             self.run_command([str(VENV_PYTHON), "-u", str(ROOT / "download_playlist.py"), url, "--output-dir", folder])
             self.events.put(("status", "Finished. Review the log for any unavailable tracks, then open your music folder."))
         except (OSError, subprocess.CalledProcessError) as error:
