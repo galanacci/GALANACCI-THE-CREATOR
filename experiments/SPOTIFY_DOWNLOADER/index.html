@@ -6,6 +6,8 @@
 </style></head><body><main>
 <small>GALANACCI / LOCAL TOOLS</small><h1>SPOTIFY_DOWNLOADER.EXE</h1>
 <p>A local Python script that downloads playlist matches as MP3 files, with metadata, album artwork and available lyrics. This page provides the script; the download runs on your computer.</p>
+<a class="download" href="./SPOTIFY_DOWNLOADER_WINDOWS.zip" download>DOWNLOAD WINDOWS LAUNCHER ↓</a>
+<p>Extract the ZIP, then double-click <strong>START_DOWNLOADER.bat</strong>. Paste your playlist URL, choose a folder and click Download playlist. Python and FFmpeg are required; spotDL is installed automatically into a local virtual environment.</p>
 <a class="download" href="./download_playlist.py" download>DOWNLOAD PYTHON SCRIPT ↓</a><button id="copy" type="button">COPY SCRIPT</button><p id="status" role="status"></p>
 <h2>1 / PREPARE</h2><p>Install Python and FFmpeg. Confirm <code>ffmpeg -version</code> works in your terminal. A virtual environment keeps spotDL separate from other projects:</p>
 <pre>py -3.12 -m venv .venv
